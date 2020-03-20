@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class FighterContoller : MonoBehaviour
 {
-    [SerializeField] bool isPlayerOne = true;
+    private bool isPlayerOne = true;
     [SerializeField] float moveSpeed = 1f;
-    private FighterContoller otherFighter;
+    private GameObject otherFighter;
+    private FighterContoller otherFighterController;
     private GameManager gameManager;
     private Rigidbody rb;
     private Vector3 startingPosition;
@@ -96,19 +97,20 @@ public class FighterContoller : MonoBehaviour
         }
     }
 
-    public void Init()
+    public void Init(GameObject otherFighter)
     {
         GameObject canvas = GameObject.FindGameObjectWithTag("Canvas");
         gameManager = GameObject.FindGameObjectWithTag("Game Manager").GetComponent<GameManager>();
         rb = GetComponent<Rigidbody>();
+        this.otherFighter = otherFighter;
+        otherFighterController = otherFighter.GetComponent<FighterContoller>();
+
         if (isPlayerOne)
         {
-            otherFighter = GameObject.FindGameObjectWithTag("Fighter2").GetComponent<FighterContoller>();
             fighterUI = canvas.transform.GetChild(0).GetComponent<FighterUI>();
         }
         else
         {
-            otherFighter = GameObject.FindGameObjectWithTag("Fighter1").GetComponent<FighterContoller>();
             fighterUI = canvas.transform.GetChild(1).GetComponent<FighterUI>();
         }
         anim = GetComponent<Animator>();
@@ -117,6 +119,11 @@ public class FighterContoller : MonoBehaviour
         startingPosition.Set(transform.position.x, transform.position.y, transform.position.z);
         startingRotation.Set(transform.rotation.x, transform.rotation.y, transform.rotation.z, transform.rotation.w);
         startingScale.Set(transform.localScale.x, transform.localScale.y, transform.localScale.z);
+    }
+
+    public void SetAsPlayerOne(bool isPlayerOne)
+    {
+        this.isPlayerOne = isPlayerOne;
     }
 
     public void ResetFighter()
@@ -209,7 +216,7 @@ public class FighterContoller : MonoBehaviour
 
     private void DamageEnemy(int damage)
     {
-        otherFighter.TakeDamage(damage);
+        otherFighterController.TakeDamage(damage);
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -218,7 +225,7 @@ public class FighterContoller : MonoBehaviour
         {
             isJumping = false;
         }
-        else if (collision.transform.tag == "Fighter2")
+        else if (collision.transform.gameObject == otherFighter)
         {
             collidingWithEnemy = true;
         }
@@ -226,7 +233,7 @@ public class FighterContoller : MonoBehaviour
 
     private void OnCollisionExit(Collision collision)
     {
-        if (collision.transform.tag == "Fighter2")
+        if (collision.transform.gameObject == otherFighter)
         {
             collidingWithEnemy = false;
         }

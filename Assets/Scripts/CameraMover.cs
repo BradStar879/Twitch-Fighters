@@ -4,31 +4,32 @@ using UnityEngine;
 
 public class CameraMover : MonoBehaviour
 {
-    private GameObject playerOne;
-    private GameObject playerTwo;
+    private GameObject fighterOne;
+    private GameObject fighterTwo;
     private float startingCameraZ;
     private float startingPlayerDistance;
     private Camera camera;
     // Start is called before the first frame update
     void Start()
     {
-        playerOne = GameObject.FindGameObjectWithTag("Fighter1");
-        playerTwo = GameObject.FindGameObjectWithTag("Fighter2");
-        startingCameraZ = transform.position.z;
-        startingPlayerDistance = Mathf.Abs(playerTwo.transform.position.x - playerOne.transform.position.x);
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        float playerDistance = Mathf.Abs(playerTwo.transform.position.x - playerOne.transform.position.x);
-        transform.position = new Vector3((playerOne.transform.position.x + playerTwo.transform.position.x) / 2,
+        float playerDistance = Mathf.Abs(fighterTwo.transform.position.x - fighterOne.transform.position.x);
+        transform.position = new Vector3((fighterOne.transform.position.x + fighterTwo.transform.position.x) / 2,
                                             transform.position.y, -4.1f - (playerDistance / 3f));
     }
 
-    public void Init()
+    public void Init(GameObject fighterOne, GameObject fighterTwo)
     {
         camera = GetComponent<Camera>();
+        this.fighterOne = fighterOne;
+        this.fighterTwo = fighterTwo;
+        startingCameraZ = transform.position.z;
+        startingPlayerDistance = Mathf.Abs(fighterTwo.transform.position.x - fighterOne.transform.position.x);
     }
 
     public void EnableCamera()
