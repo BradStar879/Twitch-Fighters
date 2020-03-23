@@ -6,7 +6,9 @@ using UnityEngine.UI;
 public class FighterUI : MonoBehaviour
 {
     private GameObject hpBar;
+    private GameObject specialBar;
     private float hpBarStartingWidth;
+    private float specialBarStartingWidth;
 
     // Start is called before the first frame update
     void Start()
@@ -22,8 +24,10 @@ public class FighterUI : MonoBehaviour
 
     public void Init()
     {
-        hpBar = transform.GetChild(1).gameObject;
+        hpBar = transform.GetChild(2).gameObject;
         hpBarStartingWidth = hpBar.GetComponent<RectTransform>().sizeDelta.x;
+        specialBar = transform.GetChild(4).gameObject;
+        specialBarStartingWidth = specialBar.GetComponent<RectTransform>().sizeDelta.x;
     }
 
     public void UpdateHp(int hp)
@@ -42,4 +46,9 @@ public class FighterUI : MonoBehaviour
             hpBar.GetComponent<Image>().color = Color.red;
         }
     } 
+
+    public void UpdateSpecial(int special)
+    {
+        specialBar.GetComponent<RectTransform>().sizeDelta = new Vector2(special / 50f * specialBarStartingWidth, specialBar.GetComponent<RectTransform>().sizeDelta.y);
+    }
 }

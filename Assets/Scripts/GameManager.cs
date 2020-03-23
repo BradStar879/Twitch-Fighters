@@ -8,13 +8,14 @@ public class GameManager : MonoBehaviour
     private bool gameActive = false;
     private float time;
     private Canvas canvas;
+    [SerializeField] bool debugMode = false;
     [SerializeField] Text timerText;
     [SerializeField] Text winText;
     [SerializeField] Text fighterOneName;
     [SerializeField] Text fighterTwoName;
     [SerializeField] CameraMover mainCamera;
     [SerializeField] ZoomInCamera zoomInCamera;
-    [SerializeField] float preFightTimer;
+    [SerializeField] float preFightTimer = 0f;
     private FighterContoller fighterOne;
     private FighterContoller fighterTwo;
     private bool preFight = false;
@@ -29,6 +30,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject blueFighter;
     [SerializeField] GameObject greenFighter;
     [SerializeField] GameObject yellowFighter;
+
+    private int damageToDealToPlayerOne = 0;
+    private int damageToDealToPlayerTwo = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -64,6 +68,7 @@ public class GameManager : MonoBehaviour
             {
                 gameActive = false;
                 winText.enabled = true;
+                postFight = true;
                 winText.text = "TIME!";
             }
         } else if (preFight)    //Short time after intro but before fight
@@ -84,19 +89,40 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void LateUpdate()
+    {
+        if (damageToDealToPlayerOne > 0)
+        {
+            fighterOne.TakeDamage(damageToDealToPlayerOne);
+            damageToDealToPlayerOne = 0;
+        }
+        if (damageToDealToPlayerTwo > 0)
+        {
+            fighterTwo.TakeDamage(damageToDealToPlayerTwo);
+            damageToDealToPlayerTwo = 0;
+        }
+    }
+
     public void StartGame()
     {
         fighterOne.ResetFighter();
         fighterTwo.ResetFighter();
         time = 99.9f;
-        preFightTimer = 1f;
         timerText.text = "" + (int)time;
-        StartFighterZoom();
+        preFightTimer = 1f;
+        if (!debugMode)
+        {
+            StartFighterZoom();
+        } else
+        {
+            winText.enabled = false;
+            preFight = false;
+            gameActive = true;
+        }
     }
 
     public void StartFighterZoom()
     {
-        canvas.enabled = false;
         zoomInCamera.EnableCamera();
         mainCamera.DisableCamera();
         zoomInCamera.StartCharacterIntro();
@@ -130,6 +156,17 @@ public class GameManager : MonoBehaviour
         postFight = true;
     }
 
+    public void DealDamageToFighter(int damage, bool isPlayerOne)
+    {
+        if (isPlayerOne)
+        {
+            damageToDealToPlayerOne += damage;
+        } else
+        {
+            damageToDealToPlayerTwo += damage;
+        }
+    }
+
     private GameObject DecideFighter(MainMenuScript.characters character)
     {
         switch (character)
@@ -146,4 +183,5 @@ public class GameManager : MonoBehaviour
                 return null;
         }
     }
+
 }
