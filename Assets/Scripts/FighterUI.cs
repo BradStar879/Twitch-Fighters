@@ -7,6 +7,7 @@ public class FighterUI : MonoBehaviour
 {
     private GameObject hpBar;
     private GameObject specialBar;
+    private Image[] winCircles; 
     private float hpBarStartingWidth;
     private float specialBarStartingWidth;
 
@@ -28,6 +29,18 @@ public class FighterUI : MonoBehaviour
         hpBarStartingWidth = hpBar.GetComponent<RectTransform>().sizeDelta.x;
         specialBar = transform.GetChild(4).gameObject;
         specialBarStartingWidth = specialBar.GetComponent<RectTransform>().sizeDelta.x;
+        winCircles = new Image[3];
+        winCircles[0] = transform.GetChild(8).gameObject.GetComponent<Image>();
+        winCircles[1] = transform.GetChild(9).gameObject.GetComponent<Image>();
+        winCircles[2] = transform.GetChild(10).gameObject.GetComponent<Image>();
+        //for (int i = 0; i < 3; i++)
+        //{
+        //    winCirclesBackground[i].enabled = i+1 < roundsToWin;
+        //}
+        foreach (Image winCircle in winCircles)
+        {
+            winCircle.enabled = false;
+        }
     }
 
     public void UpdateHp(int hp)
@@ -50,5 +63,10 @@ public class FighterUI : MonoBehaviour
     public void UpdateSpecial(int special)
     {
         specialBar.GetComponent<RectTransform>().sizeDelta = new Vector2(special / 50f * specialBarStartingWidth, specialBar.GetComponent<RectTransform>().sizeDelta.y);
+    }
+
+    public void UpdateWins(int wins)
+    {
+        winCircles[wins - 1].enabled = true;
     }
 }

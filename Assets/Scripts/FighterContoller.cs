@@ -196,6 +196,11 @@ public class FighterContoller : MonoBehaviour
         startingScale.Set(transform.localScale.x, transform.localScale.y, transform.localScale.z);
     }
 
+    public FighterUI GetFighterUI()
+    {
+        return fighterUI;
+    }
+
     public void SetAsPlayerOne(bool isPlayerOne)
     {
         this.isPlayerOne = isPlayerOne;
@@ -203,6 +208,7 @@ public class FighterContoller : MonoBehaviour
 
     public void ResetFighter()
     {
+        anim.StopPlayback();
         anim.Play("Default");
         transform.position = startingPosition;
         transform.rotation = startingRotation;
@@ -241,7 +247,7 @@ public class FighterContoller : MonoBehaviour
         {
             anim.Play("Die");
             hp = 0;
-            gameManager.DeactivateGame(!isPlayerOne);
+            gameManager.EndRound(!isPlayerOne);
         } 
         fighterUI.UpdateHp(hp);
     }

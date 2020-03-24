@@ -30,9 +30,9 @@ public class ZoomInCamera : MonoBehaviour
         anim.Play("Fighter1 Intro");
     }
 
-    public void StartPreFight()
+    public void StartRound()
     {
-        gameManager.StartPreFight();
+        gameManager.StartRound();
     }
 
     public void EnableCamera()

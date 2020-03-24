@@ -16,10 +16,17 @@ public class GameManager : MonoBehaviour
     [SerializeField] CameraMover mainCamera;
     [SerializeField] ZoomInCamera zoomInCamera;
     [SerializeField] float preFightTimer = 0f;
+    private float postRoundTimer;
+    [SerializeField] int roundsToWin = 3;
     private FighterContoller fighterOne;
     private FighterContoller fighterTwo;
+    private FighterUI fighterOneUI;
+    private FighterUI fighterTwoUI;
     private bool preFight = false;
+    private bool postRound = false;
     private bool postFight = false;
+    private int fighterOneWins;
+    private int fighterTwoWins;
 
     private readonly Vector3 fighterOneStartingPosition = new Vector3(-.9f, .6f, -2.9f);
     private readonly Vector3 fighterTwoStartingPosition = new Vector3(.9f, .6f, -2.9f);
@@ -52,6 +59,8 @@ public class GameManager : MonoBehaviour
         fighterTwo.SetAsPlayerOne(false);
         fighterOne.Init(fighterTwoClone);
         fighterTwo.Init(fighterOneClone);
+        fighterOneUI = fighterOne.GetFighterUI();
+        fighterTwoUI = fighterTwo.GetFighterUI();
         mainCamera.Init(fighterOneClone, fighterTwoClone);
         zoomInCamera.Init();
         StartGame();
@@ -71,7 +80,8 @@ public class GameManager : MonoBehaviour
                 postFight = true;
                 winText.text = "TIME!";
             }
-        } else if (preFight)    //Short time after intro but before fight
+        }
+        else if (preFight)    //Short time after intro but before fight
         {
             preFightTimer -= Time.deltaTime;
             if (preFightTimer <= 0f)
@@ -80,7 +90,17 @@ public class GameManager : MonoBehaviour
                 preFight = false;
                 gameActive = true;
             }
-        } else if (postFight)
+        }
+        else if (postRound) //After round but not enough wins to end game
+        {
+            postRoundTimer -= Time.deltaTime;
+            if (postRoundTimer <= 0f)
+            {
+                postRound = false;
+                StartRound();
+            }
+        }
+        else if (postFight)
         {
             if (Input.GetKeyDown(KeyCode.R))
             {
@@ -105,37 +125,42 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
+        gameActive = false;
         fighterOne.ResetFighter();
         fighterTwo.ResetFighter();
-        time = 99.9f;
-        timerText.text = "" + (int)time;
-        preFightTimer = 1f;
+        fighterOneWins = 0;
+        fighterTwoWins = 0;
         if (!debugMode)
         {
             StartFighterZoom();
-        } else
+        } 
+        else 
         {
-            winText.enabled = false;
-            preFight = false;
-            gameActive = true;
+            StartRound();   
         }
+    }
+
+    public void StartRound()
+    {
+        zoomInCamera.DisableCamera();
+        mainCamera.EnableCamera();
+        canvas.enabled = true;
+        fighterOne.ResetFighter();
+        fighterTwo.ResetFighter();
+        winText.enabled = true;
+        winText.text = "FIGHT!";
+        time = 99.9f;
+        timerText.text = "" + (int)time;
+        preFightTimer = 1f;
+        preFight = true;
     }
 
     public void StartFighterZoom()
     {
+        canvas.enabled = false;
         zoomInCamera.EnableCamera();
         mainCamera.DisableCamera();
         zoomInCamera.StartCharacterIntro();
-    }
-
-    public void StartPreFight()
-    {
-        canvas.enabled = true;
-        zoomInCamera.DisableCamera();
-        mainCamera.EnableCamera();
-        winText.enabled = true;
-        winText.text = "FIGHT!";
-        preFight = true;
     }
 
     public bool IsGameActive()
@@ -143,17 +168,42 @@ public class GameManager : MonoBehaviour
         return gameActive;
     }
 
-    public void DeactivateGame(bool fighterOneWins)
+    public void EndRound(bool fighterOneWinsRound)
     {
-        int fighterNumber = 1;
-        if (!fighterOneWins)
-        {
-            fighterNumber = 2;
-        }
         gameActive = false;
         winText.enabled = true;
-        winText.text = "GAME!\nFIGHTER " + fighterNumber + " WINS!";
-        postFight = true;
+        if (fighterOneWinsRound)
+        {
+            fighterOneWins++;
+            fighterOneUI.UpdateWins(fighterOneWins);
+            if (fighterOneWins == roundsToWin)
+            {
+                winText.text = "GAME!\nFIGHTER 1 WINS!";
+                postFight = true;
+            }
+            else
+            {
+                winText.text = "FIGHTER 1 WON THE ROUND!";
+                postRound = true;
+                postRoundTimer = 2f;
+            }
+        }
+        else
+        {
+            fighterTwoWins++;
+            fighterTwoUI.UpdateWins(fighterTwoWins);
+            if (fighterTwoWins == roundsToWin)
+            {
+                winText.text = "GAME!\nFIGHTER 2 WINS!";
+                postFight = true;
+            }
+            else
+            {
+                winText.text = "FIGHTER 2 WON THE ROUND!";
+                postRound = true;
+                postRoundTimer = 2f;
+            }
+        }
     }
 
     public void DealDamageToFighter(int damage, bool isPlayerOne)
