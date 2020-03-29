@@ -17,8 +17,9 @@ public class FighterContoller : MonoBehaviour
     private int special; //Max is 50
     private FighterUI fighterUI;
     private bool isJumping;
-    [SerializeField] BodyPartCollision rightShinCollider;
-    [SerializeField] BodyPartCollision rightFootCollider;
+    [SerializeField] Collider rightShinCollider;
+    [SerializeField] Collider rightFootCollider;
+    [SerializeField] Collider rightHandCollider;
     private Animator anim;
     private bool collidingWithEnemy;
     private bool kicking;
@@ -235,7 +236,7 @@ public class FighterContoller : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        attacking = false;
+        EndAttack();
         kicking = false;
         punching = false;
         recovering = true;
@@ -266,17 +267,18 @@ public class FighterContoller : MonoBehaviour
     public void StartKick()
     {
         kicking = true;
-        //GetComponent<Collider>().
+        rightShinCollider.isTrigger = true;
+        rightFootCollider.isTrigger = true;
     }
 
     public void EndKick()
     {
         kicking = false;
+        collidingWithEnemy = false;
     }
 
     private void KickEnemy()
     {
-        //if (rightShinCollider.IsCollidingWithEnemy() || rightFootCollider.IsCollidingWithEnemy())
         if (collidingWithEnemy)
         {
             DamageEnemy(30);
@@ -287,6 +289,7 @@ public class FighterContoller : MonoBehaviour
     private void StartPunch()
     {
         punching = true;
+        rightHandCollider.isTrigger = true;
     }
 
     private void EndPunch()
@@ -299,13 +302,16 @@ public class FighterContoller : MonoBehaviour
         if (collidingWithEnemy)
         {
             DamageEnemy(7);
-            punching = false;
+            EndPunch();
         }
     }
 
     public void EndAttack()
     {
         attacking = false;
+        rightShinCollider.isTrigger = false;
+        rightFootCollider.isTrigger = false;
+        rightHandCollider.isTrigger = true;
     }
 
     private void DamageEnemy(int damage)
@@ -360,15 +366,20 @@ public class FighterContoller : MonoBehaviour
         {
             isJumping = false;
         }
-        else if (collision.transform.gameObject == otherFighter)
+        
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.transform.root.gameObject == otherFighter)
         {
             collidingWithEnemy = true;
         }
     }
 
-    private void OnCollisionExit(Collision collision)
+    private void OnTriggerExit(Collider other)
     {
-        if (collision.transform.gameObject == otherFighter)
+        if (other.transform.root.gameObject == otherFighter)
         {
             collidingWithEnemy = false;
         }
