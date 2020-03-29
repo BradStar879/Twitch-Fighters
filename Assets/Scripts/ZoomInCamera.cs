@@ -9,8 +9,7 @@ public class ZoomInCamera : MonoBehaviour
     private GameManager gameManager;
     // Start is called before the first frame update
     void Start() {
-    
-        gameManager = GameObject.FindGameObjectWithTag("Game Manager").GetComponent<GameManager>();
+   
     }
 
     // Update is called once per frame
@@ -23,11 +22,41 @@ public class ZoomInCamera : MonoBehaviour
     {
         camera = GetComponent<Camera>();
         anim = GetComponent<Animator>();
+        gameManager = GameObject.FindGameObjectWithTag("Game Manager").GetComponent<GameManager>();
     }
 
     public void StartCharacterIntro()
     {
+        Vector3 parentPos = transform.parent.position;
+        transform.parent.position = new Vector3(0f, parentPos.y, parentPos.z);
         anim.Play("Fighter1 Intro");
+        gameManager.SetIntroQuote(true);
+    }
+
+    private void SetSecondIntroQuote()
+    {
+        gameManager.SetIntroQuote(false);
+    }
+
+    public void StartFighterOneVictory(float fighterOneX)
+    {
+        Vector3 parentPos = transform.parent.position;
+        transform.parent.position = new Vector3(fighterOneX + .9f, parentPos.y, parentPos.z);
+        anim.Play("Fighter1 Victory");
+        gameManager.SetVictoryQuote(true);
+    }
+
+    public void StartFighterTwoVictory(float fighterTwoX)
+    {
+        Vector3 parentPos = transform.parent.position;
+        transform.parent.position = new Vector3(fighterTwoX - .9f, parentPos.y, parentPos.z);
+        anim.Play("Fighter2 Victory");
+        gameManager.SetVictoryQuote(false);
+    }
+
+    private void DisplayRematchMenu()
+    {
+        gameManager.DisplayRematchMenu();
     }
 
     public void StartRound()

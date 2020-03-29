@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -28,6 +29,12 @@ public class GameManager : MonoBehaviour
     private int fighterOneWins;
     private int fighterTwoWins;
 
+    private GameObject fighterOneUiObject;
+    private GameObject fighterTwoUiObject;
+    private GameObject gameUiObject;
+    private Text fighterSpeechText;
+    private GameObject rematchMenuUiObject;
+
     private readonly Vector3 fighterOneStartingPosition = new Vector3(-.9f, .6f, -2.9f);
     private readonly Vector3 fighterTwoStartingPosition = new Vector3(.9f, .6f, -2.9f);
     private readonly Quaternion fighterOneStartingRotation = Quaternion.Euler(Vector3.zero);
@@ -44,6 +51,11 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         canvas = GameObject.FindGameObjectWithTag("Canvas").GetComponent<Canvas>();
+        fighterOneUiObject = canvas.transform.GetChild(0).gameObject;
+        fighterTwoUiObject = canvas.transform.GetChild(1).gameObject;
+        gameUiObject = canvas.transform.GetChild(2).gameObject;
+        fighterSpeechText = canvas.transform.GetChild(3).gameObject.GetComponent<Text>();
+        rematchMenuUiObject = canvas.transform.GetChild(4).gameObject;
         fighterOneName.text = "" + GameData.GetFighterOneCharacter();
         fighterTwoName.text = "" + GameData.GetFighterTwoCharacter();
         GameObject fighterOneToClone = DecideFighter(GameData.GetFighterOneCharacter());
@@ -75,9 +87,8 @@ public class GameManager : MonoBehaviour
             timerText.text = "" + (int)time;
             if ((int)time == 0)
             {
-                gameActive = false;
-                winText.enabled = true;
-                postFight = true;
+                EndRound(true);
+                EndRound(false);
                 winText.text = "TIME!";
             }
         }
@@ -97,14 +108,19 @@ public class GameManager : MonoBehaviour
             if (postRoundTimer <= 0f)
             {
                 postRound = false;
-                StartRound();
+                if (!DetermineWinner()) 
+                {
+                    StartRound();
+                }
             }
         }
-        else if (postFight)
+        else if (postFight) //Only happens in case of match tie
         {
-            if (Input.GetKeyDown(KeyCode.R))
+            postRoundTimer -= Time.deltaTime;
+            if (postRoundTimer <= 0f)
             {
-                StartGame();
+                postFight = false;
+                DisplayRematchMenu();
             }
         }
     }
@@ -126,8 +142,11 @@ public class GameManager : MonoBehaviour
     public void StartGame()
     {
         gameActive = false;
+        rematchMenuUiObject.SetActive(false);
         fighterOne.ResetFighter();
         fighterTwo.ResetFighter();
+        fighterOneUI.ResetWinCircles();
+        fighterTwoUI.ResetWinCircles();
         fighterOneWins = 0;
         fighterTwoWins = 0;
         if (!debugMode)
@@ -144,7 +163,10 @@ public class GameManager : MonoBehaviour
     {
         zoomInCamera.DisableCamera();
         mainCamera.EnableCamera();
-        canvas.enabled = true;
+        fighterOneUiObject.SetActive(true);
+        fighterTwoUiObject.SetActive(true);
+        gameUiObject.SetActive(true);
+        fighterSpeechText.enabled = false;
         fighterOne.ResetFighter();
         fighterTwo.ResetFighter();
         winText.enabled = true;
@@ -157,10 +179,51 @@ public class GameManager : MonoBehaviour
 
     public void StartFighterZoom()
     {
-        canvas.enabled = false;
+        fighterOneUiObject.SetActive(false);
+        fighterTwoUiObject.SetActive(false);
+        gameUiObject.SetActive(false);
         zoomInCamera.EnableCamera();
         mainCamera.DisableCamera();
         zoomInCamera.StartCharacterIntro();
+    }
+
+    public void SetIntroQuote(bool isFighterOne)
+    {
+        fighterSpeechText.enabled = true;
+        string fullIntroQuote;
+        if (isFighterOne)
+        {
+            fullIntroQuote = fighterOne.GetRandomIntroQuote();
+        }
+        else
+        {
+            fullIntroQuote = fighterTwo.GetRandomIntroQuote();
+        }
+        StartCoroutine(SpellOutQuote(fullIntroQuote));
+    }
+
+    public void SetVictoryQuote(bool isFighterOne)
+    {
+        fighterSpeechText.enabled = true;
+        string fullVictoryQuote;
+        if (isFighterOne)
+        {
+            fullVictoryQuote = fighterOne.GetRandomVictoryQuote();
+        }
+        else
+        {
+            fullVictoryQuote = fighterTwo.GetRandomVictoryQuote();
+        }
+        StartCoroutine(SpellOutQuote(fullVictoryQuote));
+    }
+
+    private IEnumerator SpellOutQuote(string quote)
+    {
+        for (int i = 0; i < quote.Length+1; i++)
+        {
+            fighterSpeechText.text = quote.Substring(0, i);
+            yield return new WaitForSeconds(.02f);
+        }
     }
 
     public bool IsGameActive()
@@ -176,34 +239,17 @@ public class GameManager : MonoBehaviour
         {
             fighterOneWins++;
             fighterOneUI.UpdateWins(fighterOneWins);
-            if (fighterOneWins == roundsToWin)
-            {
-                winText.text = "GAME!\nFIGHTER 1 WINS!";
-                postFight = true;
-            }
-            else
-            {
-                winText.text = "FIGHTER 1 WON THE ROUND!";
-                postRound = true;
-                postRoundTimer = 2f;
-            }
+            winText.text = "FIGHTER 1 WON THE ROUND!";
+           
         }
         else
         {
             fighterTwoWins++;
             fighterTwoUI.UpdateWins(fighterTwoWins);
-            if (fighterTwoWins == roundsToWin)
-            {
-                winText.text = "GAME!\nFIGHTER 2 WINS!";
-                postFight = true;
-            }
-            else
-            {
-                winText.text = "FIGHTER 2 WON THE ROUND!";
-                postRound = true;
-                postRoundTimer = 2f;
-            }
+            winText.text = "FIGHTER 2 WON THE ROUND!";
         }
+        postRound = true;
+        postRoundTimer = 3f;
     }
 
     public void DealDamageToFighter(int damage, bool isPlayerOne)
@@ -215,6 +261,48 @@ public class GameManager : MonoBehaviour
         {
             damageToDealToPlayerTwo += damage;
         }
+    }
+
+    public void DisplayRematchMenu()
+    {
+        gameUiObject.SetActive(false);
+        winText.enabled = false;
+        rematchMenuUiObject.SetActive(true);
+    }
+
+    private bool DetermineWinner()  //Returns true if a fighter won the match
+    { 
+        if (fighterOneWins != roundsToWin && fighterTwoWins != roundsToWin)
+        {
+            return false;
+        }
+        if (fighterOneWins == roundsToWin && fighterTwoWins == roundsToWin)
+        {
+            winText.text = "TIE";
+            postFight = true;
+            postRoundTimer = 3f;
+        }
+        else if (fighterOneWins == roundsToWin)
+        {
+            zoomInCamera.StartFighterOneVictory(fighterOne.gameObject.transform.position.x);
+            winText.enabled = false;
+            mainCamera.DisableCamera();
+            zoomInCamera.EnableCamera();
+        }
+        else
+        {
+            zoomInCamera.StartFighterTwoVictory(fighterTwo.gameObject.transform.position.x);
+            winText.enabled = false;
+            mainCamera.DisableCamera();
+            zoomInCamera.EnableCamera();
+        }
+
+        return true;
+    }
+
+    public void GoToMainMenu()
+    {
+        SceneManager.LoadScene("Main Menu");
     }
 
     private GameObject DecideFighter(MainMenuScript.characters character)

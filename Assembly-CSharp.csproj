@@ -65,7 +65,8 @@
     <Compile Include="Assets\Scripts\BodyPartCollision.cs" />
     <Compile Include="Assets\Scripts\CameraMover.cs" />
     <Compile Include="Assets\Scripts\ControllerInput.cs" />
-    <Compile Include="Assets\Scripts\FighterContoller.cs" />
+    <Compile Include="Assets\Scripts\Fighter Scripts\FighterContoller.cs" />
+    <Compile Include="Assets\Scripts\Fighter Scripts\RedFighterController.cs" />
     <Compile Include="Assets\Scripts\FighterUI.cs" />
     <Compile Include="Assets\Scripts\GameData.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />

@@ -33,14 +33,7 @@ public class FighterUI : MonoBehaviour
         winCircles[0] = transform.GetChild(8).gameObject.GetComponent<Image>();
         winCircles[1] = transform.GetChild(9).gameObject.GetComponent<Image>();
         winCircles[2] = transform.GetChild(10).gameObject.GetComponent<Image>();
-        //for (int i = 0; i < 3; i++)
-        //{
-        //    winCirclesBackground[i].enabled = i+1 < roundsToWin;
-        //}
-        foreach (Image winCircle in winCircles)
-        {
-            winCircle.enabled = false;
-        }
+        ResetWinCircles();
     }
 
     public void UpdateHp(int hp)
@@ -68,5 +61,13 @@ public class FighterUI : MonoBehaviour
     public void UpdateWins(int wins)
     {
         winCircles[wins - 1].enabled = true;
+    }
+
+    public void ResetWinCircles()
+    {
+        foreach (Image winCircle in winCircles)
+        {
+            winCircle.enabled = false;
+        }
     }
 }
