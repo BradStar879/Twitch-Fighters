@@ -18,9 +18,7 @@ public class CameraMover : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float playerDistance = Mathf.Abs(fighterTwo.transform.position.x - fighterOne.transform.position.x);
-        transform.position = new Vector3((fighterOne.transform.position.x + fighterTwo.transform.position.x) / 2,
-                                            transform.position.y, -4.1f - (playerDistance / 3f));
+        CenterCamera();
     }
 
     public void Init(GameObject fighterOne, GameObject fighterTwo)
@@ -30,6 +28,13 @@ public class CameraMover : MonoBehaviour
         this.fighterTwo = fighterTwo;
         startingCameraZ = transform.position.z;
         startingPlayerDistance = Mathf.Abs(fighterTwo.transform.position.x - fighterOne.transform.position.x);
+    }
+
+    public void CenterCamera()
+    {
+        float playerDistance = Mathf.Abs(fighterTwo.transform.position.x - fighterOne.transform.position.x);
+        transform.position = new Vector3((fighterOne.transform.position.x + fighterTwo.transform.position.x) / 2,
+                                            transform.position.y, -4.1f - (playerDistance / 3f));
     }
 
     public void EnableCamera()

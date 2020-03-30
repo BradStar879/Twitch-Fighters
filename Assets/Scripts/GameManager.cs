@@ -169,6 +169,7 @@ public class GameManager : MonoBehaviour
         fighterSpeechText.enabled = false;
         fighterOne.ResetFighter();
         fighterTwo.ResetFighter();
+        mainCamera.CenterCamera();
         winText.enabled = true;
         winText.text = "FIGHT!";
         time = 99.9f;
@@ -190,6 +191,7 @@ public class GameManager : MonoBehaviour
     public void SetIntroQuote(bool isFighterOne)
     {
         fighterSpeechText.enabled = true;
+        print("enable");
         string fullIntroQuote;
         if (isFighterOne)
         {

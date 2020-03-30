@@ -74,6 +74,7 @@ Material:
     - _Cull: 2
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
+    - _DissolveAmount: 0
     - _DstBlend: 0
     - _EnvironmentReflections: 1
     - _GlossMapScale: 1
@@ -98,7 +99,7 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - Color_4E351864: {r: 2.2930632, g: 0, b: 2.670157, a: 0}
+    - Color_4E351864: {r: 2.6701574, g: 0.46479404, b: 0, a: 0}
     - Color_8482ADCD: {r: 1, g: 0, b: 0, a: 0}
     - Color_E9A47A4A: {r: 0, g: 2.995628, b: 16, a: 0}
     - _BaseColor: {r: 1, g: 0, b: 0, a: 1}

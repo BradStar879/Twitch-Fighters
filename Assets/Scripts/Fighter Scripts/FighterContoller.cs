@@ -6,6 +6,7 @@ public class FighterContoller : MonoBehaviour
 {
     private bool isPlayerOne = true;
     [SerializeField] float moveSpeed = 1f;
+    [SerializeField] GameObject projectile;
     private GameObject otherFighter;
     private FighterContoller otherFighterController;
     private GameManager gameManager;
@@ -102,6 +103,11 @@ public class FighterContoller : MonoBehaviour
                         {
                             attacking = true;
                             anim.Play("Punch");
+                        }
+                        else if (Input.GetKeyDown(KeyCode.C))
+                        {
+                            attacking = true;
+                            anim.Play("Shoot");
                         }
                         else if (Input.GetKeyDown(KeyCode.X)) 
                         {
@@ -213,6 +219,11 @@ public class FighterContoller : MonoBehaviour
         this.isPlayerOne = isPlayerOne;
     }
 
+    public bool IsPlayerOne()
+    {
+        return isPlayerOne;
+    }
+
     public void ResetFighter()
     {
         anim.StopPlayback();
@@ -304,6 +315,14 @@ public class FighterContoller : MonoBehaviour
             DamageEnemy(7);
             EndPunch();
         }
+    }
+
+    private void ShootProjectile()
+    {
+        Vector3 projectilePosition = new Vector3(transform.position.x + .5f, .94f, transform.position.z);
+        GameObject projectileClone = Instantiate(projectile, projectilePosition, Quaternion.identity);
+        projectileClone.SetActive(true);
+        projectileClone.GetComponent<ProjectileScript>().Init(isPlayerOne);
     }
 
     public void EndAttack()
