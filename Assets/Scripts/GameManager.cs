@@ -19,8 +19,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] float preFightTimer = 0f;
     private float postRoundTimer;
     [SerializeField] int roundsToWin = 3;
-    private FighterContoller fighterOne;
-    private FighterContoller fighterTwo;
+    private FighterController fighterOne;
+    private FighterController fighterTwo;
     private FighterUI fighterOneUI;
     private FighterUI fighterTwoUI;
     private bool preFight = false;
@@ -65,12 +65,10 @@ public class GameManager : MonoBehaviour
         GameObject fighterTwoClone = Instantiate(fighterTwoToClone, fighterTwoStartingPosition, fighterTwoStartingRotation);
         fighterOneClone.SetActive(true);
         fighterTwoClone.SetActive(true);
-        fighterOne = fighterOneClone.GetComponent<FighterContoller>();
-        fighterTwo = fighterTwoClone.GetComponent<FighterContoller>();
-        fighterOne.SetAsPlayerOne(true);
-        fighterTwo.SetAsPlayerOne(false);
-        fighterOne.Init(fighterTwoClone);
-        fighterTwo.Init(fighterOneClone);
+        fighterOne = fighterOneClone.GetComponent<FighterController>();
+        fighterTwo = fighterTwoClone.GetComponent<FighterController>();
+        fighterOne.Init(true, fighterTwoClone);
+        fighterTwo.Init(false, fighterOneClone);
         fighterOneUI = fighterOne.GetFighterUI();
         fighterTwoUI = fighterTwo.GetFighterUI();
         mainCamera.Init(fighterOneClone, fighterTwoClone);
@@ -191,7 +189,6 @@ public class GameManager : MonoBehaviour
     public void SetIntroQuote(bool isFighterOne)
     {
         fighterSpeechText.enabled = true;
-        print("enable");
         string fullIntroQuote;
         if (isFighterOne)
         {
@@ -250,6 +247,10 @@ public class GameManager : MonoBehaviour
             fighterTwoUI.UpdateWins(fighterTwoWins);
             winText.text = "FIGHTER 2 WON THE ROUND!";
         }
+        if (postRound)
+        {
+            winText.text = "TIE ROUND";
+        }
         postRound = true;
         postRoundTimer = 3f;
     }
@@ -287,14 +288,14 @@ public class GameManager : MonoBehaviour
         else if (fighterOneWins == roundsToWin)
         {
             zoomInCamera.StartFighterOneVictory(fighterOne.gameObject.transform.position.x);
-            winText.enabled = false;
+            winText.text = "FIGHTER 1 WINS!";
             mainCamera.DisableCamera();
             zoomInCamera.EnableCamera();
         }
         else
         {
             zoomInCamera.StartFighterTwoVictory(fighterTwo.gameObject.transform.position.x);
-            winText.enabled = false;
+            winText.text = "FIGHTER 2 WINS!";
             mainCamera.DisableCamera();
             zoomInCamera.EnableCamera();
         }

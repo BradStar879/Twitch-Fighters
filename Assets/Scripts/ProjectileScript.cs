@@ -31,7 +31,7 @@ public class ProjectileScript : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        FighterContoller fighterController = other.transform.root.GetComponent<FighterContoller>();
+        FighterController fighterController = other.transform.root.GetComponent<FighterController>();
         if (fighterController != null) //Hit fighter 
         {
             gameManager.DealDamageToFighter(damage, fighterController.IsPlayerOne());
