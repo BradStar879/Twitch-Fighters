@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FighterContoller : MonoBehaviour
+public class FighterController : MonoBehaviour
 {
+    ControllerInput controllerInput;
     private bool isPlayerOne = true;
     [SerializeField] float moveSpeed = 1f;
     [SerializeField] GameObject projectile;
     private GameObject otherFighter;
-    private FighterContoller otherFighterController;
+    private FighterController otherFighterController;
     private GameManager gameManager;
     private Rigidbody rb;
     private Vector3 startingPosition;
@@ -29,6 +30,7 @@ public class FighterContoller : MonoBehaviour
     private bool recovering;
     private bool crouching;
     private bool blocking;
+    private bool risingBlocking;
 
     private Material fighterMaterial;
 
@@ -37,10 +39,31 @@ public class FighterContoller : MonoBehaviour
     protected string[] victoryQuotes;
 
 
-    // Start is called before the first frame update
-    void Start()
+    public virtual void Init(bool isPlayerOne, GameObject otherFighter)
     {
-        
+        GameObject canvas = GameObject.FindGameObjectWithTag("Canvas");
+        gameManager = GameObject.FindGameObjectWithTag("Game Manager").GetComponent<GameManager>();
+        rb = GetComponent<Rigidbody>();
+        this.isPlayerOne = isPlayerOne;
+        this.otherFighter = otherFighter;
+        otherFighterController = otherFighter.GetComponent<FighterController>();
+
+        if (isPlayerOne)
+        {
+            controllerInput = ControllerManager.GetControllerInput(1);
+            fighterUI = canvas.transform.GetChild(0).GetComponent<FighterUI>();
+        }
+        else
+        {
+            controllerInput = ControllerManager.GetControllerInput(2);
+            fighterUI = canvas.transform.GetChild(1).GetComponent<FighterUI>();
+        }
+        anim = GetComponent<Animator>();
+        fighterUI.Init();
+
+        startingPosition.Set(transform.position.x, transform.position.y, transform.position.z);
+        startingRotation.Set(transform.rotation.x, transform.rotation.y, transform.rotation.z, transform.rotation.w);
+        startingScale.Set(transform.localScale.x, transform.localScale.y, transform.localScale.z);
     }
 
     // Update is called once per frame
@@ -55,113 +78,89 @@ public class FighterContoller : MonoBehaviour
                     velocity.x = rb.velocity.x;
                 }
 
-                if (isPlayerOne)
-                {    
-                    if (!isJumping) //Stuff that can be done when not in air
-                    {
-                        if (Input.GetKey(KeyCode.A))
-                        {
-                            velocity.x -= moveSpeed;
-                        }
-                        else if (Input.GetKey(KeyCode.D))
-                        {
-                            velocity.x += moveSpeed;
-                        }
-
-                        if (Input.GetKey(KeyCode.S) && !crouching)  //Crouching and uncrouching
-                        {
-                            anim.Play("Crouch");
-                        }
-                        else if (!Input.GetKey(KeyCode.S) && crouching)
-                        {
-                            anim.Play("Uncrouch");
-                        }
-
-                        if (Input.GetKey(KeyCode.Z) && !blocking) //Blocking
-                        {
-                            anim.Play("Block");
-                        }
-                        else if (!Input.GetKey(KeyCode.Z) && blocking)
-                        {
-                            anim.Play("Unblock");
-                        }
-                    }
-
-                    if (blocking && Input.GetKey(KeyCode.W))
-                    {
-                        //Rising block
-                    }
-
-                    if (!crouching && !isJumping && !blocking)  //Standing
-                    {
-                        if (Input.GetKeyDown(KeyCode.Q))
-                        {
-                            attacking = true;
-                            anim.Play("Kick");
-                        }
-                        else if (Input.GetKeyDown(KeyCode.E))
-                        {
-                            attacking = true;
-                            anim.Play("Punch");
-                        }
-                        else if (Input.GetKeyDown(KeyCode.C))
-                        {
-                            attacking = true;
-                            anim.Play("Shoot");
-                        }
-                        else if (Input.GetKeyDown(KeyCode.X)) 
-                        {
-                            special += 10;
-                            if (special > 50)
-                            {
-                                special = 50;
-                            }
-                            fighterUI.UpdateSpecial(special);
-                        }
-                        else if (Input.GetKey(KeyCode.W))
-                        {
-                            isJumping = true;
-                            velocity.y = 3f;
-                        }
-                    }
-                    else if (crouching)
-                    {
-                        //Add crouching attacks
-                    } 
-                    else if (isJumping)
-                    {
-                        //Add jumping attacks
-                    }
-                }
-                    
-                else
+                if (!isJumping) //Stuff that can be done when not in air
                 {
-                    if (Input.GetKey(KeyCode.LeftArrow))
+                    if (controllerInput.GetXAxisLeft())
                     {
                         velocity.x -= moveSpeed;
                     }
-                    else if (Input.GetKey(KeyCode.RightArrow))
+                    else if (controllerInput.GetXAxisRight())
                     {
                         velocity.x += moveSpeed;
                     }
 
-                    if (Input.GetKey(KeyCode.UpArrow) && !isJumping)
+                    if (Input.GetKeyDown(KeyCode.Z) && !blocking) //Blocking
                     {
-                        isJumping = true;
-                        velocity.y = 3f;
+                        anim.Play("Block");
+                    }
+                    else if (controllerInput.GetYAxisUp() && !crouching && blocking)
+                    {
+                        anim.Play("Rising Block");
+                    }
+                    else if (!controllerInput.GetYAxisUp() && risingBlocking)
+                    {
+                        anim.Play("Lower Block");
+                    }
+                    else if (!Input.GetKey(KeyCode.Z) && risingBlocking)
+                    {
+                        anim.Play("Rising Unblock");
+                    }
+                    else if (!Input.GetKey(KeyCode.Z) && blocking)
+                    {
+                        anim.Play("Unblock");
                     }
 
-                    if (Input.GetKeyDown(KeyCode.O))
+                    if (!risingBlocking)
+                    {
+                        if (controllerInput.GetYAxisDown() && !crouching)  //Crouching and uncrouching
+                        {
+                            anim.Play("Crouch");
+                        }
+                        else if (!controllerInput.GetYAxisDown() && crouching)
+                        {
+                            anim.Play("Uncrouch");
+                        }
+                    }
+
+                }
+
+                if (!crouching && !isJumping && !blocking)  //Standing
+                {
+                    if (controllerInput.GetRightActionButtonDown())
                     {
                         attacking = true;
                         anim.Play("Kick");
                     }
-                    else if (Input.GetKeyDown(KeyCode.E))
+                    else if (controllerInput.GetBottomActionButtonDown())
                     {
                         attacking = true;
                         anim.Play("Punch");
                     }
+                    else if (controllerInput.GetLeftActionButtonDown())
+                    {
+                        attacking = true;
+                        anim.Play("Shoot");
+                    }
+                    else if (controllerInput.GetTopActionButtonDown()) 
+                    {
+                        attacking = true;
+                        anim.Play("Taunt");
+                    }
+                    else if (controllerInput.GetYAxisUp())
+                    {
+                        isJumping = true;
+                        velocity.y = 3f;
+                    }
                 }
+                else if (crouching)
+                {
+                    //Add crouching attacks
+                } 
+                else if (isJumping)
+                {
+                    //Add jumping attacks
+                }
+
                 rb.velocity = velocity;
             }
 
@@ -185,38 +184,9 @@ public class FighterContoller : MonoBehaviour
         }
     }*/
 
-    public virtual void Init(GameObject otherFighter)
-    {
-        GameObject canvas = GameObject.FindGameObjectWithTag("Canvas");
-        gameManager = GameObject.FindGameObjectWithTag("Game Manager").GetComponent<GameManager>();
-        rb = GetComponent<Rigidbody>();
-        this.otherFighter = otherFighter;
-        otherFighterController = otherFighter.GetComponent<FighterContoller>();
-
-        if (isPlayerOne)
-        {
-            fighterUI = canvas.transform.GetChild(0).GetComponent<FighterUI>();
-        }
-        else
-        {
-            fighterUI = canvas.transform.GetChild(1).GetComponent<FighterUI>();
-        }
-        anim = GetComponent<Animator>();
-        fighterUI.Init();
-
-        startingPosition.Set(transform.position.x, transform.position.y, transform.position.z);
-        startingRotation.Set(transform.rotation.x, transform.rotation.y, transform.rotation.z, transform.rotation.w);
-        startingScale.Set(transform.localScale.x, transform.localScale.y, transform.localScale.z);
-    }
-
     public FighterUI GetFighterUI()
     {
         return fighterUI;
-    }
-
-    public void SetAsPlayerOne(bool isPlayerOne)
-    {
-        this.isPlayerOne = isPlayerOne;
     }
 
     public bool IsPlayerOne()
@@ -243,6 +213,7 @@ public class FighterContoller : MonoBehaviour
         recovering = false;
         crouching = false;
         blocking = false;
+        risingBlocking = false;
     }
 
     public void TakeDamage(int damage)
@@ -253,9 +224,9 @@ public class FighterContoller : MonoBehaviour
         recovering = true;
         crouching = false;
         blocking = false;
+        risingBlocking = false;
         anim.StopPlayback();
         
-
         hp -= damage;
         if (hp > 0)
         {
@@ -320,9 +291,24 @@ public class FighterContoller : MonoBehaviour
     private void ShootProjectile()
     {
         Vector3 projectilePosition = new Vector3(transform.position.x + .5f, .94f, transform.position.z);
+        if (!isPlayerOne)
+        {
+            projectilePosition.x = transform.position.x - .5f;
+        }
         GameObject projectileClone = Instantiate(projectile, projectilePosition, Quaternion.identity);
         projectileClone.SetActive(true);
         projectileClone.GetComponent<ProjectileScript>().Init(isPlayerOne);
+    }
+
+    private void ChargeSpecial()
+    {
+        attacking = false;
+        special += 10;
+        if (special > 50)
+        {
+            special = 50;
+        }
+        fighterUI.UpdateSpecial(special);
     }
 
     public void EndAttack()
@@ -330,7 +316,7 @@ public class FighterContoller : MonoBehaviour
         attacking = false;
         rightShinCollider.isTrigger = false;
         rightFootCollider.isTrigger = false;
-        rightHandCollider.isTrigger = true;
+        rightHandCollider.isTrigger = false;
     }
 
     private void DamageEnemy(int damage)
@@ -345,7 +331,7 @@ public class FighterContoller : MonoBehaviour
     public bool SuccessfullyBlocked(bool isJumping, bool crouching)
     {
         return (blocking &&
-            isJumping == this.isJumping &&
+            isJumping == this.risingBlocking &&
             crouching == this.crouching);
     }
 
@@ -364,9 +350,20 @@ public class FighterContoller : MonoBehaviour
         blocking = true;
     }
 
+    private void RisingBlock()
+    {
+        risingBlocking = true;
+    }
+
+    private void LowerBlock()
+    {
+        risingBlocking = false;
+    }
+
     private void Unblock()
     {
         blocking = false;
+        risingBlocking = false;
     }
 
     public string GetRandomIntroQuote()

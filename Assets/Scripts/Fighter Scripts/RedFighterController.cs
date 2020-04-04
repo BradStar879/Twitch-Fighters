@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class RedFighterController : FighterContoller
+public class RedFighterController : FighterController
 {
-    public override void Init(GameObject otherFighter)
+    public override void Init(bool isPlayerOne, GameObject otherFighter)
     {
-        base.Init(otherFighter);
+        base.Init(isPlayerOne, otherFighter);
         introQuotes = new string[]{
             "Call me Freddie because I'm you're worst nightmare.",
             "Bring it on dingus. I could eat your ass all day.",
