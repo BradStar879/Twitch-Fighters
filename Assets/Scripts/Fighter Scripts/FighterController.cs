@@ -31,6 +31,7 @@ public class FighterController : MonoBehaviour
     private bool crouching;
     private bool blocking;
     private bool risingBlocking;
+    private bool changingStance;    //Set to true when starting crouch or block to prevent jumping
 
     private Material fighterMaterial;
 
@@ -70,7 +71,7 @@ public class FighterController : MonoBehaviour
     void Update()
     {
         if (gameManager.IsGameActive()) {
-            if(isPlayerOne && Input.GetKeyDown(KeyCode.B))
+            if(isPlayerOne && Input.GetKeyDown(KeyCode.B))  //For debugging purposes
             {
                 print("kicking: " + kicking);
                 print("punching: " + punching);
@@ -137,7 +138,7 @@ public class FighterController : MonoBehaviour
 
                 }
 
-                if (!crouching && !isJumping && !blocking && !risingBlocking)  //Standing
+                if (!crouching && !isJumping && !blocking && !risingBlocking && !changingStance)  //Standing
                 {
                     if (controllerInput.GetRightActionButtonDown())
                     {
@@ -227,6 +228,7 @@ public class FighterController : MonoBehaviour
         crouching = false;
         blocking = false;
         risingBlocking = false;
+        changingStance = false;
     }
 
     public void TakeDamage(int damage)
@@ -238,6 +240,7 @@ public class FighterController : MonoBehaviour
         crouching = false;
         blocking = false;
         risingBlocking = false;
+        changingStance = false;
         anim.Rebind();  //Stops playback on all layers
 
         hp -= damage;
@@ -351,6 +354,7 @@ public class FighterController : MonoBehaviour
     private void Crouch()
     {
         crouching = true;
+        changingStance = false;
     }
 
     private void Uncrouch()
@@ -361,6 +365,7 @@ public class FighterController : MonoBehaviour
     private void Block()
     {
         blocking = true;
+        changingStance = false;
     }
 
     private void RisingBlock()
@@ -377,6 +382,11 @@ public class FighterController : MonoBehaviour
     {
         blocking = false;
         risingBlocking = false;
+    }
+
+    private void ChangeStance()
+    {
+        changingStance = true;
     }
 
     public string GetRandomIntroQuote()
