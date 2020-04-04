@@ -70,6 +70,18 @@ public class FighterController : MonoBehaviour
     void Update()
     {
         if (gameManager.IsGameActive()) {
+            if(isPlayerOne && Input.GetKeyDown(KeyCode.B))
+            {
+                print("kicking: " + kicking);
+                print("punching: " + punching);
+                print("attacking: " + attacking);
+                print("recovering: " + recovering);
+                print("crouching: " + crouching);
+                print("blocking: " + blocking);
+                print("jumping: " + isJumping);
+                print("risingBlocking: " + risingBlocking);
+                print("z: " + Input.GetKey(KeyCode.Z));
+            }
             if (!recovering && !attacking)
             {
                 Vector3 velocity = new Vector3(0f, rb.velocity.y);
@@ -93,7 +105,7 @@ public class FighterController : MonoBehaviour
                     {
                         anim.Play("Block");
                     }
-                    else if (controllerInput.GetYAxisUp() && !crouching && blocking)
+                    else if (controllerInput.GetYAxisUp() && !crouching && blocking && !risingBlocking)
                     {
                         anim.Play("Rising Block");
                     }
@@ -103,6 +115,7 @@ public class FighterController : MonoBehaviour
                     }
                     else if (!Input.GetKey(KeyCode.Z) && risingBlocking)
                     {
+                        print("bbb");
                         anim.Play("Rising Unblock");
                     }
                     else if (!Input.GetKey(KeyCode.Z) && blocking)
@@ -124,7 +137,7 @@ public class FighterController : MonoBehaviour
 
                 }
 
-                if (!crouching && !isJumping && !blocking)  //Standing
+                if (!crouching && !isJumping && !blocking && !risingBlocking)  //Standing
                 {
                     if (controllerInput.GetRightActionButtonDown())
                     {
@@ -225,8 +238,8 @@ public class FighterController : MonoBehaviour
         crouching = false;
         blocking = false;
         risingBlocking = false;
-        anim.StopPlayback();
-        
+        anim.Rebind();  //Stops playback on all layers
+
         hp -= damage;
         if (hp > 0)
         {
