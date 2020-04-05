@@ -119,23 +119,24 @@ public class InputState
         return Input.GetButtonDown(inputType + inputSpot + "_RightAction");
     }
 
-    public float GetRightTrigger()
+    public bool GetRightTrigger()
     {
-        return Input.GetAxis(inputType + inputSpot + "_RightTrigger");
+        return Input.GetAxis(inputType + inputSpot + "_Triggers") >= .8f;
     }
 
-    public bool GetRightTriggerDown()
+    public bool GetLeftTrigger()
     {
-        return GetRightTrigger() > .8f;
+        return Input.GetAxis(inputType + inputSpot + "_Triggers") <= -.8f;
     }
 
-    public float GetLeftTrigger()
+    public bool GetStartButton()
     {
-        return Input.GetAxis(inputType + inputSpot + "_LeftTrigger");
+        return Input.GetButton(inputType + inputSpot + "_Start");
     }
 
-    public bool GetLeftTriggerDown()
+    public bool GetStartButtonDown()
     {
-        return GetLeftTrigger() > .8f;
+        return Input.GetButtonDown(inputType + inputSpot + "_Start");
     }
+
 }

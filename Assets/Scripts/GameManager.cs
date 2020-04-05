@@ -304,8 +304,25 @@ public class GameManager : MonoBehaviour
         return true;
     }
 
+    public void PauseGame(bool isPlayerOne)
+    {
+        gameActive = false;
+
+    }
+
+    public void ResumeGame(bool isPlayerOne)
+    {
+        gameActive = true;
+    }
+
     public void GoToMainMenu()
     {
+        SceneManager.LoadScene("Main Menu");
+    }
+
+    public void GoToFighterSelection()
+    {
+        GameData.SetSameSettings(true);
         SceneManager.LoadScene("Main Menu");
     }
 

@@ -104,23 +104,23 @@ public class ControllerInput
         return inputState.GetRightActionButtonDown();
     }
 
-    public float GetRightTrigger()
+    public bool GetRightTrigger()
     {
         return inputState.GetRightTrigger();
     }
 
-    public bool GetRightTriggerDown()
-    {
-        return inputState.GetRightTriggerDown();
-    }
-
-    public float GetLeftTrigger()
+    public bool GetLeftTrigger()
     {
         return inputState.GetLeftTrigger();
     }
 
-    public bool GetLeftTriggerDown()
+    public bool GetStartButton()
     {
-        return inputState.GetLeftTriggerDown();
+        return inputState.GetStartButton();
+    }
+
+    public bool GetStartButtonDown()
+    {
+        return inputState.GetStartButtonDown();
     }
 }

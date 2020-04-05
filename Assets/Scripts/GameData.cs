@@ -7,6 +7,7 @@ public class GameData
     private static int players;
     private static MainMenuScript.characters fighterOneCharacter;
     private static MainMenuScript.characters fighterTwoCharacter;
+    private static bool sameSettings = false;   //True if starting fight with same settings but new fighters
 
     public static int GetPlayers()
     {
@@ -36,5 +37,15 @@ public class GameData
     public static void SetFighterTwoCharacter(MainMenuScript.characters character)
     {
         fighterTwoCharacter = character;
+    }
+
+    public static bool GetSameSettings()
+    {
+        return sameSettings;
+    }
+
+    public static void SetSameSettings(bool isSameSettings)
+    {
+        sameSettings = isSameSettings;
     }
 }

@@ -71,19 +71,21 @@ public class FighterController : MonoBehaviour
     void Update()
     {
         if (gameManager.IsGameActive()) {
-            if(isPlayerOne && Input.GetKeyDown(KeyCode.B))  //For debugging purposes
+            if (controllerInput.GetStartButtonDown())
             {
-                print("left: " + controllerInput.GetLeftTrigger());
-                print("right: " + controllerInput.GetRightTrigger());
-                //print("kicking: " + kicking);
-                //print("punching: " + punching);
-                //print("attacking: " + attacking);
-                //print("recovering: " + recovering);
-                //print("crouching: " + crouching);
-                //print("blocking: " + blocking);
-                //print("jumping: " + isJumping);
-                //print("risingBlocking: " + risingBlocking);
-                //print("z: " + Input.GetKey(KeyCode.Z));
+                gameManager.PauseGame(isPlayerOne);
+            }
+            if (isPlayerOne && Input.GetKeyDown(KeyCode.B))  //For debugging purposes
+            {
+                print("kicking: " + kicking);
+                print("punching: " + punching);
+                print("attacking: " + attacking);
+                print("recovering: " + recovering);
+                print("crouching: " + crouching);
+                print("blocking: " + blocking);
+                print("jumping: " + isJumping);
+                print("risingBlocking: " + risingBlocking);
+                print("z: " + Input.GetKey(KeyCode.Z));
             }
             if (!recovering && !attacking)
             {
@@ -104,7 +106,7 @@ public class FighterController : MonoBehaviour
                         velocity.x += moveSpeed;
                     }
 
-                    if (Input.GetKey(KeyCode.Z) && !blocking) //Blocking
+                    if (controllerInput.GetRightTrigger() && !blocking) //Blocking
                     {
                         anim.Play("Block");
                     }
@@ -116,12 +118,11 @@ public class FighterController : MonoBehaviour
                     {
                         anim.Play("Lower Block");
                     }
-                    else if (!Input.GetKey(KeyCode.Z) && risingBlocking)
+                    else if (!controllerInput.GetRightTrigger() && risingBlocking)
                     {
-                        print("bbb");
                         anim.Play("Rising Unblock");
                     }
-                    else if (!Input.GetKey(KeyCode.Z) && blocking)
+                    else if (!controllerInput.GetRightTrigger() && blocking)
                     {
                         anim.Play("Unblock");
                     }
@@ -162,6 +163,10 @@ public class FighterController : MonoBehaviour
                         attacking = true;
                         anim.Play("Taunt");
                     }
+                    else if (special == 50 && controllerInput.GetLeftTrigger())
+                    {
+                        //Special move here
+                    }
                     else if (controllerInput.GetYAxisUp())
                     {
                         isJumping = true;
@@ -187,6 +192,13 @@ public class FighterController : MonoBehaviour
             else if (punching)
             {
                 PunchEnemy();
+            }
+        }
+        else
+        {
+            if (controllerInput.GetStartButtonDown())
+            {
+                gameManager.ResumeGame(isPlayerOne);
             }
         }
     }
