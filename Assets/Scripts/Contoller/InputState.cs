@@ -118,4 +118,24 @@ public class InputState
     {
         return Input.GetButtonDown(inputType + inputSpot + "_RightAction");
     }
+
+    public float GetRightTrigger()
+    {
+        return Input.GetAxis(inputType + inputSpot + "_RightTrigger");
+    }
+
+    public bool GetRightTriggerDown()
+    {
+        return GetRightTrigger() > .8f;
+    }
+
+    public float GetLeftTrigger()
+    {
+        return Input.GetAxis(inputType + inputSpot + "_LeftTrigger");
+    }
+
+    public bool GetLeftTriggerDown()
+    {
+        return GetLeftTrigger() > .8f;
+    }
 }

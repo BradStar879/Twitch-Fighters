@@ -103,4 +103,24 @@ public class ControllerInput
     {
         return inputState.GetRightActionButtonDown();
     }
+
+    public float GetRightTrigger()
+    {
+        return inputState.GetRightTrigger();
+    }
+
+    public bool GetRightTriggerDown()
+    {
+        return inputState.GetRightTriggerDown();
+    }
+
+    public float GetLeftTrigger()
+    {
+        return inputState.GetLeftTrigger();
+    }
+
+    public bool GetLeftTriggerDown()
+    {
+        return inputState.GetLeftTriggerDown();
+    }
 }
