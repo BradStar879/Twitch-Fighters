@@ -71,6 +71,7 @@ public class ZoomInCamera : MonoBehaviour
 
     public void DisableCamera()
     {
+        anim.Rebind();
         camera.enabled = false;
     }
 }

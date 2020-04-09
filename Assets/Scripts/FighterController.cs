@@ -6,6 +6,7 @@ public class FighterController : MonoBehaviour
 {
     ControllerInput controllerInput;
     private bool isPlayerOne = true;
+    private bool paused = false;
     [SerializeField] float moveSpeed = 1f;
     [SerializeField] GameObject projectile;
     private GameObject otherFighter;
@@ -35,9 +36,9 @@ public class FighterController : MonoBehaviour
 
     private Material fighterMaterial;
 
-    //To be populated by child classes
-    protected string[] introQuotes;
-    protected string[] victoryQuotes;
+    //To be populated via Unity
+    [SerializeField] string[] introQuotes;
+    [SerializeField] string[] victoryQuotes;
 
 
     public virtual void Init(bool isPlayerOne, GameObject otherFighter)
@@ -73,6 +74,7 @@ public class FighterController : MonoBehaviour
         if (gameManager.IsGameActive()) {
             if (controllerInput.GetStartButtonDown())
             {
+                paused = true;
                 gameManager.PauseGame(isPlayerOne);
             }
             if (isPlayerOne && Input.GetKeyDown(KeyCode.B))  //For debugging purposes
@@ -95,9 +97,9 @@ public class FighterController : MonoBehaviour
                     velocity.x = rb.velocity.x;
                 }
 
-                if (!isJumping) //Stuff that can be done when not in air
+                if (!isJumping) //Blocking, moving, and crouching inputs
                 {
-                    if (controllerInput.GetXAxisLeft())
+                    if (controllerInput.GetXAxisLeft()) //Movement
                     {
                         velocity.x -= moveSpeed;
                     }
@@ -141,45 +143,77 @@ public class FighterController : MonoBehaviour
 
                 }
 
-                if (!crouching && !isJumping && !blocking && !risingBlocking && !changingStance)  //Standing
+                if (!blocking && !risingBlocking && !changingStance)  
                 {
-                    if (controllerInput.GetRightActionButtonDown())
+                    if (!crouching && !isJumping)   //Standing
                     {
-                        attacking = true;
-                        anim.Play("Kick");
+                        if (controllerInput.GetRightActionButtonDown())
+                        {
+                            attacking = true;
+                            anim.Play("Kick");
+                        }
+                        else if (controllerInput.GetBottomActionButtonDown())
+                        {
+                            attacking = true;
+                            anim.Play("Punch");
+                        }
+                        else if (controllerInput.GetLeftActionButtonDown())
+                        {
+                            attacking = true;
+                            anim.Play("Shoot");
+                        }
+                        else if (controllerInput.GetTopActionButtonDown())
+                        {
+                            attacking = true;
+                            anim.Play("Taunt");
+                        }
+                        else if (special == 50 && controllerInput.GetLeftTrigger())
+                        {
+                            //Special move here
+                        }
+                        else if (controllerInput.GetYAxisUp())
+                        {
+                            isJumping = true;
+                            velocity.y = 3f;
+                        }
                     }
-                    else if (controllerInput.GetBottomActionButtonDown())
+                    else if (crouching)
                     {
-                        attacking = true;
-                        anim.Play("Punch");
+                        if (controllerInput.GetRightActionButtonDown())
+                        {
+                            attacking = true;
+                            anim.Play("Crouch Kick");
+                        }
+                        else if (controllerInput.GetBottomActionButtonDown())
+                        {
+                            attacking = true;
+                            anim.Play("Crouch Punch");
+                        }
+                        else if (controllerInput.GetLeftActionButtonDown())
+                        {
+                            attacking = true;
+                            anim.Play("Crouch Shoot");
+                        }
                     }
-                    else if (controllerInput.GetLeftActionButtonDown())
+                    else if (isJumping)
                     {
-                        attacking = true;
-                        anim.Play("Shoot");
+                        if (controllerInput.GetRightActionButtonDown())
+                        {
+                            attacking = true;
+                            anim.Play("Jump Kick");
+                        }
+                        else if (controllerInput.GetBottomActionButtonDown())
+                        {
+                            attacking = true;
+                            anim.Play("Jump Punch");
+                        }
+                        else if (controllerInput.GetLeftActionButtonDown())
+                        {
+                            attacking = true;
+                            anim.Play("Jump Shoot");
+                        }
                     }
-                    else if (controllerInput.GetTopActionButtonDown()) 
-                    {
-                        attacking = true;
-                        anim.Play("Taunt");
-                    }
-                    else if (special == 50 && controllerInput.GetLeftTrigger())
-                    {
-                        //Special move here
-                    }
-                    else if (controllerInput.GetYAxisUp())
-                    {
-                        isJumping = true;
-                        velocity.y = 3f;
-                    }
-                }
-                else if (crouching)
-                {
-                    //Add crouching attacks
-                } 
-                else if (isJumping)
-                {
-                    //Add jumping attacks
+
                 }
 
                 rb.velocity = velocity;
@@ -194,11 +228,11 @@ public class FighterController : MonoBehaviour
                 PunchEnemy();
             }
         }
-        else
+        else if (paused)
         {
             if (controllerInput.GetStartButtonDown())
             {
-                gameManager.ResumeGame(isPlayerOne);
+                gameManager.ResumeGame();
             }
         }
     }
@@ -215,6 +249,16 @@ public class FighterController : MonoBehaviour
     public FighterUI GetFighterUI()
     {
         return fighterUI;
+    }
+
+    public Rigidbody GetRigidbody()
+    {
+        return rb;
+    }
+
+    public Animator GetAnimator()
+    {
+        return anim;
     }
 
     public bool IsPlayerOne()
@@ -321,6 +365,18 @@ public class FighterController : MonoBehaviour
     private void ShootProjectile()
     {
         Vector3 projectilePosition = new Vector3(transform.position.x + .5f, .94f, transform.position.z);
+        if (!isPlayerOne)
+        {
+            projectilePosition.x = transform.position.x - .5f;
+        }
+        GameObject projectileClone = Instantiate(projectile, projectilePosition, Quaternion.identity);
+        projectileClone.SetActive(true);
+        projectileClone.GetComponent<ProjectileScript>().Init(isPlayerOne);
+    }
+
+    private void ShootProjectileLow()
+    {
+        Vector3 projectilePosition = new Vector3(transform.position.x + .5f, .82f, transform.position.z);
         if (!isPlayerOne)
         {
             projectilePosition.x = transform.position.x - .5f;

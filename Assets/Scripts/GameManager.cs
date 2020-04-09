@@ -34,16 +34,21 @@ public class GameManager : MonoBehaviour
     private GameObject gameUiObject;
     private Text fighterSpeechText;
     private GameObject rematchMenuUiObject;
+    private GameObject pauseMenuObject;
 
     private readonly Vector3 fighterOneStartingPosition = new Vector3(-.9f, .6f, -2.9f);
     private readonly Vector3 fighterTwoStartingPosition = new Vector3(.9f, .6f, -2.9f);
     private readonly Quaternion fighterOneStartingRotation = Quaternion.Euler(Vector3.zero);
     private readonly Quaternion fighterTwoStartingRotation = Quaternion.Euler(0f, 180f, 0f);
 
+    private Vector3 fighterOneSavedVelocity;
+    private Vector3 fighterTwoSavedVelocity;
+
+    [SerializeField] GameObject willNeffFighter;
+    [SerializeField] GameObject hasanAbiFighter;
+    [SerializeField] GameObject nesuaFighter;
     [SerializeField] GameObject redFighter;
-    [SerializeField] GameObject blueFighter;
-    [SerializeField] GameObject greenFighter;
-    [SerializeField] GameObject yellowFighter;
+
 
     private int damageToDealToPlayerOne = 0;
     private int damageToDealToPlayerTwo = 0;
@@ -57,6 +62,7 @@ public class GameManager : MonoBehaviour
         gameUiObject = canvas.transform.GetChild(2).gameObject;
         fighterSpeechText = canvas.transform.GetChild(3).gameObject.GetComponent<Text>();
         rematchMenuUiObject = canvas.transform.GetChild(4).gameObject;
+        pauseMenuObject = canvas.transform.GetChild(5).gameObject;
         fighterOneName.text = "" + GameData.GetFighterOneCharacter();
         fighterTwoName.text = "" + GameData.GetFighterTwoCharacter();
         GameObject fighterOneToClone = DecideFighter(GameData.GetFighterOneCharacter());
@@ -307,12 +313,35 @@ public class GameManager : MonoBehaviour
     public void PauseGame(bool isPlayerOne)
     {
         gameActive = false;
-
+        fighterOneSavedVelocity = fighterOne.GetRigidbody().velocity;
+        fighterOne.GetRigidbody().isKinematic = true;
+        fighterOne.GetAnimator().enabled = false;
+        fighterTwoSavedVelocity = fighterTwo.GetRigidbody().velocity;
+        fighterTwo.GetRigidbody().isKinematic = true;
+        fighterTwo.GetAnimator().enabled = false;
+        pauseMenuObject.SetActive(true);
+        string playerText;
+        if (isPlayerOne)
+        {
+            playerText = "P1";
+        } else
+        {
+            playerText = "P2";
+        }
+        string pauseText = playerText + " Paused";
+        pauseMenuObject.GetComponentInChildren<Text>().text = pauseText;
     }
 
-    public void ResumeGame(bool isPlayerOne)
+    public void ResumeGame()
     {
         gameActive = true;
+        fighterOne.GetRigidbody().isKinematic = false;
+        fighterOne.GetRigidbody().velocity = fighterOneSavedVelocity;
+        fighterOne.GetAnimator().enabled = true;
+        fighterTwo.GetRigidbody().isKinematic = false;
+        fighterTwo.GetRigidbody().velocity = fighterTwoSavedVelocity;
+        fighterTwo.GetAnimator().enabled = true;
+        pauseMenuObject.SetActive(false);
     }
 
     public void GoToMainMenu()
@@ -330,14 +359,14 @@ public class GameManager : MonoBehaviour
     {
         switch (character)
         {
+            case MainMenuScript.characters.WillNeff:
+                return willNeffFighter;
+            case MainMenuScript.characters.HasanAbi:
+                return hasanAbiFighter;
+            case MainMenuScript.characters.Nesua:
+                return nesuaFighter;
             case MainMenuScript.characters.red:
                 return redFighter;
-            case MainMenuScript.characters.blue:
-                return blueFighter;
-            case MainMenuScript.characters.green:
-                return greenFighter;
-            case MainMenuScript.characters.yellow:
-                return yellowFighter;
             default:
                 return null;
         }
