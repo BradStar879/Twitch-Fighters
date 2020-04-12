@@ -8,11 +8,13 @@ public class ProjectileScript : MonoBehaviour
     private float duration;
     [SerializeField] float speed;
     [SerializeField] int damage;
+    private bool dealtDamage;
 
     public void Init(bool isFighterOne)
     {
         gameManager = GameObject.FindGameObjectWithTag("Game Manager").GetComponent<GameManager>();
         duration = 10f;
+        dealtDamage = false;
         if (!isFighterOne)
         {
             speed *= -1f;
@@ -29,15 +31,20 @@ public class ProjectileScript : MonoBehaviour
         }
     }
 
+    public void SetDownwardVelocity()
+    {
+        GetComponent<Rigidbody>().velocity = new Vector3(speed, -Mathf.Abs(speed), 0f);
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         FighterController fighterController = other.transform.root.GetComponent<FighterController>();
-        if (fighterController != null) //Hit fighter 
+        if (!dealtDamage && fighterController != null) //Hit fighter 
         {
             gameManager.DealDamageToFighter(damage, fighterController.IsPlayerOne());
-            Destroy(gameObject);
+            dealtDamage = true;
         }
-
+        Destroy(gameObject);
     }
 
 }

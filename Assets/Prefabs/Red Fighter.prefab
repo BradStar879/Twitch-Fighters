@@ -853,6 +853,7 @@ MonoBehaviour:
   rightShinCollider: {fileID: 5055013764153378640}
   rightFootCollider: {fileID: 5055013763140056246}
   rightHandCollider: {fileID: 5055013762868483514}
+  rightForearmCollider: {fileID: 5055013762536821671}
   introQuotes:
   - 
   - 

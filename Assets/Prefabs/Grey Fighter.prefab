@@ -474,6 +474,7 @@ MonoBehaviour:
   rightShinCollider: {fileID: 4571413033888543483}
   rightFootCollider: {fileID: 4571413035640171075}
   rightHandCollider: {fileID: 4571413034088632558}
+  rightForearmCollider: {fileID: 4571413034569020362}
   introQuotes:
   - Das crazy.
   victoryQuotes:

@@ -23,16 +23,20 @@ public class FighterController : MonoBehaviour
     [SerializeField] Collider rightShinCollider;
     [SerializeField] Collider rightFootCollider;
     [SerializeField] Collider rightHandCollider;
+    [SerializeField] Collider rightForearmCollider;
+    [SerializeField] ParticleSystem sparkParticles;
     private Animator anim;
     private bool collidingWithEnemy;
     private bool kicking;
     private bool punching;
     private bool attacking;
+    private bool attackMoving;
     private bool recovering;
     private bool crouching;
     private bool blocking;
     private bool risingBlocking;
     private bool changingStance;    //Set to true when starting crouch or block to prevent jumping
+    private Vector3 attackingVelocity;
 
     private Material fighterMaterial;
 
@@ -66,12 +70,14 @@ public class FighterController : MonoBehaviour
         startingPosition.Set(transform.position.x, transform.position.y, transform.position.z);
         startingRotation.Set(transform.rotation.x, transform.rotation.y, transform.rotation.z, transform.rotation.w);
         startingScale.Set(transform.localScale.x, transform.localScale.y, transform.localScale.z);
+        attackingVelocity = Vector3.zero;
     }
 
     // Update is called once per frame
     void Update()
     {
         if (gameManager.IsGameActive()) {
+
             if (controllerInput.GetStartButtonDown())
             {
                 paused = true;
@@ -218,6 +224,10 @@ public class FighterController : MonoBehaviour
 
                 rb.velocity = velocity;
             }
+            else if (attackMoving)
+            {
+                rb.velocity = attackingVelocity;
+            } 
 
             if (kicking)
             {
@@ -299,6 +309,7 @@ public class FighterController : MonoBehaviour
         blocking = false;
         risingBlocking = false;
         changingStance = false;
+        attackMoving = false;
         anim.Rebind();  //Stops playback on all layers
 
         hp -= damage;
@@ -337,7 +348,7 @@ public class FighterController : MonoBehaviour
     {
         if (collidingWithEnemy)
         {
-            DamageEnemy(30);
+            AttackEnemy(30);
             kicking = false;
         }
     }
@@ -346,6 +357,7 @@ public class FighterController : MonoBehaviour
     {
         punching = true;
         rightHandCollider.isTrigger = true;
+        rightForearmCollider.isTrigger = true;
     }
 
     private void EndPunch()
@@ -357,7 +369,7 @@ public class FighterController : MonoBehaviour
     {
         if (collidingWithEnemy)
         {
-            DamageEnemy(7);
+            AttackEnemy(7);
             EndPunch();
         }
     }
@@ -386,6 +398,19 @@ public class FighterController : MonoBehaviour
         projectileClone.GetComponent<ProjectileScript>().Init(isPlayerOne);
     }
 
+    private void ShootProjectileHigh()
+    {
+        Vector3 projectilePosition = new Vector3(transform.position.x + .5f, transform.position.y + .2f, transform.position.z);
+        if (!isPlayerOne)
+        {
+            projectilePosition.x = transform.position.x - .5f;
+        }
+        GameObject projectileClone = Instantiate(projectile, projectilePosition, Quaternion.identity);
+        projectileClone.SetActive(true);
+        projectileClone.GetComponent<ProjectileScript>().Init(isPlayerOne);
+        projectileClone.GetComponent<ProjectileScript>().SetDownwardVelocity();
+    }
+
     private void ChargeSpecial()
     {
         attacking = false;
@@ -403,22 +428,27 @@ public class FighterController : MonoBehaviour
         rightShinCollider.isTrigger = false;
         rightFootCollider.isTrigger = false;
         rightHandCollider.isTrigger = false;
+        rightForearmCollider.isTrigger = false;
     }
 
-    private void DamageEnemy(int damage)
+    private void AttackEnemy(int damage)
     {
         if (!otherFighterController.SuccessfullyBlocked(isJumping, crouching))
         {
             gameManager.DealDamageToFighter(damage, !isPlayerOne);
         }
-        
     }
 
     public bool SuccessfullyBlocked(bool isJumping, bool crouching)
     {
-        return (blocking &&
+        bool successfullyBlocked = blocking &&
             isJumping == this.risingBlocking &&
-            crouching == this.crouching);
+            crouching == this.crouching;
+        if (!successfullyBlocked)
+        {
+            sparkParticles.Play();
+        }
+        return successfullyBlocked;
     }
 
     private void Crouch()
@@ -452,6 +482,23 @@ public class FighterController : MonoBehaviour
     {
         blocking = false;
         risingBlocking = false;
+    }
+
+    private void AttackMoveForward()
+    {
+        attackMoving = true;
+        if (isPlayerOne)
+        {
+            attackingVelocity = new Vector3(moveSpeed, 0f, 0f);
+        } else
+        {
+            attackingVelocity = new Vector3(-moveSpeed, 0f, 0f);
+        }
+    }
+
+    private void StopAttackMoving()
+    {
+        attackMoving = false;
     }
 
     private void ChangeStance()

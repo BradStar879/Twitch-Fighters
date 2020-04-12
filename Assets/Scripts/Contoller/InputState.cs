@@ -6,6 +6,7 @@ public class InputState
 {
     private string inputType;
     private int inputSpot;
+    private readonly float axisMinimum = .7f;
 
     public void SetAsKeyboardType(int inputSpot)
     {
@@ -26,12 +27,12 @@ public class InputState
 
     public bool GetXAxisLeft()
     {
-        return GetXAxis() <= -.8f;
+        return GetXAxis() <= -axisMinimum;
     }
 
     public bool GetXAxisRight()
     {
-        return GetXAxis() >= .8f;
+        return GetXAxis() >= axisMinimum;
     }
 
     public float GetYAxis()
@@ -41,12 +42,12 @@ public class InputState
 
     public bool GetYAxisDown()
     {
-        return GetYAxis() <= -.8f;
+        return GetYAxis() <= -axisMinimum;
     }
 
     public bool GetYAxisUp()
     {
-        return GetYAxis() >= .8f;
+        return GetYAxis() >= axisMinimum;
     }
 
     public float GetSecondaryXAxis()
@@ -56,12 +57,12 @@ public class InputState
 
     public bool GetSecondaryXAxisLeft()
     {
-        return GetSecondaryXAxis() <= -.8f;
+        return GetSecondaryXAxis() <= -axisMinimum;
     }
 
     public bool GetSecondaryXAxisRight()
     {
-        return GetSecondaryXAxis() >= .8f;
+        return GetSecondaryXAxis() >= axisMinimum;
     }
 
     public float GetSecondaryYAxis()
@@ -71,12 +72,12 @@ public class InputState
 
     public bool GetSecondaryYAxisDown()
     {
-        return GetSecondaryYAxis() <= -.8f;
+        return GetSecondaryYAxis() <= -axisMinimum;
     }
 
     public bool GetSecondaryYAxisUp()
     {
-        return GetSecondaryYAxis() >= .8f;
+        return GetSecondaryYAxis() >= axisMinimum;
     }
 
     public bool GetBottomActionButton()
@@ -121,12 +122,12 @@ public class InputState
 
     public bool GetRightTrigger()
     {
-        return Input.GetAxis(inputType + inputSpot + "_Triggers") >= .8f;
+        return Input.GetAxis(inputType + inputSpot + "_Triggers") >= axisMinimum;
     }
 
     public bool GetLeftTrigger()
     {
-        return Input.GetAxis(inputType + inputSpot + "_Triggers") <= -.8f;
+        return Input.GetAxis(inputType + inputSpot + "_Triggers") <= -axisMinimum;
     }
 
     public bool GetStartButton()

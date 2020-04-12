@@ -1333,6 +1333,7 @@ MonoBehaviour:
   rightShinCollider: {fileID: 903113747171703727}
   rightFootCollider: {fileID: 903113748068701819}
   rightHandCollider: {fileID: 903113746983496869}
+  rightForearmCollider: {fileID: 903113747056470949}
   introQuotes:
   - Get read for 5 feet and 10 inches of pain.
   victoryQuotes:
