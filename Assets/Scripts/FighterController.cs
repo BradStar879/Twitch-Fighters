@@ -348,7 +348,7 @@ public class FighterController : MonoBehaviour
     {
         if (collidingWithEnemy)
         {
-            AttackEnemy(30);
+            AttackEnemy(12);
             kicking = false;
         }
     }

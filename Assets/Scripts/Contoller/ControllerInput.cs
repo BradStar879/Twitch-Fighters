@@ -34,6 +34,26 @@ public class ControllerInput
         usingController = true;
     }
 
+    public string GetXAxisString()
+    {
+        return inputState.GetXAxisString();
+    }
+
+    public string GetYAxisString()
+    {
+        return inputState.GetYAxisString();
+    }
+
+    public string GetBottomActionButtonString()
+    {
+        return inputState.GetBottomActionButtonString();
+    }
+
+    public string GetRightActionButtonString()
+    {
+        return inputState.GetRightActionButtonString();
+    }
+
     public float GetXAxis()
     {
         return inputState.GetXAxis();

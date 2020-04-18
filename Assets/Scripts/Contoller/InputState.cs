@@ -35,6 +35,11 @@ public class InputState
         return GetXAxis() >= axisMinimum;
     }
 
+    public string GetXAxisString()
+    {
+        return inputType + inputSpot + "_xAxis";
+    }
+
     public float GetYAxis()
     {
         return Input.GetAxis(inputType + inputSpot + "_yAxis");
@@ -48,6 +53,11 @@ public class InputState
     public bool GetYAxisUp()
     {
         return GetYAxis() >= axisMinimum;
+    }
+
+    public string GetYAxisString()
+    {
+        return inputType + inputSpot + "_yAxis";
     }
 
     public float GetSecondaryXAxis()
@@ -90,6 +100,11 @@ public class InputState
         return Input.GetButtonDown(inputType + inputSpot + "_BottomAction");
     }
 
+    public string GetBottomActionButtonString()
+    {
+        return inputType + inputSpot + "_BottomAction";
+    }
+
     public bool GetLeftActionButton()
     {
         return Input.GetButton(inputType + inputSpot + "_LeftAction");
@@ -118,6 +133,11 @@ public class InputState
     public bool GetRightActionButtonDown()
     {
         return Input.GetButtonDown(inputType + inputSpot + "_RightAction");
+    }
+
+    public string GetRightActionButtonString()
+    {
+        return inputType + inputSpot + "_RightAction";
     }
 
     public bool GetRightTrigger()
