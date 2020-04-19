@@ -5,82 +5,75 @@ using UnityEngine;
 public abstract class AttackManager : MonoBehaviour
 {
     protected Animator anim;
+    private FighterController fighterController;
     private ComboState currentCombo;
     private EndComboState endComboState;
-    protected bool readyForComboAttack;
+    protected bool readyForAttackInput;
+    protected bool readyForAttackAnimation;
+    private bool queuedComboAttack;
+    private string queuedComboAttackAnimation;
+    private int queuedComboAttackDamage;
 
     public virtual void Init()
     {
         anim = GetComponent<Animator>();
-        endComboState = new EndComboState(anim);
+        fighterController = GetComponent<FighterController>();
     }
 
     public void ResetCombo()
     {
         currentCombo = GetDefaultState();
-        readyForComboAttack = false;
+        readyForAttackInput = true;
+        readyForAttackAnimation = true;
+        queuedComboAttack = false;
+        queuedComboAttackAnimation = "";
+        queuedComboAttackDamage = 0;
     }
 
-    public void SetReadyForComboAttack(bool ready)
+    public void SetReadyForAttackInput(bool ready)
     {
-        readyForComboAttack = ready;
+        readyForAttackInput = ready;
+    }
+
+    public void SetReadyForAttackAnimation(bool ready)
+    {
+        readyForAttackAnimation = ready;
     }
 
     public void Punch()
     {
-        if (InDefaultState() ||
-            (!InDefaultState() && readyForComboAttack))
+        if (readyForAttackInput)
         {
             currentCombo = currentCombo.Punch();
-            readyForComboAttack = false;
+            readyForAttackInput = false;
         }
-        /*else
-        {
-            currentCombo = endComboState;
-        }*/
-        
     }
 
     public void Kick()
     {
-        if (InDefaultState() ||
-            (!InDefaultState() && readyForComboAttack))
+        if (readyForAttackInput)
         {
             currentCombo = currentCombo.Kick();
-            readyForComboAttack = false;
+            readyForAttackInput = false;
         }
-        /*else
-        {
-            currentCombo = endComboState;
-        }*/
     }
 
     public void RangeAttack()
     {
-        if (InDefaultState() ||
-            (!InDefaultState() && readyForComboAttack))
+        if (readyForAttackInput)
         {
             currentCombo = currentCombo.RangeAttack();
-            readyForComboAttack = false;
+            readyForAttackInput = false;
         }
-        /*else
-        {
-            currentCombo = endComboState;
-        }*/
     }
 
     public void SpecialAttack()
     {
-        if (InDefaultState() ||
-            (!InDefaultState() && readyForComboAttack))
+        if (readyForAttackInput)
         {
             currentCombo = currentCombo.SpecialAttack();
-            readyForComboAttack = false;
+            readyForAttackInput = false;
         }
-        /*else
-        {
-            currentCombo = endComboState;
-        }*/
     }
 
     public void Ultimate()
@@ -88,11 +81,25 @@ public abstract class AttackManager : MonoBehaviour
 
     }
 
-    private bool InDefaultState()
+    public void PerformComboAttackIfQueued()
     {
-        //print("current combo: " + currentCombo);
-        //print("default state" + GetDefaultState());
-        return currentCombo == GetDefaultState();
+        if (readyForAttackAnimation && queuedComboAttack)
+        {
+            anim.Rebind();
+            anim.Play(queuedComboAttackAnimation);
+            fighterController.SetAttackDamage(queuedComboAttackDamage);
+            readyForAttackAnimation = false;
+            queuedComboAttack = false;
+            queuedComboAttackAnimation = "";
+            queuedComboAttackDamage = 0;
+        }
+    }
+
+    public void QueueUpAttack(string attackAnimation, int attackDamage)
+    {
+        queuedComboAttack = true;
+        queuedComboAttackAnimation = attackAnimation;
+        queuedComboAttackDamage = attackDamage;
     }
 
     public abstract ComboState GetDefaultState();
@@ -100,14 +107,14 @@ public abstract class AttackManager : MonoBehaviour
 
 public abstract class ComboState
 {
-    protected Animator anim;
+    protected AttackManager attackManager;
     protected ComboState endComboState;
     
-    public ComboState(Animator anim)
+    public ComboState(AttackManager attackManager)
     {
-        this.anim = anim;
+        this.attackManager = attackManager;
         if (!(GetType().Equals(typeof(EndComboState)))) {  //Stops infinite recursion in EndComboState constructor
-            endComboState = new EndComboState(anim);
+            endComboState = new EndComboState(attackManager);
         }
     }
 
@@ -122,7 +129,7 @@ public abstract class ComboState
 
 public class EndComboState : ComboState
 {
-    public EndComboState(Animator anim) : base(anim) { }
+    public EndComboState(AttackManager attackManager) : base(attackManager) { }
 
     public override ComboState Punch()
     {

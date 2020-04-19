@@ -28,15 +28,15 @@ public class FighterController : MonoBehaviour
     [SerializeField] ParticleSystem sparkParticles;
     private Animator anim;
     private bool collidingWithEnemy;
-    private bool kicking;
-    private bool punching;
     private bool attacking;
     private bool attackMoving;
     private bool recovering;
     private bool crouching;
     private bool blocking;
     private bool changingStance;    //Set to true when starting crouch or block to prevent jumping
+    private bool inHitFrame;
     private Vector3 attackingVelocity;
+    private int currentAttackDamage;
 
     private Material fighterMaterial;
 
@@ -87,8 +87,6 @@ public class FighterController : MonoBehaviour
             }
             if (isPlayerOne && Input.GetKeyDown(KeyCode.B))  //For debugging purposes
             {
-                print("kicking: " + kicking);
-                print("punching: " + punching);
                 print("attacking: " + attacking);
                 print("recovering: " + recovering);
                 print("crouching: " + crouching);
@@ -102,8 +100,9 @@ public class FighterController : MonoBehaviour
                 if (controllerInput.GetLeftActionButtonDown())
                 {
                     attackManager.Punch();
-                    print("punch pressed");
                 }
+
+                attackManager.PerformComboAttackIfQueued();
             }
 
             if (!recovering && !attacking)
@@ -166,11 +165,6 @@ public class FighterController : MonoBehaviour
                             attacking = true;
                             anim.Play("Kick");
                         }
-                        /*else if (controllerInput.GetLeftActionButtonDown())
-                        {
-                            attacking = true;
-                            anim.Play("Punch");
-                        }*/
                         else if (controllerInput.GetTopActionButtonDown())
                         {
                             attacking = true;
@@ -241,13 +235,9 @@ public class FighterController : MonoBehaviour
                 rb.velocity = attackingVelocity;
             } 
 
-            if (kicking)
+            if (inHitFrame)
             {
-                KickEnemy();
-            }
-            else if (punching)
-            {
-                PunchEnemy();
+                CheckForHit();
             }
         }
         else if (paused)
@@ -290,7 +280,7 @@ public class FighterController : MonoBehaviour
 
     public void ResetFighter()
     {
-        anim.StopPlayback();
+        anim.Rebind();
         anim.Play("Default");
         transform.position = startingPosition;
         transform.rotation = startingRotation;
@@ -301,8 +291,7 @@ public class FighterController : MonoBehaviour
         fighterUI.UpdateSpecial(special);
         isJumping = false;
         collidingWithEnemy = false;
-        kicking = false;
-        punching = false;
+        inHitFrame = false;
         attacking = false;
         recovering = false;
         crouching = false;
@@ -313,8 +302,7 @@ public class FighterController : MonoBehaviour
     public void TakeDamage(int damage)
     {
         EndAttack();
-        kicking = false;
-        punching = false;
+        inHitFrame = false;
         recovering = true;
         crouching = false;
         blocking = false;
@@ -341,47 +329,37 @@ public class FighterController : MonoBehaviour
         recovering = false;
     }
 
-    public void StartKick()
+    public void SetAttackDamage(int attackDamage)
     {
-        kicking = true;
+        currentAttackDamage = attackDamage;
+    }
+
+    public void EndHitFrame()
+    {
+        inHitFrame = false;
+    }
+
+    private void CheckForHit()
+    {
+        if (collidingWithEnemy)
+        {
+            AttackEnemy(currentAttackDamage);
+            inHitFrame = false;
+        }
+    }
+
+    public void StartKickHitFrame()
+    {
+        inHitFrame = true;
         rightShinCollider.isTrigger = true;
         rightFootCollider.isTrigger = true;
     }
 
-    public void EndKick()
+    private void StartPunchHitFrame()
     {
-        kicking = false;
-        collidingWithEnemy = false;
-    }
-
-    private void KickEnemy()
-    {
-        if (collidingWithEnemy)
-        {
-            AttackEnemy(12);
-            kicking = false;
-        }
-    }
-
-    private void StartPunch()
-    {
-        punching = true;
+        inHitFrame = true;
         rightHandCollider.isTrigger = true;
         rightForearmCollider.isTrigger = true;
-    }
-
-    private void EndPunch()
-    {
-        punching = false;
-    }
-
-    private void PunchEnemy()
-    {
-        if (collidingWithEnemy)
-        {
-            AttackEnemy(7);
-            EndPunch();
-        }
     }
 
     private void ShootProjectile()
@@ -447,14 +425,19 @@ public class FighterController : MonoBehaviour
         rightForearmCollider.isTrigger = false;
     }
 
-    public void EnableComboAttack()
+    public void EnableAttackInput()
     {
-        attackManager.SetReadyForComboAttack(true);
+        attackManager.SetReadyForAttackInput(true);
     }
 
-    public void DisableComboAttack()
+    public void DisableAttackInput()
     {
-        attackManager.SetReadyForComboAttack(false);
+        attackManager.SetReadyForAttackInput(false);
+    }
+
+    public void EnableAttackAnimation()
+    {
+        attackManager.SetReadyForAttackAnimation(true);
     }
 
     private void AttackEnemy(int damage)
@@ -540,6 +523,14 @@ public class FighterController : MonoBehaviour
     }
 
     private void OnTriggerEnter(Collider other)
+    {
+        if (other.transform.root.gameObject == otherFighter)
+        {
+            collidingWithEnemy = true;
+        }
+    }
+
+    private void OnTriggerStay(Collider other)
     {
         if (other.transform.root.gameObject == otherFighter)
         {

@@ -11,9 +11,9 @@ public class WillNeffAttackManager : AttackManager
     public override void Init()
     {
         base.Init();
-        ppState = new WillNeffComboStatePP(anim);
-        pState = new WillNeffComboStateP(anim, ppState);
-        defaultState = new WillNeffComboStateDefault(anim, pState);
+        ppState = new WillNeffComboStatePP(this);
+        pState = new WillNeffComboStateP(this, ppState);
+        defaultState = new WillNeffComboStateDefault(this, pState);
         ResetCombo();
     }
 
@@ -27,14 +27,14 @@ public class WillNeffComboStateDefault : ComboState
 {
     private WillNeffComboStateP pState;
 
-    public WillNeffComboStateDefault(Animator anim, WillNeffComboStateP pState) : base(anim)
+    public WillNeffComboStateDefault(AttackManager attackManager, WillNeffComboStateP pState) : base(attackManager)
     {
         this.pState = pState;
     }
 
     public override ComboState Punch()
     {
-        anim.Play("Lunge Punch");
+        attackManager.QueueUpAttack("Lunge Punch", 5);
         return pState;
     }
 
@@ -58,15 +58,15 @@ public class WillNeffComboStateP : ComboState
 {
     private WillNeffComboStatePP ppState;
 
-    public WillNeffComboStateP(Animator anim, WillNeffComboStatePP ppState) : base(anim)
+    public WillNeffComboStateP(AttackManager attackManager, WillNeffComboStatePP ppState) : base(attackManager)
     {
         this.ppState = ppState;
     }
 
     public override ComboState Punch()
     {
-        anim.Rebind();
-        anim.Play("Lunge Punch");
+
+        attackManager.QueueUpAttack("Lunge Punch", 5);
         return ppState;
     }
 
@@ -88,12 +88,11 @@ public class WillNeffComboStateP : ComboState
 
 public class WillNeffComboStatePP : ComboState
 {
-    public WillNeffComboStatePP(Animator anim) : base(anim) { }
+    public WillNeffComboStatePP(AttackManager attackManager) : base(attackManager) { }
 
     public override ComboState Punch()
     {
-        anim.Rebind();
-        anim.Play("Punch");
+        attackManager.QueueUpAttack("Punch", 10);
         return endComboState;
     }
 

@@ -870,6 +870,13 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
+  - time: 0.033333335
+    functionName: EnableAttackInput
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
   - time: 0.16666667
     functionName: AttackMoveForward
     data: 
@@ -898,15 +905,15 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.41666666
-    functionName: EnableComboAttack
+  - time: 0.43333334
+    functionName: EnableAttackAnimation
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.53333336
-    functionName: DisableComboAttack
+  - time: 0.56666666
+    functionName: DisableAttackInput
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
