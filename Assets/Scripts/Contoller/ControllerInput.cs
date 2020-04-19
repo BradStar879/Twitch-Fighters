@@ -124,6 +124,16 @@ public class ControllerInput
         return inputState.GetRightActionButtonDown();
     }
 
+    public bool GetLeftBumperDown()
+    {
+        return inputState.GetLeftBumperDown();
+    }
+
+    public bool GetRightBumper()
+    {
+        return inputState.GetRightBumper();
+    }
+
     public bool GetRightTrigger()
     {
         return inputState.GetRightTrigger();

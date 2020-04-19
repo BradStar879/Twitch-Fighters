@@ -1138,6 +1138,7 @@ GameObject:
   - component: {fileID: 1079174890743829974}
   - component: {fileID: 1079174890743829800}
   - component: {fileID: 7235626252024480353}
+  - component: {fileID: -2956639884096471009}
   m_Layer: 0
   m_Name: Black Fighter
   m_TagString: Untagged
@@ -1221,6 +1222,18 @@ MonoBehaviour:
   - I'll slap the beard off you!
   victoryQuotes:
   - Stay dangerous.
+--- !u!114 &-2956639884096471009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1079174890743829803}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5d02c3ef317aab47b06eff3de826e2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1079174890799450078
 GameObject:
   m_ObjectHideFlags: 0

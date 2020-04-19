@@ -140,6 +140,26 @@ public class InputState
         return inputType + inputSpot + "_RightAction";
     }
 
+    public bool GetLeftBumper()
+    {
+        return Input.GetButton(inputType + inputSpot + "_LeftBumper");
+    }
+
+    public bool GetLeftBumperDown()
+    {
+        return Input.GetButtonDown(inputType + inputSpot + "_LeftBumper");
+    }
+
+    public bool GetRightBumper()
+    {
+        return Input.GetButton(inputType + inputSpot + "_RightBumper");
+    }
+
+    public bool GetRightBumperDown()
+    {
+        return Input.GetButtonDown(inputType + inputSpot + "_RightBumper");
+    }
+
     public bool GetRightTrigger()
     {
         return Input.GetAxis(inputType + inputSpot + "_Triggers") >= axisMinimum;

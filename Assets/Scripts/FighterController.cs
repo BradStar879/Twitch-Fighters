@@ -9,6 +9,7 @@ public class FighterController : MonoBehaviour
     private bool paused = false;
     [SerializeField] float moveSpeed = 1f;
     [SerializeField] GameObject projectile;
+    private AttackManager attackManager;
     private GameObject otherFighter;
     private FighterController otherFighterController;
     private GameManager gameManager;
@@ -34,7 +35,6 @@ public class FighterController : MonoBehaviour
     private bool recovering;
     private bool crouching;
     private bool blocking;
-    private bool risingBlocking;
     private bool changingStance;    //Set to true when starting crouch or block to prevent jumping
     private Vector3 attackingVelocity;
 
@@ -65,6 +65,8 @@ public class FighterController : MonoBehaviour
             fighterUI = canvas.transform.GetChild(1).GetComponent<FighterUI>();
         }
         anim = GetComponent<Animator>();
+        attackManager = GetComponent<AttackManager>();
+        attackManager.Init();
         fighterUI.Init();
 
         startingPosition.Set(transform.position.x, transform.position.y, transform.position.z);
@@ -92,9 +94,18 @@ public class FighterController : MonoBehaviour
                 print("crouching: " + crouching);
                 print("blocking: " + blocking);
                 print("jumping: " + isJumping);
-                print("risingBlocking: " + risingBlocking);
                 print("z: " + Input.GetKey(KeyCode.Z));
             }
+
+            if (!recovering && !blocking && !changingStance)
+            {
+                if (controllerInput.GetLeftActionButtonDown())
+                {
+                    attackManager.Punch();
+                    print("punch pressed");
+                }
+            }
+
             if (!recovering && !attacking)
             {
                 Vector3 velocity = new Vector3(0f, rb.velocity.y);
@@ -114,66 +125,67 @@ public class FighterController : MonoBehaviour
                         velocity.x += moveSpeed;
                     }
 
-                    if (controllerInput.GetRightTrigger() && !blocking) //Blocking
+                    if (blocking)
                     {
-                        anim.Play("Block");
+                        if (!(controllerInput.GetLeftTrigger() || controllerInput.GetRightTrigger()))
+                        {
+                            anim.Play("Unblock");
+                        }
                     }
-                    else if (controllerInput.GetYAxisUp() && !crouching && blocking && !risingBlocking)
+                    else
                     {
-                        anim.Play("Rising Block");
-                    }
-                    else if (!controllerInput.GetYAxisUp() && risingBlocking)
-                    {
-                        anim.Play("Lower Block");
-                    }
-                    else if (!controllerInput.GetRightTrigger() && risingBlocking)
-                    {
-                        anim.Play("Rising Unblock");
-                    }
-                    else if (!controllerInput.GetRightTrigger() && blocking)
-                    {
-                        anim.Play("Unblock");
+                        if (controllerInput.GetLeftTrigger() || controllerInput.GetRightTrigger())
+                        {
+                            anim.Play("Block");
+                        }
                     }
 
-                    if (!risingBlocking)
+                    if (crouching)
                     {
-                        if (controllerInput.GetYAxisDown() && !crouching)  //Crouching and uncrouching
-                        {
-                            anim.Play("Crouch");
-                        }
-                        else if (!controllerInput.GetYAxisDown() && crouching)
+                        if (!controllerInput.GetYAxisDown())
                         {
                             anim.Play("Uncrouch");
+                        }
+                    }
+                    else
+                    {
+                        if (controllerInput.GetYAxisDown())
+                        {
+                            anim.Play("Crouch");
                         }
                     }
 
                 }
 
-                if (!blocking && !risingBlocking && !changingStance)  
+                if (!blocking && !changingStance)  
                 {
                     if (!crouching && !isJumping)   //Standing
                     {
-                        if (controllerInput.GetRightActionButtonDown())
+                        if (controllerInput.GetBottomActionButtonDown())
                         {
                             attacking = true;
                             anim.Play("Kick");
                         }
-                        else if (controllerInput.GetBottomActionButtonDown())
+                        /*else if (controllerInput.GetLeftActionButtonDown())
                         {
                             attacking = true;
                             anim.Play("Punch");
-                        }
-                        else if (controllerInput.GetLeftActionButtonDown())
+                        }*/
+                        else if (controllerInput.GetTopActionButtonDown())
                         {
                             attacking = true;
                             anim.Play("Shoot");
                         }
-                        else if (controllerInput.GetTopActionButtonDown())
+                        else if (controllerInput.GetLeftBumperDown())
                         {
                             attacking = true;
                             anim.Play("Taunt");
                         }
-                        else if (special == 50 && controllerInput.GetLeftTrigger())
+                        else if (special == 50 && controllerInput.GetRightBumper() && controllerInput.GetRightActionButtonDown())
+                        {
+                            //Ultimate move here
+                        }
+                        else if (controllerInput.GetRightActionButtonDown())
                         {
                             //Special move here
                         }
@@ -295,7 +307,6 @@ public class FighterController : MonoBehaviour
         recovering = false;
         crouching = false;
         blocking = false;
-        risingBlocking = false;
         changingStance = false;
     }
 
@@ -307,7 +318,6 @@ public class FighterController : MonoBehaviour
         recovering = true;
         crouching = false;
         blocking = false;
-        risingBlocking = false;
         changingStance = false;
         attackMoving = false;
         anim.Rebind();  //Stops playback on all layers
@@ -422,13 +432,29 @@ public class FighterController : MonoBehaviour
         fighterUI.UpdateSpecial(special);
     }
 
+    public void StartAttack()
+    {
+        attacking = true;
+    } 
+
     public void EndAttack()
     {
         attacking = false;
+        attackManager.ResetCombo();
         rightShinCollider.isTrigger = false;
         rightFootCollider.isTrigger = false;
         rightHandCollider.isTrigger = false;
         rightForearmCollider.isTrigger = false;
+    }
+
+    public void EnableComboAttack()
+    {
+        attackManager.SetReadyForComboAttack(true);
+    }
+
+    public void DisableComboAttack()
+    {
+        attackManager.SetReadyForComboAttack(false);
     }
 
     private void AttackEnemy(int damage)
@@ -442,7 +468,6 @@ public class FighterController : MonoBehaviour
     public bool SuccessfullyBlocked(bool isJumping, bool crouching)
     {
         bool successfullyBlocked = blocking &&
-            isJumping == this.risingBlocking &&
             crouching == this.crouching;
         if (!successfullyBlocked)
         {
@@ -468,20 +493,9 @@ public class FighterController : MonoBehaviour
         changingStance = false;
     }
 
-    private void RisingBlock()
-    {
-        risingBlocking = true;
-    }
-
-    private void LowerBlock()
-    {
-        risingBlocking = false;
-    }
-
     private void Unblock()
     {
         blocking = false;
-        risingBlocking = false;
     }
 
     private void AttackMoveForward()
