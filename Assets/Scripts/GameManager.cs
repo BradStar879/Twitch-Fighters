@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviour
 {
     private bool gameActive = false;
     private float time;
+    private int roundedTime;
+    private bool chargeSpecial;
     private Canvas canvas;
     [SerializeField] bool debugMode = false;
     [SerializeField] Text timerText;
@@ -51,7 +53,9 @@ public class GameManager : MonoBehaviour
 
 
     private int damageToDealToPlayerOne = 0;
+    private AttackType typeOfDamageToDealToPlayerOne = AttackType.Flinch;
     private int damageToDealToPlayerTwo = 0;
+    private AttackType typeOfDamageToDealToPlayerTwo = AttackType.Flinch;
     // Start is called before the first frame update
     void Start()
     {
@@ -89,8 +93,19 @@ public class GameManager : MonoBehaviour
         if (gameActive) //Fight is in progress
         {
             time -= Time.deltaTime;
-            timerText.text = "" + (int)time;
-            if ((int)time == 0)
+            if (roundedTime != (int)time)   //One second has passed
+            {
+                roundedTime = (int)time;
+                timerText.text = "" + roundedTime;
+                if (chargeSpecial)  //Charge both players' specials by 1 every other second
+                {
+                    fighterOne.ChargeSpecial(1);
+                    fighterTwo.ChargeSpecial(1);
+                }
+                chargeSpecial = !chargeSpecial;
+            }
+            
+            if (roundedTime == 0)
             {
                 EndRound(true);
                 EndRound(false);
@@ -134,13 +149,15 @@ public class GameManager : MonoBehaviour
     {
         if (damageToDealToPlayerOne > 0)
         {
-            fighterOne.TakeDamage(damageToDealToPlayerOne);
+            fighterOne.TakeDamage(damageToDealToPlayerOne, typeOfDamageToDealToPlayerOne);
             damageToDealToPlayerOne = 0;
+            typeOfDamageToDealToPlayerOne = AttackType.Flinch;
         }
         if (damageToDealToPlayerTwo > 0)
         {
-            fighterTwo.TakeDamage(damageToDealToPlayerTwo);
+            fighterTwo.TakeDamage(damageToDealToPlayerTwo, typeOfDamageToDealToPlayerTwo);
             damageToDealToPlayerTwo = 0;
+            typeOfDamageToDealToPlayerTwo = AttackType.Flinch;
         }
     }
 
@@ -178,7 +195,9 @@ public class GameManager : MonoBehaviour
         winText.enabled = true;
         winText.text = "FIGHT!";
         time = 99.9f;
-        timerText.text = "" + (int)time;
+        roundedTime = 99;
+        timerText.text = "" + roundedTime;
+        chargeSpecial = false;
         preFightTimer = 1f;
         preFight = true;
     }
@@ -262,14 +281,16 @@ public class GameManager : MonoBehaviour
         postRoundTimer = 3f;
     }
 
-    public void DealDamageToFighter(int damage, bool isPlayerOne)
+    public void DealDamageToFighter(int damage, AttackType attackType, bool isPlayerOne)
     {
         if (isPlayerOne)
         {
             damageToDealToPlayerOne += damage;
+            typeOfDamageToDealToPlayerOne = attackType;
         } else
         {
             damageToDealToPlayerTwo += damage;
+            typeOfDamageToDealToPlayerTwo = attackType;
         }
     }
 

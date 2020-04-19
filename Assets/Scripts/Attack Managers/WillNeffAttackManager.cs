@@ -34,23 +34,28 @@ public class WillNeffComboStateDefault : ComboState
 
     public override ComboState Punch()
     {
-        attackManager.QueueUpAttack("Lunge Punch", 5);
+        attackManager.QueueUpAttack("Lunge Punch", 5, AttackType.Flinch);
         return pState;
     }
 
     public override ComboState Kick()
     {
-        return endComboState;
+        return this;
     }
 
-    public override ComboState RangeAttack()
+    public override ComboState RangedAttack()
     {
-        return endComboState;
+        return this;
     }
 
     public override ComboState SpecialAttack()
     {
-        return endComboState;
+        if (attackManager.HasEnoughSpecial(10))
+        {
+            attackManager.QueueUpAttack("Lunge Punch", 15, AttackType.KnockBack, 10);
+            return endComboState;
+        }
+        return this;
     }
 }
 
@@ -66,7 +71,7 @@ public class WillNeffComboStateP : ComboState
     public override ComboState Punch()
     {
 
-        attackManager.QueueUpAttack("Lunge Punch", 5);
+        attackManager.QueueUpAttack("Lunge Punch", 5, AttackType.Flinch);
         return ppState;
     }
 
@@ -75,7 +80,7 @@ public class WillNeffComboStateP : ComboState
         return endComboState;
     }
 
-    public override ComboState RangeAttack()
+    public override ComboState RangedAttack()
     {
         return endComboState;
     }
@@ -92,7 +97,7 @@ public class WillNeffComboStatePP : ComboState
 
     public override ComboState Punch()
     {
-        attackManager.QueueUpAttack("Punch", 10);
+        attackManager.QueueUpAttack("Punch", 10, AttackType.KnockBack);
         return endComboState;
     }
 
@@ -101,7 +106,7 @@ public class WillNeffComboStatePP : ComboState
         return endComboState;
     }
 
-    public override ComboState RangeAttack()
+    public override ComboState RangedAttack()
     {
         return endComboState;
     }

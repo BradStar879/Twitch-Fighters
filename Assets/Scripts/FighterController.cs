@@ -37,13 +37,13 @@ public class FighterController : MonoBehaviour
     private bool inHitFrame;
     private Vector3 attackingVelocity;
     private int currentAttackDamage;
+    private AttackType currentAttackType;
 
     private Material fighterMaterial;
 
     //To be populated via Unity
     [SerializeField] string[] introQuotes;
     [SerializeField] string[] victoryQuotes;
-
 
     public virtual void Init(bool isPlayerOne, GameObject otherFighter)
     {
@@ -100,6 +100,11 @@ public class FighterController : MonoBehaviour
                 if (controllerInput.GetLeftActionButtonDown())
                 {
                     attackManager.Punch();
+                }
+                else if (controllerInput.GetRightActionButtonDown())
+                {
+                    print("Special");
+                    attackManager.SpecialAttack();
                 }
 
                 attackManager.PerformComboAttackIfQueued();
@@ -299,11 +304,11 @@ public class FighterController : MonoBehaviour
         changingStance = false;
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, AttackType attackType)
     {
         EndAttack();
-        inHitFrame = false;
         recovering = true;
+        inHitFrame = false;
         crouching = false;
         blocking = false;
         changingStance = false;
@@ -313,11 +318,23 @@ public class FighterController : MonoBehaviour
         hp -= damage;
         if (hp > 0)
         {
-            anim.Play("Get Hit");
+            if (attackType == AttackType.Flinch)
+            {
+                anim.Play("Flinch");
+            }
+            else if (attackType == AttackType.KnockBack)
+            {
+                anim.Play("Knock Back");
+            }
+            else if (attackType == AttackType.KnockUp)
+            {
+                //anim.Play("Flinch");
+            }
+            ChargeSpecial(damage / 3);
         }
         else
         {
-            anim.Play("Die");
+            anim.Play("Knock Back");
             hp = 0;
             gameManager.EndRound(!isPlayerOne);
         } 
@@ -334,6 +351,11 @@ public class FighterController : MonoBehaviour
         currentAttackDamage = attackDamage;
     }
 
+    public void SetAttackType(AttackType attackType)
+    {
+        currentAttackType = attackType;
+    }
+
     public void EndHitFrame()
     {
         inHitFrame = false;
@@ -343,7 +365,7 @@ public class FighterController : MonoBehaviour
     {
         if (collidingWithEnemy)
         {
-            AttackEnemy(currentAttackDamage);
+            AttackEnemy();
             inHitFrame = false;
         }
     }
@@ -399,10 +421,26 @@ public class FighterController : MonoBehaviour
         projectileClone.GetComponent<ProjectileScript>().SetDownwardVelocity();
     }
 
-    private void ChargeSpecial()
+    public void ConsumeSpecial(int specialToUse)
     {
+        special -= specialToUse;
+        fighterUI.UpdateSpecial(special);
+    }
+
+    public bool HasEnoughSpecial(int specialToUse)
+    {
+        return specialToUse <= special;
+    }
+
+    private void ChargeSpecialFromTaunt()
+    {
+        ChargeSpecial(10);
         attacking = false;
-        special += 10;
+    }
+
+    public void ChargeSpecial(int amount)
+    {
+        special += amount;
         if (special > 50)
         {
             special = 50;
@@ -440,11 +478,11 @@ public class FighterController : MonoBehaviour
         attackManager.SetReadyForAttackAnimation(true);
     }
 
-    private void AttackEnemy(int damage)
+    private void AttackEnemy()
     {
         if (!otherFighterController.SuccessfullyBlocked(isJumping, crouching))
         {
-            gameManager.DealDamageToFighter(damage, !isPlayerOne);
+            gameManager.DealDamageToFighter(currentAttackDamage, currentAttackType, !isPlayerOne);
         }
     }
 

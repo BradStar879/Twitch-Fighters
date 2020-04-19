@@ -10,9 +10,11 @@ public abstract class AttackManager : MonoBehaviour
     private EndComboState endComboState;
     protected bool readyForAttackInput;
     protected bool readyForAttackAnimation;
-    private bool queuedComboAttack;
-    private string queuedComboAttackAnimation;
-    private int queuedComboAttackDamage;
+    private bool queuedAttack;
+    private string queuedAttackAnimation;
+    private int queuedAttackDamage;
+    private AttackType queuedAttackType;
+    private int queuedAttackSpecial;
 
     public virtual void Init()
     {
@@ -25,9 +27,11 @@ public abstract class AttackManager : MonoBehaviour
         currentCombo = GetDefaultState();
         readyForAttackInput = true;
         readyForAttackAnimation = true;
-        queuedComboAttack = false;
-        queuedComboAttackAnimation = "";
-        queuedComboAttackDamage = 0;
+        queuedAttack = false;
+        queuedAttackAnimation = "";
+        queuedAttackDamage = 0;
+        queuedAttackType = AttackType.Flinch;
+        queuedAttackSpecial = 0;
     }
 
     public void SetReadyForAttackInput(bool ready)
@@ -58,11 +62,11 @@ public abstract class AttackManager : MonoBehaviour
         }
     }
 
-    public void RangeAttack()
+    public void RangedAttack()
     {
         if (readyForAttackInput)
         {
-            currentCombo = currentCombo.RangeAttack();
+            currentCombo = currentCombo.RangedAttack();
             readyForAttackInput = false;
         }
     }
@@ -72,7 +76,10 @@ public abstract class AttackManager : MonoBehaviour
         if (readyForAttackInput)
         {
             currentCombo = currentCombo.SpecialAttack();
-            readyForAttackInput = false;
+            if (currentCombo != GetDefaultState())  //Check for failed default special attack to prevent not being able to attack
+            {
+                readyForAttackInput = false;
+            }
         }
     }
 
@@ -83,23 +90,45 @@ public abstract class AttackManager : MonoBehaviour
 
     public void PerformComboAttackIfQueued()
     {
-        if (readyForAttackAnimation && queuedComboAttack)
+        if (readyForAttackAnimation && queuedAttack)
         {
             anim.Rebind();
-            anim.Play(queuedComboAttackAnimation);
-            fighterController.SetAttackDamage(queuedComboAttackDamage);
+            anim.Play(queuedAttackAnimation);
+            fighterController.SetAttackDamage(queuedAttackDamage);
+            fighterController.SetAttackType(queuedAttackType);
+            fighterController.ConsumeSpecial(queuedAttackSpecial);
             readyForAttackAnimation = false;
-            queuedComboAttack = false;
-            queuedComboAttackAnimation = "";
-            queuedComboAttackDamage = 0;
+            queuedAttack = false;
+            queuedAttackAnimation = "";
+            queuedAttackDamage = 0;
+            queuedAttackType = AttackType.Flinch;
+            queuedAttackSpecial = 0;
         }
     }
 
-    public void QueueUpAttack(string attackAnimation, int attackDamage)
+    public void QueueUpAttack(string attackAnimation, int attackDamage, AttackType attackType)
     {
-        queuedComboAttack = true;
-        queuedComboAttackAnimation = attackAnimation;
-        queuedComboAttackDamage = attackDamage;
+        queuedAttack = true;
+        queuedAttackAnimation = attackAnimation;
+        queuedAttackDamage = attackDamage;
+        queuedAttackType = attackType;
+        queuedAttackSpecial = 0;
+    }
+
+    public void QueueUpAttack(string attackAnimation, int attackDamage, AttackType attackType, int attackSpecial)
+    {
+        queuedAttack = true;
+        queuedAttackAnimation = attackAnimation;
+        queuedAttackDamage = attackDamage;
+        queuedAttackType = attackType;
+        queuedAttackSpecial = attackSpecial;
+    }
+
+    public bool HasEnoughSpecial(int specialToUse)
+    {
+        print("a");
+        print(fighterController.HasEnoughSpecial(specialToUse));
+        return fighterController.HasEnoughSpecial(specialToUse);
     }
 
     public abstract ComboState GetDefaultState();
@@ -122,7 +151,7 @@ public abstract class ComboState
 
     public abstract ComboState Kick();
 
-    public abstract ComboState RangeAttack();
+    public abstract ComboState RangedAttack();
 
     public abstract ComboState SpecialAttack();
 }
@@ -141,7 +170,7 @@ public class EndComboState : ComboState
         return this;
     }
 
-    public override ComboState RangeAttack()
+    public override ComboState RangedAttack()
     {
         return this;
     }
@@ -150,4 +179,11 @@ public class EndComboState : ComboState
     {
         return this;
     }
+}
+
+public enum AttackType
+{
+    Flinch,
+    KnockBack,
+    KnockUp
 }
