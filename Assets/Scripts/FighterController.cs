@@ -35,6 +35,8 @@ public class FighterController : MonoBehaviour
     private bool blocking;
     private bool changingStance;    //Set to true when starting crouch or block to prevent jumping
     private bool inHitFrame;
+    private bool knockedDown;
+    private bool invincible;
     private Vector3 attackingVelocity;
     private int currentAttackDamage;
     private AttackType currentAttackType;
@@ -95,22 +97,33 @@ public class FighterController : MonoBehaviour
                 print("z: " + Input.GetKey(KeyCode.Z));
             }
 
-            if (!recovering && !blocking && !changingStance)
+            if (!recovering && !blocking && !changingStance && !knockedDown)
             {
                 if (controllerInput.GetLeftActionButtonDown())
                 {
                     attackManager.Punch();
                 }
+                else if (controllerInput.GetBottomActionButtonDown())
+                {
+                    attackManager.Kick();
+                }
+                else if (controllerInput.GetTopActionButtonDown())
+                {
+                    attackManager.RangedAttack();
+                }
                 else if (controllerInput.GetRightActionButtonDown())
                 {
-                    print("Special");
                     attackManager.SpecialAttack();
+                }
+                else if (controllerInput.GetRightBumper() && controllerInput.GetRightActionButtonDown())
+                {
+                    attackManager.Ultimate();
                 }
 
                 attackManager.PerformComboAttackIfQueued();
             }
 
-            if (!recovering && !attacking)
+            if (!recovering && !attacking && !knockedDown)
             {
                 Vector3 velocity = new Vector3(0f, rb.velocity.y);
                 if (isJumping)
@@ -165,28 +178,10 @@ public class FighterController : MonoBehaviour
                 {
                     if (!crouching && !isJumping)   //Standing
                     {
-                        if (controllerInput.GetBottomActionButtonDown())
-                        {
-                            attacking = true;
-                            anim.Play("Kick");
-                        }
-                        else if (controllerInput.GetTopActionButtonDown())
-                        {
-                            attacking = true;
-                            anim.Play("Shoot");
-                        }
-                        else if (controllerInput.GetLeftBumperDown())
+                        if (controllerInput.GetLeftBumperDown())
                         {
                             attacking = true;
                             anim.Play("Taunt");
-                        }
-                        else if (special == 50 && controllerInput.GetRightBumper() && controllerInput.GetRightActionButtonDown())
-                        {
-                            //Ultimate move here
-                        }
-                        else if (controllerInput.GetRightActionButtonDown())
-                        {
-                            //Special move here
                         }
                         else if (controllerInput.GetYAxisUp())
                         {
@@ -239,6 +234,16 @@ public class FighterController : MonoBehaviour
             {
                 rb.velocity = attackingVelocity;
             } 
+            else if (!recovering && knockedDown)
+            {
+                if (controllerInput.GetYAxisUp() ||
+                    !isPlayerOne)   //Remove this or statement, for debugging only
+                {
+                    knockedDown = false;
+                    recovering = true;
+                    anim.Play("Get Up");
+                }
+            }
 
             if (inHitFrame)
             {
@@ -302,6 +307,8 @@ public class FighterController : MonoBehaviour
         crouching = false;
         blocking = false;
         changingStance = false;
+        knockedDown = false;
+        invincible = false;
     }
 
     public void TakeDamage(int damage, AttackType attackType)
@@ -318,17 +325,26 @@ public class FighterController : MonoBehaviour
         hp -= damage;
         if (hp > 0)
         {
-            if (attackType == AttackType.Flinch)
+            if (knockedDown)
             {
-                anim.Play("Flinch");
+                //anim.Play("Flop");
             }
-            else if (attackType == AttackType.KnockBack)
+            else
             {
-                anim.Play("Knock Back");
-            }
-            else if (attackType == AttackType.KnockUp)
-            {
-                //anim.Play("Flinch");
+                if (attackType == AttackType.Flinch)
+                {
+                    anim.Play("Flinch");
+                }
+                else if (attackType == AttackType.KnockBack)
+                {
+                    invincible = true;
+                    knockedDown = true;
+                    anim.Play("Knock Back");
+                }
+                else if (attackType == AttackType.KnockUp)
+                {
+                    //anim.Play("Flinch");
+                }
             }
             ChargeSpecial(damage / 3);
         }
@@ -354,6 +370,11 @@ public class FighterController : MonoBehaviour
     public void SetAttackType(AttackType attackType)
     {
         currentAttackType = attackType;
+    }
+
+    private void DisableInvincibility()
+    {
+        invincible = false;
     }
 
     public void EndHitFrame()
@@ -488,8 +509,8 @@ public class FighterController : MonoBehaviour
 
     public bool SuccessfullyBlocked(bool isJumping, bool crouching)
     {
-        bool successfullyBlocked = blocking &&
-            crouching == this.crouching;
+        bool successfullyBlocked = invincible || 
+        (blocking && crouching == this.crouching);
         if (!successfullyBlocked)
         {
             sparkParticles.Play();

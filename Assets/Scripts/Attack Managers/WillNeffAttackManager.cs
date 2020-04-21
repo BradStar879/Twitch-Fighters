@@ -7,13 +7,17 @@ public class WillNeffAttackManager : AttackManager
     private WillNeffComboStateDefault defaultState;
     private WillNeffComboStateP pState;
     private WillNeffComboStatePP ppState;
+    private WillNeffComboStateK kState;
+    private WillNeffComboStateKK kkState;
 
     public override void Init()
     {
         base.Init();
         ppState = new WillNeffComboStatePP(this);
         pState = new WillNeffComboStateP(this, ppState);
-        defaultState = new WillNeffComboStateDefault(this, pState);
+        kkState = new WillNeffComboStateKK(this);
+        kState = new WillNeffComboStateK(this, kkState);
+        defaultState = new WillNeffComboStateDefault(this, pState, kState);
         ResetCombo();
     }
 
@@ -26,10 +30,13 @@ public class WillNeffAttackManager : AttackManager
 public class WillNeffComboStateDefault : ComboState
 {
     private WillNeffComboStateP pState;
+    private WillNeffComboStateK kState;
 
-    public WillNeffComboStateDefault(AttackManager attackManager, WillNeffComboStateP pState) : base(attackManager)
+    public WillNeffComboStateDefault(AttackManager attackManager, WillNeffComboStateP pState, 
+        WillNeffComboStateK kState) : base(attackManager)
     {
         this.pState = pState;
+        this.kState = kState;
     }
 
     public override ComboState Punch()
@@ -40,12 +47,14 @@ public class WillNeffComboStateDefault : ComboState
 
     public override ComboState Kick()
     {
-        return this;
+        attackManager.QueueUpAttack("Kick", 7, AttackType.Flinch);
+        return kState;
     }
 
     public override ComboState RangedAttack()
     {
-        return this;
+        attackManager.QueueUpAttack("Shoot", 0, AttackType.Flinch);  //Possibly change logic for unique ranged attacks
+        return endComboState;
     }
 
     public override ComboState SpecialAttack()
@@ -103,6 +112,63 @@ public class WillNeffComboStatePP : ComboState
 
     public override ComboState Kick()
     {
+        return endComboState;
+    }
+
+    public override ComboState RangedAttack()
+    {
+        return endComboState;
+    }
+
+    public override ComboState SpecialAttack()
+    {
+        return endComboState;
+    }
+}
+
+public class WillNeffComboStateK : ComboState
+{
+    private WillNeffComboStateKK kkState;
+
+    public WillNeffComboStateK(AttackManager attackManager, WillNeffComboStateKK kkState) : base(attackManager)
+    {
+        this.kkState = kkState;
+    }
+
+    public override ComboState Punch()
+    {
+        return endComboState;
+    }
+
+    public override ComboState Kick()
+    {
+        attackManager.QueueUpAttack("Kick", 7, AttackType.Flinch);
+        return kkState;
+    }
+
+    public override ComboState RangedAttack()
+    {
+        return endComboState;
+    }
+
+    public override ComboState SpecialAttack()
+    {
+        return endComboState;
+    }
+}
+
+public class WillNeffComboStateKK : ComboState
+{
+    public WillNeffComboStateKK(AttackManager attackManager) : base(attackManager) { }
+
+    public override ComboState Punch()
+    {
+        return endComboState;
+    }
+
+    public override ComboState Kick()
+    {
+        attackManager.QueueUpAttack("Kick", 7, AttackType.KnockBack);
         return endComboState;
     }
 

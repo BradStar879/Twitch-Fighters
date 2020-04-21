@@ -85,7 +85,10 @@ public abstract class AttackManager : MonoBehaviour
 
     public void Ultimate()
     {
-
+        if (readyForAttackInput && fighterController.HasEnoughSpecial(50))  //Might need to change if special max changes
+        {
+            //Perform ultimate setup here
+        }
     }
 
     public void PerformComboAttackIfQueued()
@@ -126,8 +129,6 @@ public abstract class AttackManager : MonoBehaviour
 
     public bool HasEnoughSpecial(int specialToUse)
     {
-        print("a");
-        print(fighterController.HasEnoughSpecial(specialToUse));
         return fighterController.HasEnoughSpecial(specialToUse);
     }
 
