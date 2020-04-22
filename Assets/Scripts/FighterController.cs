@@ -21,6 +21,8 @@ public class FighterController : MonoBehaviour
     private int special; //Max is 50
     private FighterUI fighterUI;
     private bool isJumping;
+    [SerializeField] Collider leftShinCollider;
+    [SerializeField] Collider leftFootCollider;
     [SerializeField] Collider rightShinCollider;
     [SerializeField] Collider rightFootCollider;
     [SerializeField] Collider rightHandCollider;
@@ -35,6 +37,7 @@ public class FighterController : MonoBehaviour
     private bool blocking;
     private bool changingStance;    //Set to true when starting crouch or block to prevent jumping
     private bool inHitFrame;
+    private bool knockedUp;
     private bool knockedDown;
     private bool invincible;
     private Vector3 attackingVelocity;
@@ -241,6 +244,7 @@ public class FighterController : MonoBehaviour
                 {
                     knockedDown = false;
                     recovering = true;
+                    invincible = true;
                     anim.Play("Get Up");
                 }
             }
@@ -307,6 +311,7 @@ public class FighterController : MonoBehaviour
         crouching = false;
         blocking = false;
         changingStance = false;
+        knockedUp = false;
         knockedDown = false;
         invincible = false;
     }
@@ -325,9 +330,15 @@ public class FighterController : MonoBehaviour
         hp -= damage;
         if (hp > 0)
         {
-            if (knockedDown)
+            if (knockedUp)
             {
-                //anim.Play("Flop");
+                rb.velocity = new Vector3(rb.velocity.x, 5f, rb.velocity.z);
+                anim.Play("Juggle");
+            }
+            else if (knockedDown)
+            {
+                anim.Play("Flop");
+                invincible = true;
             }
             else
             {
@@ -339,11 +350,28 @@ public class FighterController : MonoBehaviour
                 {
                     invincible = true;
                     knockedDown = true;
+                    float velX = -2f;
+                    if (!isPlayerOne)
+                    {
+                        velX = 2f;
+                    }
+                    rb.velocity = new Vector3(velX, 2f, rb.velocity.z);
                     anim.Play("Knock Back");
+
                 }
                 else if (attackType == AttackType.KnockUp)
                 {
-                    //anim.Play("Flinch");
+                    float velX = -.2f;
+                    if (!isPlayerOne)
+                    {
+                        velX = .2f;
+                    }
+                    rb.velocity = new Vector3(velX, 5f, rb.velocity.z);
+                    leftShinCollider.isTrigger = false;
+                    leftFootCollider.isTrigger = false;
+                    rightShinCollider.isTrigger = false;
+                    rightFootCollider.isTrigger = false;
+                    anim.Play("Knock Up");
                 }
             }
             ChargeSpecial(damage / 3);
@@ -355,6 +383,11 @@ public class FighterController : MonoBehaviour
             gameManager.EndRound(!isPlayerOne);
         } 
         fighterUI.UpdateHp(hp);
+    }
+
+    public void KnockUp()
+    {
+        knockedUp = true;
     }
 
     public void Recover()
@@ -501,16 +534,26 @@ public class FighterController : MonoBehaviour
 
     private void AttackEnemy()
     {
-        if (!otherFighterController.SuccessfullyBlocked(isJumping, crouching))
+        if (!otherFighterController.SuccessfullyBlocked(crouching))
         {
             gameManager.DealDamageToFighter(currentAttackDamage, currentAttackType, !isPlayerOne);
         }
     }
 
-    public bool SuccessfullyBlocked(bool isJumping, bool crouching)
+    public bool SuccessfullyBlocked(bool crouching)
     {
         bool successfullyBlocked = invincible || 
         (blocking && crouching == this.crouching);
+        if (!successfullyBlocked)
+        {
+            sparkParticles.Play();
+        }
+        return successfullyBlocked;
+    }
+
+    public bool SuccessfullyBlockedProjectile()
+    {
+        bool successfullyBlocked = invincible || blocking;
         if (!successfullyBlocked)
         {
             sparkParticles.Play();
@@ -577,6 +620,17 @@ public class FighterController : MonoBehaviour
         if (collision.transform.tag == "Floor")
         {
             isJumping = false;
+            if (knockedUp)
+            {
+                leftShinCollider.isTrigger = false;
+                leftFootCollider.isTrigger = false;
+                rightShinCollider.isTrigger = false;
+                rightFootCollider.isTrigger = false;
+                knockedUp = false;
+                knockedDown = true;
+                invincible = true;
+                anim.Play("Flop");
+            }
         }
         
     }

@@ -106,7 +106,7 @@ public class WillNeffComboStatePP : ComboState
 
     public override ComboState Punch()
     {
-        attackManager.QueueUpAttack("Punch", 10, AttackType.KnockBack);
+        attackManager.QueueUpAttack("Punch", 10, AttackType.KnockUp);
         return endComboState;
     }
 

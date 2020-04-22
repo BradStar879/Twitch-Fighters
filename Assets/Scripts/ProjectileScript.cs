@@ -41,7 +41,10 @@ public class ProjectileScript : MonoBehaviour
         FighterController fighterController = other.transform.root.GetComponent<FighterController>();
         if (!dealtDamage && fighterController != null) //Hit fighter 
         {
-            gameManager.DealDamageToFighter(damage, AttackType.Flinch, fighterController.IsPlayerOne());
+            if (!fighterController.SuccessfullyBlockedProjectile())
+            {
+                gameManager.DealDamageToFighter(damage, AttackType.Flinch, fighterController.IsPlayerOne());
+            }
             dealtDamage = true;
         }
         Destroy(gameObject);

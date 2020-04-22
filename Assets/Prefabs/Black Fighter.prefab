@@ -1212,6 +1212,8 @@ MonoBehaviour:
   moveSpeed: 1
   projectile: {fileID: 8457953900539127899, guid: 275c7a36e178a5d4f929bcec2ea63c0f,
     type: 3}
+  leftShinCollider: {fileID: 1079174889796700740}
+  leftFootCollider: {fileID: 1079174889002466535}
   rightShinCollider: {fileID: 1079174889066658798}
   rightFootCollider: {fileID: 1079174889470442126}
   rightHandCollider: {fileID: 1079174890529349159}
