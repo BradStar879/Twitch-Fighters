@@ -87,7 +87,8 @@ public abstract class AttackManager : MonoBehaviour
     {
         if (readyForAttackInput && fighterController.HasEnoughSpecial(50))  //Might need to change if special max changes
         {
-            //Perform ultimate setup here
+            fighterController.StartUltimateAttack();
+            anim.Play("Ultimate Setup");
         }
     }
 

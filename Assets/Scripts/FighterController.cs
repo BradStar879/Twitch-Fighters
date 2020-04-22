@@ -31,6 +31,7 @@ public class FighterController : MonoBehaviour
     private Animator anim;
     private bool collidingWithEnemy;
     private bool attacking;
+    private bool ultimateAttacking;
     private bool attackMoving;
     private bool recovering;
     private bool crouching;
@@ -114,7 +115,7 @@ public class FighterController : MonoBehaviour
                 {
                     attackManager.RangedAttack();
                 }
-                else if (controllerInput.GetRightActionButtonDown())
+                else if (!controllerInput.GetRightBumper() && controllerInput.GetRightActionButtonDown())
                 {
                     attackManager.SpecialAttack();
                 }
@@ -307,6 +308,7 @@ public class FighterController : MonoBehaviour
         collidingWithEnemy = false;
         inHitFrame = false;
         attacking = false;
+        ultimateAttacking = false;
         recovering = false;
         crouching = false;
         blocking = false;
@@ -419,7 +421,14 @@ public class FighterController : MonoBehaviour
     {
         if (collidingWithEnemy)
         {
-            AttackEnemy();
+            if (!ultimateAttacking)
+            {
+                AttackEnemy();
+            }
+            else
+            {
+                SpecialAttackEnemy();
+            }
             inHitFrame = false;
         }
     }
@@ -502,6 +511,13 @@ public class FighterController : MonoBehaviour
         fighterUI.UpdateSpecial(special);
     }
 
+    public void StartUltimateAttack()
+    {
+        ConsumeSpecial(50);
+        attacking = true;
+        ultimateAttacking = true;
+    }
+
     public void StartAttack()
     {
         attacking = true;
@@ -510,6 +526,7 @@ public class FighterController : MonoBehaviour
     public void EndAttack()
     {
         attacking = false;
+        ultimateAttacking = false;
         attackManager.ResetCombo();
         rightShinCollider.isTrigger = false;
         rightFootCollider.isTrigger = false;
@@ -537,6 +554,15 @@ public class FighterController : MonoBehaviour
         if (!otherFighterController.SuccessfullyBlocked(crouching))
         {
             gameManager.DealDamageToFighter(currentAttackDamage, currentAttackType, !isPlayerOne);
+        }
+    }
+
+    private void SpecialAttackEnemy()
+    {
+        if (!otherFighterController.SuccessfullyBlocked(crouching))
+        {
+            gameManager.DealDamageToFighter(50, AttackType.KnockBack, !isPlayerOne);
+            //attackManager.PerformUltimateAttack(!isPlayerOne);
         }
     }
 

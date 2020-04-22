@@ -1525,7 +1525,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0.05078125, y: 0.015625, z: 0.013671875, w: -0.015625}
+  m_BoundingSphereOverride: {x: 0, y: 1, z: 7e-45, w: 0}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -7389,12 +7389,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1029116919}
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -0.258, y: 0.556, z: -3.094}
+  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0.63600004, y: -0.04400003, z: -0.204}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_Father: {fileID: 2041373270}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!1 &1047864179
 GameObject:
@@ -10705,6 +10705,12 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2036804704}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &2041373270 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5055013763675836743, guid: 073fe50eb713e6d45883303d8e3afa16,
+    type: 3}
+  m_PrefabInstance: {fileID: 1384362098}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2056775142
 GameObject:
   m_ObjectHideFlags: 0
