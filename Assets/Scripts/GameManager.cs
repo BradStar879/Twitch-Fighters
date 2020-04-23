@@ -331,6 +331,11 @@ public class GameManager : MonoBehaviour
         return true;
     }
 
+    public bool AbleToMoveForward()
+    {
+        return fighterOne.GetRightmostPosition() < fighterTwo.GetLeftmostPosition();
+    }
+
     public void PauseGame(bool isPlayerOne)
     {
         gameActive = false;

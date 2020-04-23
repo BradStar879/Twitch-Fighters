@@ -232,6 +232,13 @@ public class FighterController : MonoBehaviour
 
                 }
 
+                if (!gameManager.AbleToMoveForward() && 
+                    ((isPlayerOne && velocity.x > 0f) ||
+                    (!isPlayerOne && velocity.x < 0f)))
+                {
+                    velocity.x = 0f;
+
+                }
                 rb.velocity = velocity;
             }
             else if (attackMoving)
@@ -629,6 +636,36 @@ public class FighterController : MonoBehaviour
     private void ChangeStance()
     {
         changingStance = true;
+    }
+
+    public float GetRightmostPosition()
+    {
+        float rightmostPosition = -1000f;
+        foreach (Collider collider in GetComponentsInChildren<Collider>())  //May need to change when actual models are put in
+        {
+            float rightmostCollider = collider.transform.position.x + .05f;
+            if (rightmostCollider > rightmostPosition)
+            {
+                rightmostPosition = rightmostCollider;
+            }
+        }
+
+        return rightmostPosition;
+    }
+
+    public float GetLeftmostPosition()
+    {
+        float leftmostPosition = 1000f;
+        foreach (Collider collider in GetComponentsInChildren<Collider>())   //May need to change when actual models are put in
+        {
+            float leftmostCollider = collider.transform.position.x - .05f;
+            if (leftmostCollider < leftmostPosition)
+            {
+                leftmostPosition = leftmostCollider;
+            }
+        }
+
+        return leftmostPosition;
     }
 
     public string GetRandomIntroQuote()
