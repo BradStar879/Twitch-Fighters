@@ -54,6 +54,11 @@ public class ZoomInCamera : MonoBehaviour
         gameManager.SetVictoryQuote(false);
     }
 
+    public void PlayAnimation(string animationName)
+    {
+        anim.Play(animationName);
+    }
+
     private void DisplayRematchMenu()
     {
         gameManager.DisplayRematchMenu();

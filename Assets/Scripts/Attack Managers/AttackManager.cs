@@ -6,6 +6,7 @@ public abstract class AttackManager : MonoBehaviour
 {
     protected Animator anim;
     private FighterController fighterController;
+    private GameManager gameManager;
     private ComboState currentCombo;
     private EndComboState endComboState;
     protected bool readyForAttackInput;
@@ -15,11 +16,13 @@ public abstract class AttackManager : MonoBehaviour
     private int queuedAttackDamage;
     private AttackType queuedAttackType;
     private int queuedAttackSpecial;
+    protected string cameraUltimateAnimation;
 
     public virtual void Init()
     {
         anim = GetComponent<Animator>();
         fighterController = GetComponent<FighterController>();
+        gameManager = GameObject.FindGameObjectWithTag("Game Manager").GetComponent<GameManager>();
     }
 
     public void ResetCombo()
@@ -89,6 +92,19 @@ public abstract class AttackManager : MonoBehaviour
         {
             fighterController.StartUltimateAttack();
             anim.Play("Ultimate Setup");
+        }
+    }
+
+    public void PerformUltimateAttack(bool isPlayerOne)
+    {
+        anim.Play("Ultimate Attack");
+        if (isPlayerOne)
+        {
+            gameManager.PlayZoomInCameraAnimation(cameraUltimateAnimation + " 1");
+        }
+        else
+        {
+            gameManager.PlayZoomInCameraAnimation(cameraUltimateAnimation + " 2");
         }
     }
 

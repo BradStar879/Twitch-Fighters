@@ -20,26 +20,22 @@ public class FighterController : MonoBehaviour
     private int hp; //Max is 100
     private int special; //Max is 50
     private FighterUI fighterUI;
-    private bool isJumping;
+    private Stance stance;
+    private Action action;
     [SerializeField] Collider leftShinCollider;
     [SerializeField] Collider leftFootCollider;
+    [SerializeField] Collider leftThighCollider;
     [SerializeField] Collider rightShinCollider;
     [SerializeField] Collider rightFootCollider;
+    [SerializeField] Collider rightThighCollider;
     [SerializeField] Collider rightHandCollider;
     [SerializeField] Collider rightForearmCollider;
     [SerializeField] ParticleSystem sparkParticles;
     private Animator anim;
     private bool collidingWithEnemy;
-    private bool attacking;
     private bool ultimateAttacking;
     private bool attackMoving;
-    private bool recovering;
-    private bool crouching;
-    private bool blocking;
-    private bool changingStance;    //Set to true when starting crouch or block to prevent jumping
     private bool inHitFrame;
-    private bool knockedUp;
-    private bool knockedDown;
     private bool invincible;
     private Vector3 attackingVelocity;
     private int currentAttackDamage;
@@ -91,17 +87,13 @@ public class FighterController : MonoBehaviour
                 paused = true;
                 gameManager.PauseGame(isPlayerOne);
             }
-            if (isPlayerOne && Input.GetKeyDown(KeyCode.B))  //For debugging purposes
+
+            if (isPlayerOne)
             {
-                print("attacking: " + attacking);
-                print("recovering: " + recovering);
-                print("crouching: " + crouching);
-                print("blocking: " + blocking);
-                print("jumping: " + isJumping);
-                print("z: " + Input.GetKey(KeyCode.Z));
+                print("Stance: " + stance + "  Action: " + action);
             }
 
-            if (!recovering && !blocking && !changingStance && !knockedDown)
+            if (stance == Stance.Standing && (action == Action.Neutral || action == Action.Attacking))
             {
                 if (controllerInput.GetLeftActionButtonDown())
                 {
@@ -127,15 +119,14 @@ public class FighterController : MonoBehaviour
                 attackManager.PerformComboAttackIfQueued();
             }
 
-            if (!recovering && !attacking && !knockedDown)
+            if (action != Action.Recovering && action != Action.Attacking && stance != Stance.KnockedDown)  //Def change this <--------
             {
                 Vector3 velocity = new Vector3(0f, rb.velocity.y);
-                if (isJumping)
+                if (stance == Stance.Jumping)
                 {
                     velocity.x = rb.velocity.x;
                 }
-
-                if (!isJumping) //Blocking, moving, and crouching inputs
+                else if (stance == Stance.Standing || stance == Stance.Crouching) //Blocking, moving, and crouching inputs
                 {
                     if (controllerInput.GetXAxisLeft()) //Movement
                     {
@@ -146,7 +137,7 @@ public class FighterController : MonoBehaviour
                         velocity.x += moveSpeed;
                     }
 
-                    if (blocking)
+                    if (action == Action.Blocking)
                     {
                         if (!(controllerInput.GetLeftTrigger() || controllerInput.GetRightTrigger()))
                         {
@@ -161,7 +152,7 @@ public class FighterController : MonoBehaviour
                         }
                     }
 
-                    if (crouching)
+                    if (stance == Stance.Crouching)
                     {
                         if (!controllerInput.GetYAxisDown())
                         {
@@ -178,54 +169,54 @@ public class FighterController : MonoBehaviour
 
                 }
 
-                if (!blocking && !changingStance)  
+                if (action == Action.Neutral)  
                 {
-                    if (!crouching && !isJumping)   //Standing
+                    if (stance == Stance.Standing)   //Standing
                     {
                         if (controllerInput.GetLeftBumperDown())
                         {
-                            attacking = true;
+                            action = Action.Attacking;
                             anim.Play("Taunt");
                         }
                         else if (controllerInput.GetYAxisUp())
                         {
-                            isJumping = true;
+                            action = Action.Attacking;
                             velocity.y = 3f;
                         }
                     }
-                    else if (crouching)
+                    else if (stance == Stance.Crouching)
                     {
                         if (controllerInput.GetRightActionButtonDown())
                         {
-                            attacking = true;
+                            action = Action.Attacking;
                             anim.Play("Crouch Kick");
                         }
                         else if (controllerInput.GetBottomActionButtonDown())
                         {
-                            attacking = true;
+                            action = Action.Attacking;
                             anim.Play("Crouch Punch");
                         }
                         else if (controllerInput.GetLeftActionButtonDown())
                         {
-                            attacking = true;
+                            action = Action.Attacking;
                             anim.Play("Crouch Shoot");
                         }
                     }
-                    else if (isJumping)
+                    else if (stance == Stance.Jumping)
                     {
                         if (controllerInput.GetRightActionButtonDown())
                         {
-                            attacking = true;
+                            action = Action.Attacking;
                             anim.Play("Jump Kick");
                         }
                         else if (controllerInput.GetBottomActionButtonDown())
                         {
-                            attacking = true;
+                            action = Action.Attacking;
                             anim.Play("Jump Punch");
                         }
                         else if (controllerInput.GetLeftActionButtonDown())
                         {
-                            attacking = true;
+                            action = Action.Attacking;
                             anim.Play("Jump Shoot");
                         }
                     }
@@ -245,13 +236,13 @@ public class FighterController : MonoBehaviour
             {
                 rb.velocity = attackingVelocity;
             } 
-            else if (!recovering && knockedDown)
+            else if (stance == Stance.KnockedDown && action != Action.Recovering)
             {
                 if (controllerInput.GetYAxisUp() ||
                     !isPlayerOne)   //Remove this or statement, for debugging only
                 {
-                    knockedDown = false;
-                    recovering = true;
+                    stance = Stance.Standing;
+                    action = Action.Recovering;
                     invincible = true;
                     anim.Play("Get Up");
                 }
@@ -311,40 +302,35 @@ public class FighterController : MonoBehaviour
         special = 0;
         fighterUI.UpdateHp(hp);
         fighterUI.UpdateSpecial(special);
-        isJumping = false;
+        stance = Stance.Standing;
+        action = Action.Neutral;
         collidingWithEnemy = false;
         inHitFrame = false;
-        attacking = false;
         ultimateAttacking = false;
-        recovering = false;
-        crouching = false;
-        blocking = false;
-        changingStance = false;
-        knockedUp = false;
-        knockedDown = false;
         invincible = false;
-    }
+        TurnLegCollidersIntoColliders();
+        rightHandCollider.isTrigger = false;
+        rightForearmCollider.isTrigger = false;
+
+}
 
     public void TakeDamage(int damage, AttackType attackType)
     {
         EndAttack();
-        recovering = true;
+        action = Action.Recovering;
         inHitFrame = false;
-        crouching = false;
-        blocking = false;
-        changingStance = false;
         attackMoving = false;
         anim.Rebind();  //Stops playback on all layers
 
         hp -= damage;
         if (hp > 0)
         {
-            if (knockedUp)
+            if (stance == Stance.KnockedUp)
             {
-                rb.velocity = new Vector3(rb.velocity.x, 5f, rb.velocity.z);
+                rb.velocity = new Vector3(rb.velocity.x, 3f, rb.velocity.z);
                 anim.Play("Juggle");
             }
-            else if (knockedDown)
+            else if (stance == Stance.KnockedDown)
             {
                 anim.Play("Flop");
                 invincible = true;
@@ -358,7 +344,7 @@ public class FighterController : MonoBehaviour
                 else if (attackType == AttackType.KnockBack)
                 {
                     invincible = true;
-                    knockedDown = true;
+                    stance = Stance.KnockedDown;
                     float velX = -2f;
                     if (!isPlayerOne)
                     {
@@ -370,16 +356,14 @@ public class FighterController : MonoBehaviour
                 }
                 else if (attackType == AttackType.KnockUp)
                 {
-                    float velX = -.2f;
+                    float velX = -.4f;
                     if (!isPlayerOne)
                     {
-                        velX = .2f;
+                        velX = .4f;
                     }
-                    rb.velocity = new Vector3(velX, 5f, rb.velocity.z);
-                    leftShinCollider.isTrigger = false;
-                    leftFootCollider.isTrigger = false;
-                    rightShinCollider.isTrigger = false;
-                    rightFootCollider.isTrigger = false;
+                    rb.velocity = new Vector3(velX, 3.5f, rb.velocity.z);
+                    stance = Stance.KnockedDown;
+                    TurnLegCollidersIntoTriggers();
                     anim.Play("Knock Up");
                 }
             }
@@ -394,14 +378,9 @@ public class FighterController : MonoBehaviour
         fighterUI.UpdateHp(hp);
     }
 
-    public void KnockUp()
-    {
-        knockedUp = true;
-    }
-
     public void Recover()
     {
-        recovering = false;
+        action = Action.Recovering;
     }
 
     public void SetAttackDamage(int attackDamage)
@@ -434,7 +413,7 @@ public class FighterController : MonoBehaviour
             }
             else
             {
-                SpecialAttackEnemy();
+                UltimateAttackEnemy();
             }
             inHitFrame = false;
         }
@@ -505,7 +484,7 @@ public class FighterController : MonoBehaviour
     private void ChargeSpecialFromTaunt()
     {
         ChargeSpecial(10);
-        attacking = false;
+        action = Action.Neutral;
     }
 
     public void ChargeSpecial(int amount)
@@ -521,18 +500,18 @@ public class FighterController : MonoBehaviour
     public void StartUltimateAttack()
     {
         ConsumeSpecial(50);
-        attacking = true;
+        action = Action.Attacking;
         ultimateAttacking = true;
     }
 
     public void StartAttack()
     {
-        attacking = true;
+        action = Action.Attacking;
     } 
 
     public void EndAttack()
     {
-        attacking = false;
+        action = Action.Neutral;
         ultimateAttacking = false;
         attackManager.ResetCombo();
         rightShinCollider.isTrigger = false;
@@ -558,25 +537,27 @@ public class FighterController : MonoBehaviour
 
     private void AttackEnemy()
     {
-        if (!otherFighterController.SuccessfullyBlocked(crouching))
+        if (!otherFighterController.SuccessfullyBlocked(stance))
         {
             gameManager.DealDamageToFighter(currentAttackDamage, currentAttackType, !isPlayerOne);
         }
     }
 
-    private void SpecialAttackEnemy()
+    private void UltimateAttackEnemy()
     {
-        if (!otherFighterController.SuccessfullyBlocked(crouching))
+        if (!otherFighterController.SuccessfullyBlocked(stance))
         {
             gameManager.DealDamageToFighter(50, AttackType.KnockBack, !isPlayerOne);
-            //attackManager.PerformUltimateAttack(!isPlayerOne);
+            //attackManager.PerformUltimateAttack(isPlayerOne);
         }
     }
 
-    public bool SuccessfullyBlocked(bool crouching)
+    public bool SuccessfullyBlocked(Stance attackerStance)
     {
+        bool attackerIsCrouching = attackerStance == Stance.Crouching;
+        bool isCrouching = stance == Stance.Crouching;
         bool successfullyBlocked = invincible || 
-        (blocking && crouching == this.crouching);
+        (action == Action.Blocking && (isCrouching == attackerIsCrouching));
         if (!successfullyBlocked)
         {
             sparkParticles.Play();
@@ -586,7 +567,7 @@ public class FighterController : MonoBehaviour
 
     public bool SuccessfullyBlockedProjectile()
     {
-        bool successfullyBlocked = invincible || blocking;
+        bool successfullyBlocked = invincible || action == Action.Blocking;
         if (!successfullyBlocked)
         {
             sparkParticles.Play();
@@ -596,24 +577,24 @@ public class FighterController : MonoBehaviour
 
     private void Crouch()
     {
-        crouching = true;
-        changingStance = false;
+        stance = Stance.Crouching;
+        action = Action.Neutral;
     }
 
     private void Uncrouch()
     {
-        crouching = false;
+        stance = Stance.Standing;
+        action = Action.Neutral;
     }
 
     private void Block()
     {
-        blocking = true;
-        changingStance = false;
+        action = Action.Blocking;
     }
 
     private void Unblock()
     {
-        blocking = false;
+        action = Action.Neutral;
     }
 
     private void AttackMoveForward()
@@ -635,7 +616,7 @@ public class FighterController : MonoBehaviour
 
     private void ChangeStance()
     {
-        changingStance = true;
+        action = Action.ChangingStance;
     }
 
     public float GetRightmostPosition()
@@ -668,6 +649,26 @@ public class FighterController : MonoBehaviour
         return leftmostPosition;
     }
 
+    private void TurnLegCollidersIntoTriggers()
+    {
+        leftShinCollider.isTrigger = true;
+        leftFootCollider.isTrigger = true;
+        leftThighCollider.isTrigger = true;
+        rightShinCollider.isTrigger = true;
+        rightFootCollider.isTrigger = true;
+        rightThighCollider.isTrigger = true;
+}
+
+    private void TurnLegCollidersIntoColliders()
+    {
+        leftShinCollider.isTrigger = false;
+        leftFootCollider.isTrigger = false;
+        leftThighCollider.isTrigger = false;
+        rightShinCollider.isTrigger = false;
+        rightFootCollider.isTrigger = false;
+        rightThighCollider.isTrigger = false;
+    }
+
     public string GetRandomIntroQuote()
     {
         return introQuotes[Random.Range(0, introQuotes.Length)];
@@ -682,17 +683,16 @@ public class FighterController : MonoBehaviour
     {
         if (collision.transform.tag == "Floor")
         {
-            isJumping = false;
-            if (knockedUp)
+            if (stance == Stance.KnockedUp)
             {
-                leftShinCollider.isTrigger = false;
-                leftFootCollider.isTrigger = false;
-                rightShinCollider.isTrigger = false;
-                rightFootCollider.isTrigger = false;
-                knockedUp = false;
-                knockedDown = true;
+                stance = Stance.KnockedDown;
                 invincible = true;
+                TurnLegCollidersIntoColliders();
                 anim.Play("Flop");
+            }
+            else
+            {
+                stance = Stance.Standing;
             }
         }
         
@@ -703,6 +703,20 @@ public class FighterController : MonoBehaviour
         if (other.transform.root.gameObject == otherFighter)
         {
             collidingWithEnemy = true;
+        }
+        else if (other.transform.tag == "Floor")
+        {
+            if (stance == Stance.KnockedUp)
+            {
+                stance = Stance.KnockedDown;
+                invincible = true;
+                TurnLegCollidersIntoColliders();
+                anim.Play("Flop");
+            }
+            else
+            {
+                stance = Stance.Standing;
+            }
         }
     }
 
@@ -721,4 +735,22 @@ public class FighterController : MonoBehaviour
             collidingWithEnemy = false;
         }
     }
+}
+
+public enum Stance
+{
+    Standing,
+    Crouching,
+    Jumping,
+    KnockedUp,
+    KnockedDown
+}
+
+public enum Action
+{
+    Neutral,
+    Attacking,
+    Blocking,
+    ChangingStance,
+    Recovering
 }

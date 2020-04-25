@@ -13,6 +13,7 @@ public class WillNeffAttackManager : AttackManager
     public override void Init()
     {
         base.Init();
+        cameraUltimateAnimation = "Will Neff Ultimate";
         ppState = new WillNeffComboStatePP(this);
         pState = new WillNeffComboStateP(this, ppState);
         kkState = new WillNeffComboStateKK(this);
@@ -80,7 +81,7 @@ public class WillNeffComboStateP : ComboState
     public override ComboState Punch()
     {
 
-        attackManager.QueueUpAttack("Lunge Punch", 5, AttackType.Flinch);
+        attackManager.QueueUpAttack("Lunge Punch", 1, AttackType.Flinch);
         return ppState;
     }
 
@@ -106,7 +107,7 @@ public class WillNeffComboStatePP : ComboState
 
     public override ComboState Punch()
     {
-        attackManager.QueueUpAttack("Punch", 10, AttackType.KnockUp);
+        attackManager.QueueUpAttack("Punch", 1, AttackType.KnockUp);
         return endComboState;
     }
 

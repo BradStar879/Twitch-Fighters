@@ -1214,8 +1214,10 @@ MonoBehaviour:
     type: 3}
   leftShinCollider: {fileID: 1079174889796700740}
   leftFootCollider: {fileID: 1079174889002466535}
+  leftThighCollider: {fileID: 1079174888984802054}
   rightShinCollider: {fileID: 1079174889066658798}
   rightFootCollider: {fileID: 1079174889470442126}
+  rightThighCollider: {fileID: 1079174890562303762}
   rightHandCollider: {fileID: 1079174890529349159}
   rightForearmCollider: {fileID: 1079174890386769754}
   sparkParticles: {fileID: 6677304261175262464}

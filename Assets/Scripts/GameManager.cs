@@ -336,6 +336,11 @@ public class GameManager : MonoBehaviour
         return fighterOne.GetRightmostPosition() < fighterTwo.GetLeftmostPosition();
     }
 
+    public void PlayZoomInCameraAnimation(string animationName)
+    {
+        zoomInCamera.PlayAnimation(animationName);
+    }
+
     public void PauseGame(bool isPlayerOne)
     {
         gameActive = false;
