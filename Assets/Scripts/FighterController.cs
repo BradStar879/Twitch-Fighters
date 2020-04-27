@@ -180,7 +180,7 @@ public class FighterController : MonoBehaviour
                         }
                         else if (controllerInput.GetYAxisUp())
                         {
-                            action = Action.Attacking;
+                            stance = Stance.Jumping;
                             velocity.y = 3f;
                         }
                     }
@@ -362,7 +362,7 @@ public class FighterController : MonoBehaviour
                         velX = .4f;
                     }
                     rb.velocity = new Vector3(velX, 3.5f, rb.velocity.z);
-                    stance = Stance.KnockedDown;
+                    stance = Stance.KnockedUp;
                     TurnLegCollidersIntoTriggers();
                     anim.Play("Knock Up");
                 }
@@ -380,7 +380,7 @@ public class FighterController : MonoBehaviour
 
     public void Recover()
     {
-        action = Action.Recovering;
+        action = Action.Neutral;
     }
 
     public void SetAttackDamage(int attackDamage)
@@ -683,14 +683,14 @@ public class FighterController : MonoBehaviour
     {
         if (collision.transform.tag == "Floor")
         {
-            if (stance == Stance.KnockedUp)
+            if (stance == Stance.KnockedUp || stance == Stance.KnockedDown)
             {
                 stance = Stance.KnockedDown;
                 invincible = true;
                 TurnLegCollidersIntoColliders();
                 anim.Play("Flop");
             }
-            else
+            else if (stance == Stance.Jumping)
             {
                 stance = Stance.Standing;
             }
@@ -706,14 +706,14 @@ public class FighterController : MonoBehaviour
         }
         else if (other.transform.tag == "Floor")
         {
-            if (stance == Stance.KnockedUp)
+            if (stance == Stance.KnockedUp || stance == Stance.KnockedDown)
             {
                 stance = Stance.KnockedDown;
                 invincible = true;
                 TurnLegCollidersIntoColliders();
                 anim.Play("Flop");
             }
-            else
+            else if (stance == Stance.Jumping)
             {
                 stance = Stance.Standing;
             }
