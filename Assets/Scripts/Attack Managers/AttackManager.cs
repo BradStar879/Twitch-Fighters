@@ -74,6 +74,54 @@ public abstract class AttackManager : MonoBehaviour
         }
     }
 
+    public void CrouchPunch()
+    {
+        if (readyForAttackInput && currentCombo == GetDefaultState())
+        {
+            currentCombo = ((DefaultComboState)currentCombo).CrouchPunch();
+        }
+    }
+
+    public void CrouchKick()
+    {
+        if (readyForAttackInput && currentCombo == GetDefaultState())
+        {
+            currentCombo = ((DefaultComboState)currentCombo).CrouchKick();
+        }
+    }
+
+    public void CrouchRangedAttack()
+    {
+        if (readyForAttackInput && currentCombo == GetDefaultState())
+        {
+            currentCombo = ((DefaultComboState)currentCombo).CrouchRangedAttack();
+        }
+    }
+
+    public void JumpPunch()
+    {
+        if (readyForAttackInput && currentCombo == GetDefaultState())
+        {
+            currentCombo = ((DefaultComboState)currentCombo).JumpPunch();
+        }
+    }
+
+    public void JumpKick()
+    {
+        if (readyForAttackInput && currentCombo == GetDefaultState())
+        {
+            currentCombo = ((DefaultComboState)currentCombo).JumpKick();
+        }
+    }
+
+    public void JumpRangedAttack()
+    {
+        if (readyForAttackInput && currentCombo == GetDefaultState())
+        {
+            currentCombo = ((DefaultComboState)currentCombo).JumpRangedAttack();
+        }
+    }
+
     public void SpecialAttack()
     {
         if (readyForAttackInput)
@@ -112,7 +160,10 @@ public abstract class AttackManager : MonoBehaviour
     {
         if (readyForAttackAnimation && queuedAttack)
         {
-            anim.Rebind();
+            if (!queuedAttackAnimation.Contains("Crouch") && !queuedAttackAnimation.Contains("Jump"))
+            {
+                anim.Rebind();
+            }
             anim.Play(queuedAttackAnimation);
             fighterController.SetAttackDamage(queuedAttackDamage);
             fighterController.SetAttackType(queuedAttackType);
@@ -172,6 +223,47 @@ public abstract class ComboState
     public abstract ComboState RangedAttack();
 
     public abstract ComboState SpecialAttack();
+}
+
+public abstract class DefaultComboState : ComboState
+{
+    public DefaultComboState(AttackManager attackManager) : base(attackManager) { }
+
+    public ComboState CrouchPunch()
+    {
+        attackManager.QueueUpAttack("Crouch Punch", 3, AttackType.Flinch);
+        return endComboState;
+    }
+
+    public ComboState CrouchKick()
+    {
+        attackManager.QueueUpAttack("Crouch Kick", 5, AttackType.KnockBack);
+        return endComboState;
+    }
+
+    public ComboState CrouchRangedAttack()
+    {
+        attackManager.QueueUpAttack("Crouch Shoot", 0, AttackType.Flinch);
+        return endComboState;
+    }
+
+    public ComboState JumpPunch()
+    {
+        attackManager.QueueUpAttack("Jump Punch", 3, AttackType.Flinch);
+        return endComboState;
+    }
+
+    public ComboState JumpKick()
+    {
+        attackManager.QueueUpAttack("Jump Kick", 5, AttackType.KnockBack);
+        return endComboState;
+    }
+
+    public ComboState JumpRangedAttack()
+    {
+        attackManager.QueueUpAttack("Jump Shoot", 0, AttackType.Flinch);
+        return endComboState;
+    }
 }
 
 public class EndComboState : ComboState

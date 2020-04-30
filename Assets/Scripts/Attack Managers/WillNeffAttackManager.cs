@@ -28,7 +28,7 @@ public class WillNeffAttackManager : AttackManager
     }
 }
 
-public class WillNeffComboStateDefault : ComboState
+public class WillNeffComboStateDefault : DefaultComboState
 {
     private WillNeffComboStateP pState;
     private WillNeffComboStateK kState;

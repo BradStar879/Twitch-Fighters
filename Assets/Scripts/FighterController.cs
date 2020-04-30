@@ -74,7 +74,6 @@ public class FighterController : MonoBehaviour
         startingPosition.Set(transform.position.x, transform.position.y, transform.position.z);
         startingRotation.Set(transform.rotation.x, transform.rotation.y, transform.rotation.z, transform.rotation.w);
         startingScale.Set(transform.localScale.x, transform.localScale.y, transform.localScale.z);
-        attackingVelocity = Vector3.zero;
     }
 
     // Update is called once per frame
@@ -93,27 +92,60 @@ public class FighterController : MonoBehaviour
                 print("Stance: " + stance + "  Action: " + action);
             }
 
-            if (stance == Stance.Standing && (action == Action.Neutral || action == Action.Attacking))
+            if (action == Action.Neutral || action == Action.Attacking) //Attacks managed here
             {
-                if (controllerInput.GetLeftActionButtonDown())
+                if (stance == Stance.Standing)
                 {
-                    attackManager.Punch();
+                    if (controllerInput.GetLeftActionButtonDown())
+                    {
+                        attackManager.Punch();
+                    }
+                    else if (controllerInput.GetBottomActionButtonDown())
+                    {
+                        attackManager.Kick();
+                    }
+                    else if (controllerInput.GetTopActionButtonDown())
+                    {
+                        attackManager.RangedAttack();
+                    }
+                    else if (!controllerInput.GetRightBumper() && controllerInput.GetRightActionButtonDown())
+                    {
+                        attackManager.SpecialAttack();
+                    }
+                    else if (controllerInput.GetRightBumper() && controllerInput.GetRightActionButtonDown())
+                    {
+                        attackManager.Ultimate();
+                    }
                 }
-                else if (controllerInput.GetBottomActionButtonDown())
+                else if (stance == Stance.Crouching)
                 {
-                    attackManager.Kick();
+                    if (controllerInput.GetLeftActionButtonDown())
+                    {
+                        attackManager.CrouchPunch();
+                    }
+                    else if (controllerInput.GetBottomActionButtonDown())
+                    {
+                        attackManager.CrouchKick();
+                    }
+                    else if (controllerInput.GetTopActionButtonDown())
+                    {
+                        attackManager.CrouchRangedAttack();
+                    }
                 }
-                else if (controllerInput.GetTopActionButtonDown())
+                else if (stance == Stance.Jumping)
                 {
-                    attackManager.RangedAttack();
-                }
-                else if (!controllerInput.GetRightBumper() && controllerInput.GetRightActionButtonDown())
-                {
-                    attackManager.SpecialAttack();
-                }
-                else if (controllerInput.GetRightBumper() && controllerInput.GetRightActionButtonDown())
-                {
-                    attackManager.Ultimate();
+                    if (controllerInput.GetLeftActionButtonDown())
+                    {
+                        attackManager.JumpPunch();
+                    }
+                    else if (controllerInput.GetBottomActionButtonDown())
+                    {
+                        attackManager.JumpKick();
+                    }
+                    else if (controllerInput.GetTopActionButtonDown())
+                    {
+                        attackManager.JumpRangedAttack();
+                    }
                 }
 
                 attackManager.PerformComboAttackIfQueued();
@@ -182,42 +214,6 @@ public class FighterController : MonoBehaviour
                         {
                             stance = Stance.Jumping;
                             velocity.y = 3f;
-                        }
-                    }
-                    else if (stance == Stance.Crouching)
-                    {
-                        if (controllerInput.GetRightActionButtonDown())
-                        {
-                            action = Action.Attacking;
-                            anim.Play("Crouch Kick");
-                        }
-                        else if (controllerInput.GetBottomActionButtonDown())
-                        {
-                            action = Action.Attacking;
-                            anim.Play("Crouch Punch");
-                        }
-                        else if (controllerInput.GetLeftActionButtonDown())
-                        {
-                            action = Action.Attacking;
-                            anim.Play("Crouch Shoot");
-                        }
-                    }
-                    else if (stance == Stance.Jumping)
-                    {
-                        if (controllerInput.GetRightActionButtonDown())
-                        {
-                            action = Action.Attacking;
-                            anim.Play("Jump Kick");
-                        }
-                        else if (controllerInput.GetBottomActionButtonDown())
-                        {
-                            action = Action.Attacking;
-                            anim.Play("Jump Punch");
-                        }
-                        else if (controllerInput.GetLeftActionButtonDown())
-                        {
-                            action = Action.Attacking;
-                            anim.Play("Jump Shoot");
                         }
                     }
 
@@ -300,6 +296,7 @@ public class FighterController : MonoBehaviour
         transform.localScale = startingScale;
         hp = 100;
         special = 0;
+        attackingVelocity = Vector3.zero;
         fighterUI.UpdateHp(hp);
         fighterUI.UpdateSpecial(special);
         stance = Stance.Standing;
