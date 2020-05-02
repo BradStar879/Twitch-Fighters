@@ -89,7 +89,7 @@ public class FighterController : MonoBehaviour
 
             if (isPlayerOne)
             {
-                print("Stance: " + stance + "  Action: " + action);
+                //print("Stance: " + stance + "  Action: " + action);
             }
 
             if (action == Action.Neutral || action == Action.Attacking) //Attacks managed here
@@ -184,26 +184,28 @@ public class FighterController : MonoBehaviour
                         }
                     }
 
-                    if (stance == Stance.Crouching)
+                    if (action != Action.Attacking)
                     {
-                        if (!controllerInput.GetYAxisDown())
+                        if (stance == Stance.Crouching)
                         {
-                            anim.Play("Uncrouch");
+                            if (!controllerInput.GetYAxisDown())
+                            {
+                                anim.Play("Uncrouch");
+                            }
+                        }
+                        else
+                        {
+                            if (controllerInput.GetYAxisDown())
+                            {
+                                anim.Play("Crouch");
+                            }
                         }
                     }
-                    else
-                    {
-                        if (controllerInput.GetYAxisDown())
-                        {
-                            anim.Play("Crouch");
-                        }
-                    }
-
                 }
 
                 if (action == Action.Neutral)  
                 {
-                    if (stance == Stance.Standing)   //Standing
+                    if (stance == Stance.Standing)
                     {
                         if (controllerInput.GetLeftBumperDown())
                         {
@@ -575,13 +577,11 @@ public class FighterController : MonoBehaviour
     private void Crouch()
     {
         stance = Stance.Crouching;
-        action = Action.Neutral;
     }
 
     private void Uncrouch()
     {
         stance = Stance.Standing;
-        action = Action.Neutral;
     }
 
     private void Block()
@@ -613,7 +613,12 @@ public class FighterController : MonoBehaviour
 
     private void ChangeStance()
     {
-        action = Action.ChangingStance;
+        stance = Stance.ChangingStance;
+    }
+
+    private void ChangeBlock()
+    {
+        action = Action.ChangingBlock;
     }
 
     public float GetRightmostPosition()
@@ -739,6 +744,7 @@ public enum Stance
     Standing,
     Crouching,
     Jumping,
+    ChangingStance,
     KnockedUp,
     KnockedDown
 }
@@ -748,6 +754,6 @@ public enum Action
     Neutral,
     Attacking,
     Blocking,
-    ChangingStance,
+    ChangingBlock,
     Recovering
 }

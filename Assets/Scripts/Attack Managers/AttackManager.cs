@@ -168,6 +168,7 @@ public abstract class AttackManager : MonoBehaviour
             fighterController.SetAttackDamage(queuedAttackDamage);
             fighterController.SetAttackType(queuedAttackType);
             fighterController.ConsumeSpecial(queuedAttackSpecial);
+            fighterController.StartAttack();
             readyForAttackAnimation = false;
             queuedAttack = false;
             queuedAttackAnimation = "";
