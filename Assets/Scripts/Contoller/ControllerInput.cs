@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ControllerInput
 {
-    private int playerNumber = 1;
+    private int playerNumber = 1;   //Player number starts at 1, not 0
     private InputState inputState;
     private bool usingController;
 

@@ -1,0 +1,7 @@
+﻿using System.Collections;using System.Collections.Generic;using UnityEngine;using UnityEngine.EventSystems;public class MainMenuScript : MonoBehaviour{    private GameObject mainMenu;    [SerializeField] GameObject playerSelectMenu;    [SerializeField] GameObject controlsMenu;
+
+    // Start is called before the first frame update
+    void Start()    {        mainMenu = gameObject;        if (GameData.GetSameSettings())
+        {
+            GoToPlayerSelect();
+        }    }    // Update is called once per frame    void Update()    {            }    public void GoToMainMenu()    {        mainMenu.SetActive(true);        playerSelectMenu.SetActive(false);        controlsMenu.SetActive(false);    }    public void GoToOnePlayerSelect()    {        GameData.SetPlayers(1);        GoToPlayerSelect();    }    public void GoToTwoPlayerSelect()    {        GameData.SetPlayers(2);        GoToPlayerSelect();    }    public void GoToControls()    {        mainMenu.SetActive(false);        controlsMenu.SetActive(true);    }    private void GoToPlayerSelect()    {        mainMenu.SetActive(false);        playerSelectMenu.SetActive(true);    }    public void Quit()    {        Application.Quit();    }}

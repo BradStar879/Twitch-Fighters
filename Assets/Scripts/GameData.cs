@@ -5,8 +5,8 @@ using UnityEngine;
 public class GameData
 {
     private static int players;
-    private static MainMenuScript.characters fighterOneCharacter;
-    private static MainMenuScript.characters fighterTwoCharacter;
+    private static characters fighterOneCharacter;
+    private static characters fighterTwoCharacter;
     private static bool sameSettings = false;   //True if starting fight with same settings but new fighters
 
     public static int GetPlayers()
@@ -19,22 +19,22 @@ public class GameData
         players = newPlayers;
     }
 
-    public static MainMenuScript.characters GetFighterOneCharacter()
+    public static characters GetFighterOneCharacter()
     {
         return fighterOneCharacter;
     }
 
-    public static void SetFighterOneCharacter(MainMenuScript.characters character)
+    public static void SetFighterOneCharacter(characters character)
     {
         fighterOneCharacter = character;
     }
 
-    public static MainMenuScript.characters GetFighterTwoCharacter()
+    public static characters GetFighterTwoCharacter()
     {
         return fighterTwoCharacter;
     }
 
-    public static void SetFighterTwoCharacter(MainMenuScript.characters character)
+    public static void SetFighterTwoCharacter(characters character)
     {
         fighterTwoCharacter = character;
     }

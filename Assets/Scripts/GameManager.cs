@@ -386,17 +386,17 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("Main Menu");
     }
 
-    private GameObject DecideFighter(MainMenuScript.characters character)
+    private GameObject DecideFighter(characters character)
     {
         switch (character)
         {
-            case MainMenuScript.characters.WillNeff:
+            case characters.WillNeff:
                 return willNeffFighter;
-            case MainMenuScript.characters.HasanAbi:
+            case characters.HasanAbi:
                 return hasanAbiFighter;
-            case MainMenuScript.characters.Nesua:
+            case characters.Nesua:
                 return nesuaFighter;
-            case MainMenuScript.characters.red:
+            case characters.red:
                 return redFighter;
             default:
                 return null;
