@@ -59,6 +59,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Physics.gravity = new Vector3(0, -7f, 0);
         gameObject.GetComponent<ControllerManager>().Init();
         canvas = GameObject.FindGameObjectWithTag("Canvas").GetComponent<Canvas>();
         fighterOneUiObject = canvas.transform.GetChild(0).gameObject;

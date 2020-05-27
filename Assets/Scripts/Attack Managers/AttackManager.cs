@@ -47,7 +47,55 @@ public abstract class AttackManager : MonoBehaviour
         readyForAttackAnimation = ready;
     }
 
-    public void Punch()
+    public void Punch(Stance stance)
+    {
+        switch(stance)
+        {
+            case Stance.Standing:
+                StandingPunch();
+                break;
+            case Stance.Crouching:
+                CrouchPunch();
+                break;
+            case Stance.Jumping:
+                JumpPunch();
+                break;
+        }
+    }
+
+    public void Kick(Stance stance)
+    {
+        switch(stance)
+        {
+            case Stance.Standing:
+                StandingKick();
+                break;
+            case Stance.Crouching:
+                CrouchKick();
+                break;
+            case Stance.Jumping:
+                JumpKick();
+                break;
+        }
+    }
+
+    public void RangedAttack(Stance stance)
+    {
+        switch (stance)
+        {
+            case Stance.Standing:
+                StandingRangedAttack();
+                break;
+            case Stance.Crouching:
+                CrouchRangedAttack();
+                break;
+            case Stance.Jumping:
+                JumpRangedAttack();
+                break;
+        }
+    }
+
+    private void StandingPunch()
     {
         if (readyForAttackInput)
         {
@@ -56,7 +104,7 @@ public abstract class AttackManager : MonoBehaviour
         }
     }
 
-    public void Kick()
+    private void StandingKick()
     {
         if (readyForAttackInput)
         {
@@ -65,7 +113,7 @@ public abstract class AttackManager : MonoBehaviour
         }
     }
 
-    public void RangedAttack()
+    private void StandingRangedAttack()
     {
         if (readyForAttackInput)
         {
@@ -74,7 +122,7 @@ public abstract class AttackManager : MonoBehaviour
         }
     }
 
-    public void CrouchPunch()
+    private void CrouchPunch()
     {
         if (readyForAttackInput && currentCombo == GetDefaultState())
         {
@@ -82,7 +130,7 @@ public abstract class AttackManager : MonoBehaviour
         }
     }
 
-    public void CrouchKick()
+    private void CrouchKick()
     {
         if (readyForAttackInput && currentCombo == GetDefaultState())
         {
@@ -90,7 +138,7 @@ public abstract class AttackManager : MonoBehaviour
         }
     }
 
-    public void CrouchRangedAttack()
+    private void CrouchRangedAttack()
     {
         if (readyForAttackInput && currentCombo == GetDefaultState())
         {
@@ -98,7 +146,7 @@ public abstract class AttackManager : MonoBehaviour
         }
     }
 
-    public void JumpPunch()
+    private void JumpPunch()
     {
         if (readyForAttackInput && currentCombo == GetDefaultState())
         {
@@ -106,7 +154,7 @@ public abstract class AttackManager : MonoBehaviour
         }
     }
 
-    public void JumpKick()
+    private void JumpKick()
     {
         if (readyForAttackInput && currentCombo == GetDefaultState())
         {
@@ -114,11 +162,21 @@ public abstract class AttackManager : MonoBehaviour
         }
     }
 
-    public void JumpRangedAttack()
+    private void JumpRangedAttack()
     {
         if (readyForAttackInput && currentCombo == GetDefaultState())
         {
             currentCombo = ((DefaultComboState)currentCombo).JumpRangedAttack();
+        }
+    }
+
+    public void Taunt()
+    {
+        if (readyForAttackInput)
+        {
+            anim.Play("Taunt");
+            currentCombo = currentCombo.GetEndComboState();
+            readyForAttackInput = false;
         }
     }
 
@@ -215,6 +273,11 @@ public abstract class ComboState
         if (!(GetType().Equals(typeof(EndComboState)))) {  //Stops infinite recursion in EndComboState constructor
             endComboState = new EndComboState(attackManager);
         }
+    }
+
+    public ComboState GetEndComboState()
+    {
+        return endComboState;
     }
 
     public abstract ComboState Punch();

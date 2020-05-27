@@ -2,17 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class DefaultButtonSelector : MonoBehaviour
 {
 
-    private EventSystem eventSystem;
-    [SerializeField] GameObject defaultSelectedButton;
-
-    private void Awake()
-    {
-        eventSystem = FindObjectOfType<EventSystem>();
-    }
+    [SerializeField] Button defaultSelectedButton;
 
     private void OnEnable()
     {
@@ -21,6 +16,7 @@ public class DefaultButtonSelector : MonoBehaviour
 
     public void SelectDefaultButton()
     {
-        eventSystem.SetSelectedGameObject(defaultSelectedButton);
+        defaultSelectedButton.Select();
+        defaultSelectedButton.OnSelect(null);
     }
 }
