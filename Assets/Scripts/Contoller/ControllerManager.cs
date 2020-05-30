@@ -16,6 +16,8 @@ public class ControllerManager : MonoBehaviour
     {
         Init();
         inputModule = eventSystem.GetComponent<StandaloneInputModule>();
+        //Cursor.lockState = CursorLockMode.locked;
+        //Cursor.visible = false;
     }
 
     public void Init()
