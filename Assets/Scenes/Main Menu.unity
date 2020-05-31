@@ -1167,7 +1167,6 @@ GameObject:
   m_Component:
   - component: {fileID: 479173131}
   - component: {fileID: 479173132}
-  - component: {fileID: 479173133}
   m_Layer: 0
   m_Name: Controls Menu
   m_TagString: Untagged
@@ -1207,21 +1206,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16a2fdfc13f3f57478e33c3798f80b33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  defaultButton: {fileID: 1150489282}
   controllerControlsText: {fileID: 1207995795}
   keyboardControls: {fileID: 1955640458}
---- !u!114 &479173133
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 479173130}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d3cbc4db6180b14c9d8f8d68ff088dc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  defaultSelectedButton: {fileID: 1150489282}
+  controllerControlsButton: {fileID: 1150489282}
+  keyboardControlsButton: {fileID: 1766916882}
+  mainMenuButton: {fileID: 925876905}
 --- !u!1 &529246840
 GameObject:
   m_ObjectHideFlags: 0
@@ -1498,6 +1488,7 @@ GameObject:
   m_Component:
   - component: {fileID: 695102800}
   - component: {fileID: 695102801}
+  - component: {fileID: 695102802}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Game Manager
@@ -1531,7 +1522,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18382250fc18a2e43b8d812bb3bc2e86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  eventSystem: {fileID: 822687974}
+--- !u!114 &695102802
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 695102799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8662af7fc4e794836b02f6d125250683, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  multiplePlayersSelecting: 0
+  repeatDelay: 0.2
 --- !u!1 &805842953
 GameObject:
   m_ObjectHideFlags: 0
@@ -1761,7 +1765,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &822687973
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1769,15 +1773,15 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 822687972}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_HorizontalAxis: Keyboard1_xAxis
-  m_VerticalAxis: Keyboard1_yAxis
-  m_SubmitButton: Keyboard1_BottomAction
-  m_CancelButton: Keyboard1_RightAction
+  m_HorizontalAxis: 
+  m_VerticalAxis: 
+  m_SubmitButton: 
+  m_CancelButton: 
   m_InputActionsPerSecond: 10
   m_RepeatDelay: 0.5
   m_ForceModuleActive: 0
@@ -2123,7 +2127,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1091207054}
   - component: {fileID: 1091207055}
-  - component: {fileID: 1091207056}
   m_Layer: 5
   m_Name: Main Menu
   m_TagString: Untagged
@@ -2167,21 +2170,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff920034856df417293304823e29cc16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  defaultButton: {fileID: 1775783398}
   playerSelectMenu: {fileID: 1517640108}
   controlsMenu: {fileID: 479173130}
---- !u!114 &1091207056
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1091207053}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d3cbc4db6180b14c9d8f8d68ff088dc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  defaultSelectedButton: {fileID: 1775783398}
+  onePlayerButton: {fileID: 1775783398}
+  twoPlayerButton: {fileID: 805842955}
+  controlsButton: {fileID: 186212882}
+  quitButton: {fileID: 616313898}
 --- !u!1 &1112762487
 GameObject:
   m_ObjectHideFlags: 0
@@ -3009,7 +3004,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1387952489}
-  - component: {fileID: 1387952490}
   m_Layer: 0
   m_Name: Confirmation Message
   m_TagString: Untagged
@@ -3035,19 +3029,6 @@ Transform:
   m_Father: {fileID: 1517640109}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1387952490
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1387952488}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d3cbc4db6180b14c9d8f8d68ff088dc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  defaultSelectedButton: {fileID: 164298074}
 --- !u!1 &1471270730
 GameObject:
   m_ObjectHideFlags: 0
@@ -3137,7 +3118,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1517640109}
   - component: {fileID: 1517640110}
-  - component: {fileID: 1517640111}
   m_Layer: 5
   m_Name: Player Select Menu
   m_TagString: Untagged
@@ -3186,30 +3166,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8fe885436b043c41a4bc5db684f9275, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  defaultButton: {fileID: 1386075114}
   fighterOneText: {fileID: 1256967856}
   fighterTwoText: {fileID: 1751381051}
   fighterOneDisplay: {fileID: 47558928}
   fighterTwoDisplay: {fileID: 2146356207}
   confirmationMessage: {fileID: 1387952488}
-  nonpromptButtons:
-  - {fileID: 1386075114}
-  - {fileID: 1772286137}
-  - {fileID: 529246842}
-  - {fileID: 1803007904}
-  - {fileID: 1115765765}
---- !u!114 &1517640111
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1517640108}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d3cbc4db6180b14c9d8f8d68ff088dc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  defaultSelectedButton: {fileID: 1386075114}
+  willNeffButton: {fileID: 1386075114}
+  hasanAbiButton: {fileID: 1772286137}
+  nesuaButton: {fileID: 529246842}
+  redPlayerButton: {fileID: 1803007904}
+  mainMenuButton: {fileID: 1115765765}
+  yesButton: {fileID: 164298074}
+  noButton: {fileID: 317825856}
 --- !u!1 &1556754911
 GameObject:
   m_ObjectHideFlags: 0
@@ -4299,7 +4268,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Xbox Controls
+  m_Text: Keyboard Controls
 --- !u!222 &1887711209
 CanvasRenderer:
   m_ObjectHideFlags: 0

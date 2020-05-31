@@ -3,12 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ControlsMenu : MonoBehaviour
+public class ControlsMenu : BaseMenuScript
 {
 
     [SerializeField] Text controllerControlsText;    [SerializeField] GameObject keyboardControls;
+    [SerializeField] Button controllerControlsButton;
+    [SerializeField] Button keyboardControlsButton;
+    [SerializeField] Button mainMenuButton;
 
-    private void OnEnable()
+    protected override void Init()
+    {
+        buttonMap = new Button[,] { { controllerControlsButton, keyboardControlsButton, mainMenuButton } };
+    }
+
+    protected override void ResetMenu()
     {
         ShowControllerControls();
     }

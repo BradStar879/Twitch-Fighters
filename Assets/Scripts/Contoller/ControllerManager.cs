@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class ControllerManager : MonoBehaviour
 {
@@ -9,13 +8,11 @@ public class ControllerManager : MonoBehaviour
     private static ControllerInput[] controllerInputs;
     private static List<int> controllerSpotsToIgnore;
     private static Dictionary<int, int> connectedControllerMap;    //Key - Controller spot, Value - Player Number
-    [SerializeField] EventSystem eventSystem;
-    private StandaloneInputModule inputModule; //Used for menu navigation
 
     public void Start()
     {
         Init();
-        inputModule = eventSystem.GetComponent<StandaloneInputModule>();
+        GetComponent<MenuNavigation>().Init();
         //Cursor.lockState = CursorLockMode.locked;
         //Cursor.visible = false;
     }
@@ -90,15 +87,6 @@ public class ControllerManager : MonoBehaviour
             {
                 break;
             }
-        }
-
-        if (inputModule != null)
-        {
-            ControllerInput playerOneControllerInput = GetControllerInput(1);
-            inputModule.horizontalAxis = playerOneControllerInput.GetXAxisString();
-            inputModule.verticalAxis = playerOneControllerInput.GetYAxisString();
-            inputModule.submitButton = playerOneControllerInput.GetBottomActionButtonString();
-            inputModule.cancelButton = playerOneControllerInput.GetRightActionButtonString();
         }
     }
 
