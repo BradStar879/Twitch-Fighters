@@ -16,6 +16,12 @@ public class MenuNavigation : MonoBehaviour
     private int maxY;
     private ButtonTypes lastButtonPressed;
     private float repeatDelayCount;
+    private bool menuActive;
+
+    private void Awake()
+    {
+        menuActive = false;
+    }
 
     public void Init()
     {
@@ -28,75 +34,78 @@ public class MenuNavigation : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (repeatDelayCount > 0f)
+        if (menuActive)
         {
-            repeatDelayCount -= Time.deltaTime;
-        }
-        int startX = currentX;
-        int startY = currentY;
-        if (playerOneControllerInput.GetXAxisLeft() && 
-            (repeatDelayCount <= 0f || lastButtonPressed != ButtonTypes.Left))
-        {
-            DeselectButton();
-            do
+            if (repeatDelayCount > 0f)
             {
-                currentX--;
-                if (currentX < 0)
-                {
-                    currentX = maxX;
-                }
-            } while (!ValidButton() && currentX != startX);
-            lastButtonPressed = ButtonTypes.Left;
-            SelectButton();
-        }
-        else if (playerOneControllerInput.GetXAxisRight()
-            && (repeatDelayCount <= 0f || lastButtonPressed != ButtonTypes.Right))
-        {
-            DeselectButton();
-            do
+                repeatDelayCount -= Time.deltaTime;
+            }
+            int startX = currentX;
+            int startY = currentY;
+            if (playerOneControllerInput.GetXAxisLeft() &&
+                (repeatDelayCount <= 0f || lastButtonPressed != ButtonTypes.Left))
             {
-                currentX++;
-                if (currentX > maxX)
+                DeselectButton();
+                do
                 {
-                    currentX = 0;
-                }
-            } while (!ValidButton() && currentX != startX);
-            lastButtonPressed = ButtonTypes.Right;
-            SelectButton();
-        }
-        else if (playerOneControllerInput.GetYAxisUp() 
-            && (repeatDelayCount <= 0f || lastButtonPressed != ButtonTypes.Up))
-        {
-            DeselectButton();
-            do
+                    currentX--;
+                    if (currentX < 0)
+                    {
+                        currentX = maxX;
+                    }
+                } while (!ValidButton() && currentX != startX);
+                lastButtonPressed = ButtonTypes.Left;
+                SelectButton();
+            }
+            else if (playerOneControllerInput.GetXAxisRight()
+                && (repeatDelayCount <= 0f || lastButtonPressed != ButtonTypes.Right))
             {
-                currentY--;
-                if (currentY < 0)
+                DeselectButton();
+                do
                 {
-                    currentY = maxY;
-                }
-            } while (!ValidButton() && currentY != startY);
-            lastButtonPressed = ButtonTypes.Up;
-            SelectButton();
-        }
-        else if (playerOneControllerInput.GetYAxisDown() 
-            && (repeatDelayCount <= 0f || lastButtonPressed != ButtonTypes.Down))
-        {
-            DeselectButton();
-            do
+                    currentX++;
+                    if (currentX > maxX)
+                    {
+                        currentX = 0;
+                    }
+                } while (!ValidButton() && currentX != startX);
+                lastButtonPressed = ButtonTypes.Right;
+                SelectButton();
+            }
+            else if (playerOneControllerInput.GetYAxisUp()
+                && (repeatDelayCount <= 0f || lastButtonPressed != ButtonTypes.Up))
             {
-                currentY++;
-                if (currentY > maxY)
+                DeselectButton();
+                do
                 {
-                    currentY = 0;
-                }
-            } while (!ValidButton() && currentY != startY);
-            lastButtonPressed = ButtonTypes.Down;
-            SelectButton();
-        }
-        else if (playerOneControllerInput.GetBottomActionButtonDown())
-        {
-            PressButton();
+                    currentY--;
+                    if (currentY < 0)
+                    {
+                        currentY = maxY;
+                    }
+                } while (!ValidButton() && currentY != startY);
+                lastButtonPressed = ButtonTypes.Up;
+                SelectButton();
+            }
+            else if (playerOneControllerInput.GetYAxisDown()
+                && (repeatDelayCount <= 0f || lastButtonPressed != ButtonTypes.Down))
+            {
+                DeselectButton();
+                do
+                {
+                    currentY++;
+                    if (currentY > maxY)
+                    {
+                        currentY = 0;
+                    }
+                } while (!ValidButton() && currentY != startY);
+                lastButtonPressed = ButtonTypes.Down;
+                SelectButton();
+            }
+            else if (playerOneControllerInput.GetBottomActionButtonDown())
+            {
+                PressButton();
+            }
         }
     }
 
@@ -107,8 +116,14 @@ public class MenuNavigation : MonoBehaviour
         this.currentY = defaultButtonY;
         this.maxX = buttonMap.GetLength(1) - 1;
         this.maxY = buttonMap.GetLength(0) - 1;
+        menuActive = true;
         SelectButton();
         buttonMap[currentY, currentX].OnSelect(null);
+    }
+
+    public void DeactivateMenu()
+    {
+        menuActive = false;
     }
 
     private bool ValidButton()

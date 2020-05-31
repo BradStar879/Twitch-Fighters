@@ -48,7 +48,7 @@ public class WillNeffComboStateDefault : DefaultComboState
 
     public override ComboState Kick()
     {
-        attackManager.QueueUpAttack("Kick", 7, AttackType.Flinch);
+        attackManager.QueueUpAttack("Kick", 70, AttackType.Flinch);
         return kState;
     }
 

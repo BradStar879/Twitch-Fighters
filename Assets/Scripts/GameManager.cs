@@ -56,7 +56,9 @@ public class GameManager : MonoBehaviour
     private AttackType typeOfDamageToDealToPlayerOne = AttackType.Flinch;
     private int damageToDealToPlayerTwo = 0;
     private AttackType typeOfDamageToDealToPlayerTwo = AttackType.Flinch;
-    // Start is called before the first frame update
+
+    private MenuNavigation menuNavigation;
+
     void Start()
     {
         Physics.gravity = new Vector3(0, -7f, 0);
@@ -85,6 +87,7 @@ public class GameManager : MonoBehaviour
         fighterTwoUI = fighterTwo.GetFighterUI();
         mainCamera.Init(fighterOneClone, fighterTwoClone);
         zoomInCamera.Init();
+        menuNavigation = GetComponent<MenuNavigation>();
         StartGame();
     }
 
@@ -164,6 +167,7 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
+        menuNavigation.DeactivateMenu();
         gameActive = false;
         rematchMenuUiObject.SetActive(false);
         fighterOne.ResetFighter();
