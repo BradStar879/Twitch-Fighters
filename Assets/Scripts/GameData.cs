@@ -5,7 +5,7 @@ using UnityEngine;
 public class GameData
 {
     private static int players;
-    private static bool pressedButtonPlayerOne;
+    private static bool pressedButtonPlayerOne; //True if player one pressed the last button
     private static characters fighterOneCharacter;
     private static characters fighterTwoCharacter;
     private static bool sameSettings = false;   //True if starting fight with same settings but new fighters
