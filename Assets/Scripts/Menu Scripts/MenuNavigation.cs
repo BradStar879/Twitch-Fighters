@@ -5,10 +5,9 @@ using UnityEngine.UI;
 
 public class MenuNavigation : MonoBehaviour
 {
-    [SerializeField] bool multiplePlayersSelecting = false;
-    [SerializeField] float repeatDelay = .2f;
-    private ControllerInput playerOneControllerInput;
-    private ControllerInput playerTwoControllerInput;
+    private BaseMenuScript menuScript;
+    private float repeatDelay = .2f;
+    private ControllerInput controllerInput;
     private Button[,] buttonMap;
     private int currentX;
     private int currentY;
@@ -17,113 +16,171 @@ public class MenuNavigation : MonoBehaviour
     private ButtonTypes lastButtonPressed;
     private float repeatDelayCount;
     private bool menuActive;
+    private bool lockedMenu;
+    private bool isPlayerOne;
 
-    private void Awake()
-    {
-        menuActive = false;
-    }
+    private MenuNavigation playerTwoNavigation;
 
     public void Init()
     {
-        playerOneControllerInput = ControllerManager.GetControllerInput(1);
-        playerTwoControllerInput = ControllerManager.GetControllerInput(2);
+        controllerInput = ControllerManager.GetControllerInput(1);
         lastButtonPressed = ButtonTypes.None;
         repeatDelayCount = 0f;
+        menuActive = false;
+        lockedMenu = false;
+        isPlayerOne = true;
+        playerTwoNavigation = GetComponents<MenuNavigation>()[1];
+        playerTwoNavigation.SecondPlayerInit();
     }
 
-    // Update is called once per frame
+    public void SecondPlayerInit()
+    {
+        controllerInput = ControllerManager.GetControllerInput(2);
+        lastButtonPressed = ButtonTypes.None;
+        repeatDelayCount = 0f;
+        menuActive = false;
+        lockedMenu = false;
+        isPlayerOne = false;
+    }
+
     void Update()
+    {
+        CheckForButtonInput();
+    }
+
+    public void CheckForButtonInput()
     {
         if (menuActive)
         {
-            if (repeatDelayCount > 0f)
+            if (!lockedMenu)
             {
-                repeatDelayCount -= Time.deltaTime;
-            }
-            int startX = currentX;
-            int startY = currentY;
-            if (playerOneControllerInput.GetXAxisLeft() &&
-                (repeatDelayCount <= 0f || lastButtonPressed != ButtonTypes.Left))
-            {
-                DeselectButton();
-                do
+                if (repeatDelayCount > 0f)
                 {
-                    currentX--;
-                    if (currentX < 0)
-                    {
-                        currentX = maxX;
-                    }
-                } while (!ValidButton() && currentX != startX);
-                lastButtonPressed = ButtonTypes.Left;
-                SelectButton();
-            }
-            else if (playerOneControllerInput.GetXAxisRight()
-                && (repeatDelayCount <= 0f || lastButtonPressed != ButtonTypes.Right))
-            {
-                DeselectButton();
-                do
+                    repeatDelayCount -= Time.deltaTime;
+                }
+                int startX = currentX;
+                int startY = currentY;
+                if (controllerInput.GetXAxisLeft() &&
+                    (repeatDelayCount <= 0f || lastButtonPressed != ButtonTypes.Left))
                 {
-                    currentX++;
-                    if (currentX > maxX)
+                    DeselectButton();
+                    do
                     {
-                        currentX = 0;
-                    }
-                } while (!ValidButton() && currentX != startX);
-                lastButtonPressed = ButtonTypes.Right;
-                SelectButton();
-            }
-            else if (playerOneControllerInput.GetYAxisUp()
-                && (repeatDelayCount <= 0f || lastButtonPressed != ButtonTypes.Up))
-            {
-                DeselectButton();
-                do
+                        currentX--;
+                        if (currentX < 0)
+                        {
+                            currentX = maxX;
+                        }
+                    } while (!ValidButton() && currentX != startX);
+                    lastButtonPressed = ButtonTypes.Left;
+                    SelectButton();
+                }
+                else if (controllerInput.GetXAxisRight()
+                    && (repeatDelayCount <= 0f || lastButtonPressed != ButtonTypes.Right))
                 {
-                    currentY--;
-                    if (currentY < 0)
+                    DeselectButton();
+                    do
                     {
-                        currentY = maxY;
-                    }
-                } while (!ValidButton() && currentY != startY);
-                lastButtonPressed = ButtonTypes.Up;
-                SelectButton();
-            }
-            else if (playerOneControllerInput.GetYAxisDown()
-                && (repeatDelayCount <= 0f || lastButtonPressed != ButtonTypes.Down))
-            {
-                DeselectButton();
-                do
+                        currentX++;
+                        if (currentX > maxX)
+                        {
+                            currentX = 0;
+                        }
+                    } while (!ValidButton() && currentX != startX);
+                    lastButtonPressed = ButtonTypes.Right;
+                    SelectButton();
+                }
+                else if (controllerInput.GetYAxisUp()
+                    && (repeatDelayCount <= 0f || lastButtonPressed != ButtonTypes.Up))
                 {
-                    currentY++;
-                    if (currentY > maxY)
+                    DeselectButton();
+                    do
                     {
-                        currentY = 0;
-                    }
-                } while (!ValidButton() && currentY != startY);
-                lastButtonPressed = ButtonTypes.Down;
-                SelectButton();
+                        currentY--;
+                        if (currentY < 0)
+                        {
+                            currentY = maxY;
+                        }
+                    } while (!ValidButton() && currentY != startY);
+                    lastButtonPressed = ButtonTypes.Up;
+                    SelectButton();
+                }
+                else if (controllerInput.GetYAxisDown()
+                    && (repeatDelayCount <= 0f || lastButtonPressed != ButtonTypes.Down))
+                {
+                    DeselectButton();
+                    do
+                    {
+                        currentY++;
+                        if (currentY > maxY)
+                        {
+                            currentY = 0;
+                        }
+                    } while (!ValidButton() && currentY != startY);
+                    lastButtonPressed = ButtonTypes.Down;
+                    SelectButton();
+                }
+                else if (controllerInput.GetBottomActionButtonDown())
+                {
+                    PressButton();
+                }
             }
-            else if (playerOneControllerInput.GetBottomActionButtonDown())
+            if (controllerInput.GetRightActionButtonDown())
             {
-                PressButton();
+                menuScript.Cancel(isPlayerOne);
             }
         }
     }
 
-    public void LoadMenu(Button[,] buttonMap, int defaultButtonX, int defaultButtonY)
+    public void LoadMenu(BaseMenuScript baseMenuScript, Button[,] buttonMap, 
+        int defaultButtonX, int defaultButtonY)
     {
+        this.menuScript = baseMenuScript;
         this.buttonMap = buttonMap;
         this.currentX = defaultButtonX;
         this.currentY = defaultButtonY;
         this.maxX = buttonMap.GetLength(1) - 1;
         this.maxY = buttonMap.GetLength(0) - 1;
         menuActive = true;
+        lockedMenu = false;
+        if (isPlayerOne)
+        {
+            playerTwoNavigation.DeactivateMenu();
+        }
         SelectButton();
         buttonMap[currentY, currentX].OnSelect(null);
+    }
+
+    public void LoadMenu(BaseMenuScript baseMenuScript, Button[,] buttonMap, 
+        int defaultButtonX, int defaultButtonY, int defaultButtonXTwo, int defaultButtonYTwo)
+    {
+        LoadMenu(baseMenuScript, buttonMap, defaultButtonX, defaultButtonY);
+        playerTwoNavigation.LoadMenu(baseMenuScript, buttonMap, defaultButtonXTwo, defaultButtonYTwo);
     }
 
     public void DeactivateMenu()
     {
         menuActive = false;
+    }
+
+    public void LockPlayerOneSelection()
+    {
+        lockedMenu = true;
+    }
+
+    public void LockPlayerTwoSelection()
+    {
+        playerTwoNavigation.LockPlayerOneSelection();
+    }
+
+    public void UnlockPlayerOneSelection()
+    {
+        lockedMenu = false;
+    }
+
+    public void UnlockPlayerTwoSelection()
+    {
+        playerTwoNavigation.UnlockPlayerOneSelection();
     }
 
     private bool ValidButton()
@@ -145,6 +202,7 @@ public class MenuNavigation : MonoBehaviour
 
     private void PressButton()
     {
+        GameData.SetPressedButtonPlayerOne(isPlayerOne);
         buttonMap[currentY, currentX].onClick.Invoke();
     }
 }

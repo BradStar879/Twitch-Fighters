@@ -9,7 +9,7 @@ public class ControllerManager : MonoBehaviour
     private static List<int> controllerSpotsToIgnore;
     private static Dictionary<int, int> connectedControllerMap;    //Key - Controller spot, Value - Player Number
 
-    public void Start()
+    public void Awake()
     {
         Init();
         GetComponent<MenuNavigation>().Init();

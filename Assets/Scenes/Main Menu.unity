@@ -361,7 +361,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1517640110}
-        m_MethodName: Confirm
+        m_MethodName: PromptConfirm
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -868,7 +868,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1517640110}
-        m_MethodName: Cancel
+        m_MethodName: PromptCancel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1489,6 +1489,7 @@ GameObject:
   - component: {fileID: 695102800}
   - component: {fileID: 695102801}
   - component: {fileID: 695102802}
+  - component: {fileID: 695102803}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Game Manager
@@ -1534,8 +1535,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8662af7fc4e794836b02f6d125250683, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  multiplePlayersSelecting: 0
-  repeatDelay: 0.2
+--- !u!114 &695102803
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 695102799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8662af7fc4e794836b02f6d125250683, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &805842953
 GameObject:
   m_ObjectHideFlags: 0

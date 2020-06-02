@@ -36,8 +36,10 @@ public abstract class BaseMenuScript : MonoBehaviour
 
     public void LoadMenu()
     {
-        menuNavigation.LoadMenu(buttonMap, defaultButtonX, defaultButtonY);
+        menuNavigation.LoadMenu(this, buttonMap, defaultButtonX, defaultButtonY);
     }
+
+    public virtual void Cancel(bool isPlayerOne) { }
 
     protected virtual void ResetMenu() {}
 

@@ -5,6 +5,7 @@ using UnityEngine;
 public class GameData
 {
     private static int players;
+    private static bool pressedButtonPlayerOne;
     private static characters fighterOneCharacter;
     private static characters fighterTwoCharacter;
     private static bool sameSettings = false;   //True if starting fight with same settings but new fighters
@@ -17,6 +18,16 @@ public class GameData
     public static void SetPlayers(int newPlayers)
     {
         players = newPlayers;
+    }
+
+    public static bool GetPressedButtonPlayerOne()
+    {
+        return pressedButtonPlayerOne;
+    }
+
+    public static void SetPressedButtonPlayerOne(bool isPlayerOne)
+    {
+        pressedButtonPlayerOne = isPlayerOne;
     }
 
     public static characters GetFighterOneCharacter()
