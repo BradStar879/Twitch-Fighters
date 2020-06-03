@@ -21,6 +21,11 @@ public class ControlsMenu : BaseMenuScript
         ShowControllerControls();
     }
 
+    public override void Cancel(bool isPlayerOne)
+    {
+        mainMenuButton.onClick.Invoke();
+    }
+
     public void ShowControllerControls()
     {
         controllerControlsText.enabled = true;        keyboardControls.SetActive(false);
