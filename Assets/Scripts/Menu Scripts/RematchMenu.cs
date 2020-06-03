@@ -13,4 +13,5 @@ public class RematchMenu : BaseMenuScript
     {
         buttonMap = new Button[,] { { rematchButton, newFightersButton, mainMenuButton } };
     }
+
 }

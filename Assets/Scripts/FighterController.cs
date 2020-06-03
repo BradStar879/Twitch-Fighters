@@ -6,7 +6,6 @@ public class FighterController : MonoBehaviour
 {
     ControllerInput controllerInput;
     private bool isPlayerOne = true;
-    private bool paused = false;
     [SerializeField] float moveSpeed = 1f;
     [SerializeField] GameObject projectile;
     private AttackManager attackManager;
@@ -83,13 +82,11 @@ public class FighterController : MonoBehaviour
 
             if (controllerInput.GetStartButtonDown())
             {
-                paused = true;
                 gameManager.PauseGame(isPlayerOne);
             }
 
             if (action == Action.Neutral || action == Action.Attacking) //Attacks managed here
             {
-
                 if (controllerInput.GetLeftActionButtonDown())
                 {
                     attackManager.Punch(stance);
@@ -213,13 +210,6 @@ public class FighterController : MonoBehaviour
             if (inHitFrame)
             {
                 CheckForHit();
-            }
-        }
-        else if (paused)
-        {
-            if (controllerInput.GetStartButtonDown())
-            {
-                gameManager.ResumeGame();
             }
         }
     }

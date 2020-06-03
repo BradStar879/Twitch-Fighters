@@ -37,6 +37,7 @@ public class GameManager : MonoBehaviour
     private Text fighterSpeechText;
     private GameObject rematchMenuUiObject;
     private GameObject pauseMenuObject;
+    private bool playerOnePaused;
 
     private readonly Vector3 fighterOneStartingPosition = new Vector3(-.9f, .6f, -2.9f);
     private readonly Vector3 fighterTwoStartingPosition = new Vector3(.9f, .6f, -2.9f);
@@ -70,6 +71,7 @@ public class GameManager : MonoBehaviour
         fighterSpeechText = canvas.transform.GetChild(3).gameObject.GetComponent<Text>();
         rematchMenuUiObject = canvas.transform.GetChild(4).gameObject;
         pauseMenuObject = canvas.transform.GetChild(5).gameObject;
+        playerOnePaused = false;
         fighterOneName.text = "" + GameData.GetFighterOneCharacter();
         fighterTwoName.text = "" + GameData.GetFighterTwoCharacter();
         GameObject fighterOneToClone = DecideFighter(GameData.GetFighterOneCharacter());
@@ -346,9 +348,15 @@ public class GameManager : MonoBehaviour
         zoomInCamera.PlayAnimation(animationName);
     }
 
+    public bool IsPlayerOnePaused()
+    {
+        return playerOnePaused;
+    }
+
     public void PauseGame(bool isPlayerOne)
     {
         gameActive = false;
+        playerOnePaused = isPlayerOne;
         fighterOneSavedVelocity = fighterOne.GetRigidbody().velocity;
         fighterOne.GetRigidbody().isKinematic = true;
         fighterOne.GetAnimator().enabled = false;

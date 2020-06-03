@@ -46,6 +46,12 @@ public class MenuNavigation : MonoBehaviour
     void Update()
     {
         CheckForButtonInput();
+        if (isPlayerOne && controllerInput.GetTopActionButtonDown())
+        {
+            print("menu active: " + menuActive);
+            print("lockedMenu: " + lockedMenu);
+            print("menu script: " + menuScript);
+        }
     }
 
     public void CheckForButtonInput()
