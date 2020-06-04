@@ -50,6 +50,26 @@ public class ComboMenu : BaseMenuScript
     {
         basicCombos.SetActive(false);
         advancedCombos.SetActive(true);
+        int fighterNumber = 0;
+        if (gameManager.IsPlayerOnePaused())
+        {
+            fighterNumber = (int) GameData.GetFighterOneCharacter() + 1;
+        }
+        else
+        {
+            fighterNumber = (int)GameData.GetFighterTwoCharacter() + 1;
+        }
+        for (int i = 1; i < advancedCombos.transform.childCount; i++) 
+        {
+            if (i == fighterNumber)
+            {
+                advancedCombos.transform.GetChild(i).gameObject.SetActive(true);    //Activate correct fighter combo body
+            }
+            else
+            {
+                advancedCombos.transform.GetChild(i).gameObject.SetActive(false);   //Deactivate all other combo bodies
+            }
+        }
     }
 
     public void Back()
