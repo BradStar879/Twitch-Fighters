@@ -169,7 +169,7 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
-        menuNavigation.DeactivateMenu();
+        menuNavigation.DeactivateMenuBothPlayers();
         gameActive = false;
         rematchMenuUiObject.SetActive(false);
         fighterOne.ResetFighter();
@@ -379,6 +379,15 @@ public class GameManager : MonoBehaviour
     public void ResumeGame()
     {
         gameActive = true;
+        if (playerOnePaused)
+        {
+            fighterOne.ActivateDelayFrame();
+        }
+        else
+        {
+            fighterTwo.ActivateDelayFrame();
+        }
+        menuNavigation.DeactivateMenuBothPlayers();
         fighterOne.GetRigidbody().isKinematic = false;
         fighterOne.GetRigidbody().velocity = fighterOneSavedVelocity;
         fighterOne.GetAnimator().enabled = true;

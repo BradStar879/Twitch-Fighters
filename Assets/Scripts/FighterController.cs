@@ -31,6 +31,7 @@ public class FighterController : MonoBehaviour
     [SerializeField] Collider rightForearmCollider;
     [SerializeField] ParticleSystem sparkParticles;
     private Animator anim;
+    private bool delayFrame;
     private bool collidingWithEnemy;
     private bool ultimateAttacking;
     private bool attackMoving;
@@ -91,7 +92,7 @@ public class FighterController : MonoBehaviour
                 {
                     attackManager.Punch(stance);
                 }
-                else if (controllerInput.GetBottomActionButtonDown())
+                else if (controllerInput.GetBottomActionButtonDown() && !delayFrame)    //Same button as resuming from pause menu so wait a frame
                 {
                     attackManager.Kick(stance);
                 }
@@ -176,6 +177,7 @@ public class FighterController : MonoBehaviour
                 {
                     if (controllerInput.GetYAxisUp())
                     {
+                        invincible = false;
                         stance = Stance.Jumping;
                         velocity.y = 2f;
                         //Add jumping animation
@@ -211,6 +213,10 @@ public class FighterController : MonoBehaviour
             {
                 CheckForHit();
             }
+        }
+        if (delayFrame)
+        {
+            delayFrame = false;
         }
     }
 
@@ -257,6 +263,7 @@ public class FighterController : MonoBehaviour
         fighterUI.UpdateSpecial(special);
         stance = Stance.Standing;
         action = Action.Neutral;
+        delayFrame = false;
         collidingWithEnemy = false;
         inHitFrame = false;
         ultimateAttacking = false;
@@ -459,6 +466,7 @@ public class FighterController : MonoBehaviour
 
     public void StartAttack()
     {
+        invincible = false;
         action = Action.Attacking;
     } 
 
@@ -530,6 +538,7 @@ public class FighterController : MonoBehaviour
 
     private void Crouch()
     {
+        invincible = false;
         stance = Stance.Crouching;
     }
 
@@ -540,6 +549,7 @@ public class FighterController : MonoBehaviour
 
     private void Block()
     {
+        invincible = false;
         action = Action.Blocking;
     }
 
@@ -625,6 +635,11 @@ public class FighterController : MonoBehaviour
         rightThighCollider.isTrigger = false;
     }
 
+    public void ActivateDelayFrame()
+    {
+        delayFrame = true;
+    }
+
     public string GetRandomIntroQuote()
     {
         return introQuotes[Random.Range(0, introQuotes.Length)];
@@ -637,7 +652,7 @@ public class FighterController : MonoBehaviour
 
     private void LandOnFloor()
     {
-        if (stance == Stance.KnockedUp || stance == Stance.KnockedDown)
+        if (stance == Stance.KnockedUp)
         {
             stance = Stance.KnockedDown;
             invincible = true;

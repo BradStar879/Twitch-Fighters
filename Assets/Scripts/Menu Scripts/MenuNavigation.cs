@@ -163,6 +163,12 @@ public class MenuNavigation : MonoBehaviour
         menuActive = false;
     }
 
+    public void DeactivateMenuBothPlayers()
+    {
+        DeactivateMenu();
+        playerTwoNavigation.DeactivateMenu();
+    }
+
     public void LockPlayerOneSelection()
     {
         lockedMenu = true;
