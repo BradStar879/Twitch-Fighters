@@ -356,6 +356,11 @@ public class GameManager : MonoBehaviour
         return true;
     }
 
+    public bool IsPlayerOneWinner()
+    {
+        return fighterOneWins == roundsToWin;
+    }
+
     public bool AbleToMoveForward()
     {
         return fighterOne.GetRightmostPosition() < fighterTwo.GetLeftmostPosition();
