@@ -7,28 +7,30 @@ public class FighterUI : MonoBehaviour
 {
     private GameObject hpBar;
     private GameObject specialBar;
+    [SerializeField] GameObject[] winCircleBackgrounds;
     private Image[] winCircles; 
     private float hpBarStartingWidth;
     private float specialBarStartingWidth;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void Init()
     {
+        GameManager gameManager = GameObject.FindWithTag("Game Manager").GetComponent<GameManager>();
+        int roundsToWin = gameManager.GetRoundsToWin();
         hpBar = transform.GetChild(2).gameObject;
         hpBarStartingWidth = hpBar.GetComponent<RectTransform>().sizeDelta.x;
         specialBar = transform.GetChild(4).gameObject;
         specialBarStartingWidth = specialBar.GetComponent<RectTransform>().sizeDelta.x;
+        for (int i = 0; i < 3; i++)
+        {
+            if (i < roundsToWin)
+            {
+                winCircleBackgrounds[i].SetActive(true);
+            }
+            else
+            {
+                winCircleBackgrounds[i].SetActive(false);
+            }
+        }
         winCircles = new Image[3];
         winCircles[0] = transform.GetChild(8).gameObject.GetComponent<Image>();
         winCircles[1] = transform.GetChild(9).gameObject.GetComponent<Image>();

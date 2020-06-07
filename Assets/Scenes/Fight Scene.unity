@@ -8829,7 +8829,7 @@ MonoBehaviour:
   mainCamera: {fileID: 963194229}
   zoomInCamera: {fileID: 1388592289}
   preFightTimer: 1
-  roundsToWin: 3
+  roundsToWin: 1
   willNeffFighter: {fileID: 1079174890743829803, guid: 69deb0253b2d2624480463b0caa4f67a,
     type: 3}
   hasanAbiFighter: {fileID: 4571413033932903503, guid: 5f7e445b35d5b1d4f831c57bbb86b147,
@@ -9406,6 +9406,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d0a8e4444b775f469ab246e7515a365, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  winCircleBackgrounds:
+  - {fileID: 785620661}
+  - {fileID: 930231996}
+  - {fileID: 467995583}
 --- !u!1 &1351117433
 GameObject:
   m_ObjectHideFlags: 0
@@ -11416,6 +11420,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d0a8e4444b775f469ab246e7515a365, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  winCircleBackgrounds:
+  - {fileID: 1633490369}
+  - {fileID: 1757373701}
+  - {fileID: 2036437597}
 --- !u!1 &1750175931
 GameObject:
   m_ObjectHideFlags: 0

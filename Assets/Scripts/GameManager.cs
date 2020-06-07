@@ -167,6 +167,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public int GetRoundsToWin()
+    {
+        return roundsToWin;
+    }
+
     public void StartGame()
     {
         menuNavigation.DeactivateMenuBothPlayers();
