@@ -1270,10 +1270,13 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Hasanabi Combo 1 - P, P, P
+  m_Text: 'HasanAbi Combo 1 - P, P, K, P, P / S
 
 
-    Hasanabi Combo 2 - K, K, K'
+    HasanAbi Combo 2 - P, R, R, P, K / S
+
+
+    HasanAbi Combo 3 - P, K, R, K / S'
 --- !u!222 &408526699
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1520,10 +1523,13 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Will Combo 1 - P, P, P
+  m_Text: 'Will Combo 1 - P, K, K, R, P / S
 
 
-    Will Combo 2 - K, K, K'
+    Will Combo 2 - P, K, R, K / S
+
+
+    Will Combo 3 - P, R, R, K, R, P / S'
 --- !u!222 &509712268
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -9251,10 +9257,13 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Nesua Combo 1 - P, P, P
+  m_Text: 'Nesua Combo 1 - P, P, R, R, P / S
 
 
-    Nesua Combo 2 - K, K, K'
+    Nesua Combo 2 - P, R, K, P, P / S
+
+
+    Nesua Combo 3 - K, P, P, P / S'
 --- !u!222 &1255863400
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -11699,7 +11708,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1825183615
 RectTransform:
   m_ObjectHideFlags: 0
@@ -12742,7 +12751,13 @@ MonoBehaviour:
   m_Text: 'Triple Punch - P, P, P
 
 
-    Triple Kick - K, K, K'
+    Triple Kick - K, K, K
+
+
+    Kick Up - P, P, R, K
+
+
+    Kick Up 2 - P, R, K, R, K'
 --- !u!222 &2076426859
 CanvasRenderer:
   m_ObjectHideFlags: 0
