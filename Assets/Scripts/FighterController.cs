@@ -650,6 +650,11 @@ public class FighterController : MonoBehaviour
         return victoryQuotes[Random.Range(0, victoryQuotes.Length)];
     }
 
+    public int GetHp()
+    {
+        return hp;
+    }
+
     private void LandOnFloor()
     {
         if (stance == Stance.KnockedUp)

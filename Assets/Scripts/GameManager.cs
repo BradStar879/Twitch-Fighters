@@ -113,9 +113,22 @@ public class GameManager : MonoBehaviour
             
             if (roundedTime == 0)
             {
-                EndRound(true);
-                EndRound(false);
-                winText.text = "TIME!";
+                if (fighterOne.GetHp() > fighterTwo.GetHp())
+                {
+                    EndRound(true);
+                    winText.text = "TIME!\nFIGHTER 1 WINS!";
+                }
+                else if (fighterTwo.GetHp() > fighterOne.GetHp())
+                {
+                    EndRound(false);
+                    winText.text = "TIME!\nFIGHTER 2 WINS!";
+                }
+                else
+                {
+                    EndRound(true);
+                    EndRound(false);
+                    winText.text = "TIME!\nTIE!";
+                }
             }
         }
         else if (preFight)    //Short time after intro but before fight
@@ -207,7 +220,7 @@ public class GameManager : MonoBehaviour
         winText.enabled = true;
         winText.text = "FIGHT!";
         time = 99.9f;
-        roundedTime = 99;
+        roundedTime = (int) time;
         timerText.text = "" + roundedTime;
         chargeSpecial = false;
         preFightTimer = 1f;
