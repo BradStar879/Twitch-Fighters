@@ -11144,7 +11144,7 @@ GameObject:
   - component: {fileID: 1633490372}
   - component: {fileID: 1633490371}
   m_Layer: 5
-  m_Name: Fighter2 Win Bg 1
+  m_Name: Fighter2 Win Bg 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11162,7 +11162,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1739392814}
-  m_RootOrder: 5
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -11377,7 +11377,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1739392814
 RectTransform:
   m_ObjectHideFlags: 0
@@ -11394,9 +11394,9 @@ RectTransform:
   - {fileID: 1351117434}
   - {fileID: 1607280333}
   - {fileID: 1013124548}
-  - {fileID: 1633490370}
-  - {fileID: 1757373702}
   - {fileID: 2036437598}
+  - {fileID: 1757373702}
+  - {fileID: 1633490370}
   - {fileID: 1697493444}
   - {fileID: 160002114}
   - {fileID: 1862182533}
@@ -11421,9 +11421,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   winCircleBackgrounds:
-  - {fileID: 1633490369}
-  - {fileID: 1757373701}
   - {fileID: 2036437597}
+  - {fileID: 1757373701}
+  - {fileID: 1633490369}
 --- !u!1 &1750175931
 GameObject:
   m_ObjectHideFlags: 0
@@ -12298,7 +12298,7 @@ GameObject:
   - component: {fileID: 2036437600}
   - component: {fileID: 2036437599}
   m_Layer: 5
-  m_Name: Fighter2 Win Bg 3
+  m_Name: Fighter2 Win Bg 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12316,7 +12316,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1739392814}
-  m_RootOrder: 7
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
