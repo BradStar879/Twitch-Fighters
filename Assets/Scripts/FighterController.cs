@@ -9,6 +9,7 @@ public class FighterController : MonoBehaviour
     [SerializeField] float moveSpeed = 1f;
     [SerializeField] GameObject projectile;
     private AttackManager attackManager;
+    private FighterControllerState fighterControllerState;
     private GameObject otherFighter;
     private FighterController otherFighterController;
     private GameManager gameManager;
@@ -55,6 +56,7 @@ public class FighterController : MonoBehaviour
         this.isPlayerOne = isPlayerOne;
         this.otherFighter = otherFighter;
         otherFighterController = otherFighter.GetComponent<FighterController>();
+        fighterControllerState = FighterControllerState.DetermineFighterControllerState(this);
 
         if (isPlayerOne)
         {
@@ -80,143 +82,182 @@ public class FighterController : MonoBehaviour
     void Update()
     {
         if (gameManager.IsGameActive()) {
-
-            if (controllerInput.GetStartButtonDown())
-            {
-                gameManager.PauseGame(isPlayerOne);
-            }
-
-            if (action == Action.Neutral || action == Action.Attacking) //Attacks managed here
-            {
-                if (controllerInput.GetLeftActionButtonDown())
-                {
-                    attackManager.Punch(stance);
-                }
-                else if (controllerInput.GetBottomActionButtonDown() && !delayFrame)    //Same button as resuming from pause menu so wait a frame
-                {
-                    attackManager.Kick(stance);
-                }
-                else if (controllerInput.GetTopActionButtonDown())
-                {
-                    attackManager.RangedAttack(stance);
-                }
-
-                if (stance == Stance.Standing)
-                {
-                    if (controllerInput.GetLeftBumperDown())
-                    {
-                        attackManager.Taunt();
-                    }
-                    else if (!controllerInput.GetRightBumper() && controllerInput.GetRightActionButtonDown())
-                    {
-                        attackManager.SpecialAttack();
-                    }
-                    else if (controllerInput.GetRightBumper() && controllerInput.GetRightActionButtonDown())
-                    {
-                        attackManager.Ultimate();
-                    }
-                }
-
-                attackManager.PerformComboAttackIfQueued();
-            }
-
-            if (action != Action.Recovering && action != Action.Attacking && stance != Stance.KnockedDown)
-            {
-                Vector3 velocity = new Vector3(0f, rb.velocity.y);
-                if (stance == Stance.Jumping)
-                {
-                    velocity.x = rb.velocity.x;
-                }
-                else if (stance == Stance.Standing || stance == Stance.Crouching) //Blocking, moving, and crouching inputs
-                {
-                    if (controllerInput.GetXAxisLeft()) //Movement
-                    {
-                        velocity.x -= moveSpeed;
-                    }
-                    else if (controllerInput.GetXAxisRight())
-                    {
-                        velocity.x += moveSpeed;
-                    }
-
-                    if (action == Action.Blocking)
-                    {
-                        if (!(controllerInput.GetLeftTrigger() || controllerInput.GetRightTrigger()))
-                        {
-                            anim.Play("Unblock");
-                        }
-                    }
-                    else
-                    {
-                        if (controllerInput.GetLeftTrigger() || controllerInput.GetRightTrigger())
-                        {
-                            anim.Play("Block");
-                            action = Action.Recovering;
-                        }
-                    }
-
-                    if (action != Action.Attacking)
-                    {
-                        if (stance == Stance.Crouching)
-                        {
-                            if (!controllerInput.GetYAxisDown())
-                            {
-                                anim.Play("Uncrouch");
-                            }
-                        }
-                        else
-                        {
-                            if (controllerInput.GetYAxisDown())
-                            {
-                                anim.Play("Crouch");
-                            }
-                        }
-                    }
-                }
-
-                if (stance == Stance.Standing && action == Action.Neutral)  
-                {
-                    if (controllerInput.GetYAxisUp())
-                    {
-                        invincible = false;
-                        stance = Stance.Jumping;
-                        velocity.y = 2f;
-                        //Add jumping animation
-                    }
-                }
-
-                if (!gameManager.AbleToMoveForward() && //Prevent player from moving past other player
-                    ((isPlayerOne && velocity.x > 0f) ||
-                    (!isPlayerOne && velocity.x < 0f)))
-                {
-                    velocity.x = 0f;
-
-                }
-                rb.velocity = velocity;
-            }
-            else if (attackMoving)
-            {
-                rb.velocity = attackingVelocity;
-            } 
-            else if (stance == Stance.KnockedDown && action != Action.Recovering)
-            {
-                if (controllerInput.GetYAxisUp() ||
-                    !isPlayerOne)   //Remove this or statement, for debugging only
-                {
-                    stance = Stance.Standing;
-                    action = Action.Recovering;
-                    invincible = true;
-                    anim.Play("Get Up");
-                }
-            }
-
-            if (inHitFrame)
-            {
-                CheckForHit();
-            }
+            fighterControllerState.FighterUpdate();
         }
         if (delayFrame)
         {
             delayFrame = false;
+        }
+    }
+
+    public void PlayerUpdate()
+    {
+        if (controllerInput.GetStartButtonDown())
+        {
+            gameManager.PauseGame(isPlayerOne);
+        }
+
+        if (action == Action.Neutral || action == Action.Attacking) //Attacks managed here
+        {
+            if (controllerInput.GetLeftActionButtonDown())
+            {
+                attackManager.Punch(stance);
+            }
+            else if (controllerInput.GetBottomActionButtonDown() && !delayFrame)    //Same button as resuming from pause menu so wait a frame
+            {
+                attackManager.Kick(stance);
+            }
+            else if (controllerInput.GetTopActionButtonDown())
+            {
+                attackManager.RangedAttack(stance);
+            }
+
+            if (stance == Stance.Standing)
+            {
+                if (controllerInput.GetLeftBumperDown())
+                {
+                    attackManager.Taunt();
+                }
+                else if (!controllerInput.GetRightBumper() && controllerInput.GetRightActionButtonDown())
+                {
+                    attackManager.SpecialAttack();
+                }
+                else if (controllerInput.GetRightBumper() && controllerInput.GetRightActionButtonDown())
+                {
+                    attackManager.Ultimate();
+                }
+            }
+
+            attackManager.PerformComboAttackIfQueued();
+        }
+
+        if (action != Action.Recovering && action != Action.Attacking && stance != Stance.KnockedDown)
+        {
+            Vector3 velocity = new Vector3(0f, rb.velocity.y);
+            if (stance == Stance.Jumping)
+            {
+                velocity.x = rb.velocity.x;
+            }
+            else if (stance == Stance.Standing || stance == Stance.Crouching) //Blocking, moving, and crouching inputs
+            {
+                if (controllerInput.GetXAxisLeft()) //Movement
+                {
+                    velocity.x -= moveSpeed;
+                }
+                else if (controllerInput.GetXAxisRight())
+                {
+                    velocity.x += moveSpeed;
+                }
+
+                if (action == Action.Blocking)
+                {
+                    if (!(controllerInput.GetLeftTrigger() || controllerInput.GetRightTrigger()))
+                    {
+                        anim.Play("Unblock");
+                    }
+                }
+                else
+                {
+                    if (controllerInput.GetLeftTrigger() || controllerInput.GetRightTrigger())
+                    {
+                        anim.Play("Block");
+                        action = Action.Recovering;
+                    }
+                }
+
+                if (action != Action.Attacking)
+                {
+                    if (stance == Stance.Crouching)
+                    {
+                        if (!controllerInput.GetYAxisDown())
+                        {
+                            anim.Play("Uncrouch");
+                        }
+                    }
+                    else
+                    {
+                        if (controllerInput.GetYAxisDown())
+                        {
+                            anim.Play("Crouch");
+                        }
+                    }
+                }
+            }
+
+            if (stance == Stance.Standing && action == Action.Neutral)
+            {
+                if (controllerInput.GetYAxisUp())
+                {
+                    invincible = false;
+                    stance = Stance.Jumping;
+                    velocity.y = 2f;
+                    //Add jumping animation
+                }
+            }
+
+            if (!gameManager.AbleToMoveForward() && //Prevent player from moving past other player
+                ((isPlayerOne && velocity.x > 0f) ||
+                (!isPlayerOne && velocity.x < 0f)))
+            {
+                velocity.x = 0f;
+
+            }
+            rb.velocity = velocity;
+        }
+        else if (attackMoving)
+        {
+            rb.velocity = attackingVelocity;
+        }
+        else if (stance == Stance.KnockedDown && action != Action.Recovering)
+        {
+            if (controllerInput.GetYAxisUp())  
+            {
+                GetUp();
+            }
+        }
+
+        if (inHitFrame)
+        {
+            CheckForHit();
+        }
+    }
+
+    public void EasyAiUpdate()
+    {
+        if (stance == Stance.KnockedDown && action != Action.Recovering)
+        {
+            GetUp();
+        }
+
+        if (inHitFrame)
+        {
+            CheckForHit();
+        }
+    }
+
+    public void MediumAiUpdate()
+    {
+        if (stance == Stance.KnockedDown && action != Action.Recovering)
+        {
+            GetUp();
+        }
+
+        if (inHitFrame)
+        {
+            CheckForHit();
+        }
+    }
+
+    public void HardAiUpdate()
+    {
+        if (stance == Stance.KnockedDown && action != Action.Recovering)
+        {
+            GetUp();
+        }
+
+        if (inHitFrame)
+        {
+            CheckForHit();
         }
     }
 
@@ -556,6 +597,14 @@ public class FighterController : MonoBehaviour
     private void Unblock()
     {
         action = Action.Neutral;
+    }
+
+    private void GetUp()
+    {
+        stance = Stance.Standing;
+        action = Action.Recovering;
+        invincible = true;
+        anim.Play("Get Up");
     }
 
     private void AttackMoveForward()

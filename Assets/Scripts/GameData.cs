@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class GameData
 {
-    private static int players;
+    private static int players = 1;
+    private static Difficulty computerDifficulty;
     private static bool pressedButtonPlayerOne; //True if player one pressed the last button
     private static characters fighterOneCharacter;
     private static characters fighterTwoCharacter;
@@ -18,6 +19,16 @@ public class GameData
     public static void SetPlayers(int newPlayers)
     {
         players = newPlayers;
+    }
+
+    public static Difficulty GetComputerDifficulty()
+    {
+        return computerDifficulty;
+    }
+
+    public static void SetComputerDifficulty(Difficulty difficulty)
+    {
+        computerDifficulty = difficulty;
     }
 
     public static bool GetPressedButtonPlayerOne()
@@ -59,4 +70,11 @@ public class GameData
     {
         sameSettings = isSameSettings;
     }
+}
+
+public enum Difficulty
+{
+    Easy,
+    Medium,
+    Hard
 }
