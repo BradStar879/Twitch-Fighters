@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     private bool gameActive = false;
+    [SerializeField] int startingRoundTime;
     private float time;
     private int roundedTime;
     private bool chargeSpecial;
@@ -219,8 +220,8 @@ public class GameManager : MonoBehaviour
         mainCamera.CenterCamera();
         winText.enabled = true;
         winText.text = "FIGHT!";
-        time = 99.9f;
-        roundedTime = (int) time;
+        time = startingRoundTime + .9f;
+        roundedTime = startingRoundTime;
         timerText.text = "" + roundedTime;
         chargeSpecial = false;
         preFightTimer = 1f;
@@ -358,7 +359,7 @@ public class GameManager : MonoBehaviour
 
     public bool IsPlayerOneWinner()
     {
-        return fighterOneWins == roundsToWin;
+        return fighterOneWins == roundsToWin && fighterOneWins != fighterTwoWins;
     }
 
     public bool AbleToMoveForward()

@@ -8821,6 +8821,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f0129776ef90f4448979fba2bbf24c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  startingRoundTime: 10
   debugMode: 1
   timerText: {fileID: 620714078}
   winText: {fileID: 1479265574}

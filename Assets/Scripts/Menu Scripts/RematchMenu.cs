@@ -19,7 +19,7 @@ public class RematchMenu : BaseMenuScript
     private void OnEnable()
     {
         ResetMenu();
-        if (GameData.GetPlayers() == 1 || !gameManager.IsPlayerOneWinner()) //Player 1 has control if 1 player game or is loser
+        if (GameData.GetPlayers() == 1 || !gameManager.IsPlayerOneWinner()) //Player 1 has control if 1 player game or is loser/tie
         {
             LoadMenu();
         }
