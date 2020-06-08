@@ -1,12 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;using UnityEngine.SceneManagement;
-
+using UnityEngine.UI;
 public class CharacterSelectMenu : BaseMenuScript
 {
 
     [SerializeField] Text fighterOneText;    [SerializeField] Text fighterTwoText;    [SerializeField] Image fighterOneDisplay;    [SerializeField] Image fighterTwoDisplay;
+    [SerializeField] GameObject cpuDifficultyMenu;
     [SerializeField] GameObject confirmationMessage;
 
     [SerializeField] Button willNeffButton;
@@ -15,31 +15,18 @@ public class CharacterSelectMenu : BaseMenuScript
     [SerializeField] Button redPlayerButton;
     [SerializeField] Button mainMenuButton;
 
-    private Button[,] confirmationButtonMap;
-    [SerializeField] Button yesButton;
-    [SerializeField] Button noButton;
-
     private Color[] colors = { Color.black, Color.grey, Color.magenta, Color.red };    private int playerCount = 0;    private bool fighterOneSelected;
     private bool fighterTwoSelected;
 
     private void OnEnable()
     {
-        ResetMenu();
-        if (playerCount == 1)
-        {
-            LoadMenu();
-        } 
-        else if (playerCount == 2)
-        {
-            menuNavigation.LoadMenu(this, buttonMap, 0, 0, 1, 0);
-        }
+        ResetAndLoadMenu();
     }
 
     protected override void Init()
     {
         buttonMap = new Button[,] { { willNeffButton, hasanAbiButton, nesuaButton, redPlayerButton},
                                     { mainMenuButton, null,           null,        null           } };
-        confirmationButtonMap = new Button[,] { {yesButton, noButton} };
     }
 
     public override void Cancel(bool isPlayerOne)
@@ -70,12 +57,20 @@ public class CharacterSelectMenu : BaseMenuScript
         }
     }
 
-    protected override void ResetMenu()
+    public void ResetAndLoadMenu()
     {
         playerCount = GameData.GetPlayers();
         fighterOneSelected = false;
         fighterTwoSelected = false;
         fighterOneText.text = "";        fighterTwoText.text = "";        fighterOneDisplay.color = Color.white;        fighterTwoDisplay.color = Color.white;        confirmationMessage.SetActive(false);
+        if (playerCount == 1)
+        {
+            LoadMenu();
+        }
+        else if (playerCount == 2)
+        {
+            menuNavigation.LoadMenu(this, buttonMap, 0, 0, 1, 0);
+        }
     }
 
     public void SelectCharacter(int fighterNumber)    {        characters character = (characters)fighterNumber;
@@ -120,12 +115,15 @@ public class CharacterSelectMenu : BaseMenuScript
         {            PromptConfirmation();        }    }
 
     public void PromptConfirmation()    {
-        menuNavigation.DeselectButton();        confirmationMessage.SetActive(true);
-        menuNavigation.LoadMenu(this, confirmationButtonMap, 0, 0);    }    public void PromptConfirm()    {
-        SceneManager.LoadScene("Fight Scene");    }    public void PromptCancel()
-    {
-        OnEnable();
-    }    public void DeselectCharacter(bool fighterOne)    {        if (fighterOne)
+        menuNavigation.DeselectButton();
+        if (playerCount == 1)
+        {
+            cpuDifficultyMenu.SetActive(true);
+        }
+        else
+        {
+            confirmationMessage.SetActive(true);
+        }    }    public void DeselectCharacter(bool fighterOne)    {        if (fighterOne)
         {
             fighterOneText.text = "";
             fighterOneDisplay.color = Color.white;
