@@ -6,6 +6,7 @@ public class GameData
 {
     private static int players = 1;
     private static Difficulty computerDifficulty;
+    private static int numberOfRounds = 3;
     private static bool pressedButtonPlayerOne; //True if player one pressed the last button
     private static characters fighterOneCharacter;
     private static characters fighterTwoCharacter;
@@ -29,6 +30,16 @@ public class GameData
     public static void SetComputerDifficulty(Difficulty difficulty)
     {
         computerDifficulty = difficulty;
+    }
+
+    public static int GetNumberOfRounds()
+    {
+        return numberOfRounds;
+    }
+
+    public static void SetNumberOfRounds(int roundsToWin)
+    {
+        numberOfRounds = roundsToWin;
     }
 
     public static bool GetPressedButtonPlayerOne()

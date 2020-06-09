@@ -115,7 +115,6 @@ public class CharacterSelectMenu : BaseMenuScript
         {            PromptConfirmation();        }    }
 
     public void PromptConfirmation()    {
-        menuNavigation.DeselectButton();
         if (playerCount == 1)
         {
             cpuDifficultyMenu.SetActive(true);

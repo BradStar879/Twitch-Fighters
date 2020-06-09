@@ -63,7 +63,6 @@ public class MenuNavigation : MonoBehaviour
                 if (controllerInput.GetXAxisLeft() &&
                     (repeatDelayCount <= 0f || lastButtonPressed != ButtonTypes.Left))
                 {
-                    DeselectButton();
                     do
                     {
                         currentX--;
@@ -73,12 +72,15 @@ public class MenuNavigation : MonoBehaviour
                         }
                     } while (!ValidButton() && currentX != startX);
                     lastButtonPressed = ButtonTypes.Left;
-                    SelectButton();
+                    if (currentX != startX)
+                    {
+                        DeselectButton(startX, startY);
+                        SelectButton();
+                    }
                 }
                 else if (controllerInput.GetXAxisRight()
                     && (repeatDelayCount <= 0f || lastButtonPressed != ButtonTypes.Right))
                 {
-                    DeselectButton();
                     do
                     {
                         currentX++;
@@ -88,12 +90,15 @@ public class MenuNavigation : MonoBehaviour
                         }
                     } while (!ValidButton() && currentX != startX);
                     lastButtonPressed = ButtonTypes.Right;
-                    SelectButton();
+                    if (currentX != startX)
+                    {
+                        DeselectButton(startX, startY);
+                        SelectButton();
+                    }
                 }
                 else if (controllerInput.GetYAxisUp()
                     && (repeatDelayCount <= 0f || lastButtonPressed != ButtonTypes.Up))
                 {
-                    DeselectButton();
                     do
                     {
                         currentY--;
@@ -103,12 +108,15 @@ public class MenuNavigation : MonoBehaviour
                         }
                     } while (!ValidButton() && currentY != startY);
                     lastButtonPressed = ButtonTypes.Up;
-                    SelectButton();
+                    if (currentY != startY)
+                    {
+                        DeselectButton(startX, startY);
+                        SelectButton();
+                    }
                 }
                 else if (controllerInput.GetYAxisDown()
                     && (repeatDelayCount <= 0f || lastButtonPressed != ButtonTypes.Down))
                 {
-                    DeselectButton();
                     do
                     {
                         currentY++;
@@ -118,7 +126,11 @@ public class MenuNavigation : MonoBehaviour
                         }
                     } while (!ValidButton() && currentY != startY);
                     lastButtonPressed = ButtonTypes.Down;
-                    SelectButton();
+                    if (currentY != startY)
+                    {
+                        DeselectButton(startX, startY);
+                        SelectButton();
+                    }
                 }
                 else if (controllerInput.GetBottomActionButtonDown())
                 {
@@ -194,9 +206,14 @@ public class MenuNavigation : MonoBehaviour
         return buttonMap[currentY, currentX] != null;
     }
 
-    public void DeselectButton()
+    public bool IsButtonSelected(Button button)
     {
-        buttonMap[currentY, currentX].OnDeselect(null);
+        return button == buttonMap[currentY, currentX];
+    }
+
+    public void DeselectButton(int x, int y)
+    {
+        buttonMap[y, x].OnDeselect(null);
     }
 
     private void SelectButton()

@@ -292,6 +292,7 @@ public class FighterController : MonoBehaviour
 
     public void ResetFighter()
     {
+        ChangeFighterVisibility(true);
         anim.Rebind();
         anim.Play("Default");
         transform.position = startingPosition;
@@ -313,6 +314,14 @@ public class FighterController : MonoBehaviour
         rightHandCollider.isTrigger = false;
         rightForearmCollider.isTrigger = false;
 
+    }
+
+    public void ChangeFighterVisibility(bool visible)
+    {
+        foreach (Renderer childRenderer in gameObject.GetComponentsInChildren<Renderer>())
+        {
+            childRenderer.enabled = visible;
+        }
     }
 
     public void TakeDamage(int damage, AttackType attackType)

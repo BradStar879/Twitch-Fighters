@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] ZoomInCamera zoomInCamera;
     [SerializeField] float preFightTimer = 0f;
     private float postRoundTimer;
-    [SerializeField] int roundsToWin = 3;
+    private int roundsToWin;
     private FighterController fighterOne;
     private FighterController fighterTwo;
     private FighterUI fighterOneUI;
@@ -65,6 +65,7 @@ public class GameManager : MonoBehaviour
     {
         Physics.gravity = new Vector3(0, -7f, 0);
         gameObject.GetComponent<ControllerManager>().Init();
+        roundsToWin = GameData.GetNumberOfRounds();
         canvas = GameObject.FindGameObjectWithTag("Canvas").GetComponent<Canvas>();
         fighterOneUiObject = canvas.transform.GetChild(0).gameObject;
         fighterTwoUiObject = canvas.transform.GetChild(1).gameObject;
@@ -341,6 +342,7 @@ public class GameManager : MonoBehaviour
         }
         else if (fighterOneWins == roundsToWin)
         {
+            fighterTwo.ChangeFighterVisibility(false);
             zoomInCamera.StartFighterOneVictory(fighterOne.gameObject.transform.position.x);
             winText.text = "FIGHTER 1 WINS!";
             mainCamera.DisableCamera();
@@ -348,6 +350,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            fighterOne.ChangeFighterVisibility(false);
             zoomInCamera.StartFighterTwoVictory(fighterTwo.gameObject.transform.position.x);
             winText.text = "FIGHTER 2 WINS!";
             mainCamera.DisableCamera();
