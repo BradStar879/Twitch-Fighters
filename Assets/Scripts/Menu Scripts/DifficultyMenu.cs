@@ -8,6 +8,7 @@ public class DifficultyMenu : BaseMenuScript
     [SerializeField] Button easyButton;
     [SerializeField] Button mediumButton;
     [SerializeField] Button hardButton;
+    [SerializeField] CharacterSelectMenu characterSelectMenu;
     [SerializeField] GameObject confirmationMessage;
     private GameManager gameManager;
 
@@ -37,6 +38,12 @@ public class DifficultyMenu : BaseMenuScript
     {
         GameData.SetComputerDifficulty(Difficulty.Hard);
         confirmationMessage.SetActive(true);
+        gameObject.SetActive(false);
+    }
+
+    public override void Cancel(bool isPlayerOne)
+    {
+        characterSelectMenu.ResetAndLoadMenu();
         gameObject.SetActive(false);
     }
 }

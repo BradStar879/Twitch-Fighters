@@ -9,6 +9,8 @@ public class ConfirmationMenu : BaseMenuScript
 {
     [SerializeField] Button yesButton;
     [SerializeField] Button noButton;
+    [SerializeField] CharacterSelectMenu characterSelectMenu;
+    [SerializeField] GameObject difficultyMenu;
 
     protected override void Init()
     {
@@ -18,5 +20,19 @@ public class ConfirmationMenu : BaseMenuScript
     public void LoadFightScene()
     {
         SceneManager.LoadScene("Fight Scene");
+    }
+
+    public override void Cancel(bool isPlayerOne)
+    {
+        if (GameData.GetPlayers() == 1)
+        {
+            difficultyMenu.SetActive(true);
+            gameObject.SetActive(false);
+        }
+        else
+        {
+            characterSelectMenu.ResetAndLoadMenu();
+            gameObject.SetActive(false);
+        }
     }
 }
