@@ -72,6 +72,11 @@ public class ComboMenu : BaseMenuScript
         }
     }
 
+    public override void Cancel(bool isPlayerOne) 
+    {
+        Back();
+    }
+
     public void Back()
     {
         pauseMenu.SetActive(true);
