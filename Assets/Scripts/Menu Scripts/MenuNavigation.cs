@@ -19,6 +19,11 @@ public class MenuNavigation : MonoBehaviour
     private bool lockedMenu;
     private bool isPlayerOne;
 
+    private GameObject playerSelector;
+    private GameObject cpuSelector;
+    private bool cpuSelectorActive;
+    private GameObject canvas;
+
     private MenuNavigation playerTwoNavigation;
 
     public void Init()
@@ -29,6 +34,12 @@ public class MenuNavigation : MonoBehaviour
         menuActive = false;
         lockedMenu = false;
         isPlayerOne = true;
+        cpuSelectorActive = false;
+        canvas = GameObject.FindWithTag("Canvas");
+        playerSelector = Instantiate(Resources.Load<GameObject>("Prefabs/UI/P1 Selector"), canvas.transform);
+        playerSelector.SetActive(false);
+        cpuSelector = Instantiate(Resources.Load<GameObject>("Prefabs/UI/CPU Selector"), canvas.transform);
+        cpuSelector.SetActive(false);
         playerTwoNavigation = GetComponents<MenuNavigation>()[1];
         playerTwoNavigation.SecondPlayerInit();
     }
@@ -41,6 +52,12 @@ public class MenuNavigation : MonoBehaviour
         menuActive = false;
         lockedMenu = false;
         isPlayerOne = false;
+        cpuSelectorActive = false;
+        canvas = GameObject.FindWithTag("Canvas");
+        playerSelector = Instantiate(Resources.Load<GameObject>("Prefabs/UI/P2 Selector"), canvas.transform);
+        playerSelector.SetActive(false);
+        cpuSelector = Instantiate(Resources.Load<GameObject>("Prefabs/UI/CPU Selector"), canvas.transform);
+        cpuSelector.SetActive(false);
     }
 
     void Update()
@@ -155,12 +172,13 @@ public class MenuNavigation : MonoBehaviour
         this.maxY = buttonMap.GetLength(0) - 1;
         menuActive = true;
         lockedMenu = false;
+        playerSelector.SetActive(true);
         if (isPlayerOne)
         {
             playerTwoNavigation.DeactivateMenu();
         }
         SelectButton();
-        buttonMap[currentY, currentX].OnSelect(null);
+        //buttonMap[currentY, currentX].OnSelect(null);
     }
 
     public void LoadMenu(BaseMenuScript baseMenuScript, Button[,] buttonMap, 
@@ -172,6 +190,8 @@ public class MenuNavigation : MonoBehaviour
 
     public void DeactivateMenu()
     {
+        playerSelector.SetActive(false);
+        cpuSelector.SetActive(false);
         menuActive = false;
     }
 
@@ -201,6 +221,18 @@ public class MenuNavigation : MonoBehaviour
         playerTwoNavigation.UnlockPlayerOneSelection();
     }
 
+    public void SwapSelector()
+    {
+        GameObject tempSelector = playerSelector;
+        playerSelector = cpuSelector;
+        cpuSelector = tempSelector;
+        playerSelector.SetActive(true);
+        playerSelector.transform.position = cpuSelector.transform.position;
+        cpuSelector.SetActive(false);
+        cpuSelectorActive = !cpuSelectorActive;
+        SelectButton();
+    }
+
     private bool ValidButton()
     {
         return buttonMap[currentY, currentX] != null;
@@ -218,8 +250,21 @@ public class MenuNavigation : MonoBehaviour
 
     private void SelectButton()
     {
-        buttonMap[currentY, currentX].Select();
-        buttonMap[currentY, currentX].OnSelect(null);
+        Rect buttonRect = ((RectTransform) buttonMap[currentY, currentX].transform).rect;
+        Vector2 buttonPosition = buttonMap[currentY, currentX].transform.position;
+
+        float canvasScale = canvas.transform.localScale.x;
+        float playerSelectorX;
+        float playerSelectorY = buttonPosition.y + (buttonRect.height * 3/4 * canvasScale);
+        if (isPlayerOne && !cpuSelectorActive)
+        {
+            playerSelectorX = buttonPosition.x - (buttonRect.width / 2 * canvasScale);
+        }
+        else
+        {
+            playerSelectorX = buttonPosition.x + (buttonRect.width / 2 * canvasScale);
+        }
+        playerSelector.transform.position = new Vector2(playerSelectorX, playerSelectorY);
         repeatDelayCount = repeatDelay;
     }
 

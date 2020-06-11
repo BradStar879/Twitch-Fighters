@@ -1818,6 +1818,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8662af7fc4e794836b02f6d125250683, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerSelector: {fileID: 6488127109305931943, guid: 33a6245ac31df4c84bcd3e96f44f30e5,
+    type: 3}
+  cpuSelector: {fileID: 6488127109305931943, guid: 291c4632b63604c80a3b4ee3c37adefe,
+    type: 3}
 --- !u!114 &695102803
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1830,6 +1834,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8662af7fc4e794836b02f6d125250683, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerSelector: {fileID: 6488127109305931943, guid: ffea4a31166534f6da487c7428970c7e,
+    type: 3}
+  cpuSelector: {fileID: 6488127109305931943, guid: 291c4632b63604c80a3b4ee3c37adefe,
+    type: 3}
 --- !u!1 &754025470
 GameObject:
   m_ObjectHideFlags: 0
@@ -5224,7 +5232,7 @@ GameObject:
   - component: {fileID: 1992577081}
   m_Layer: 5
   m_Name: Canvas
-  m_TagString: Untagged
+  m_TagString: Canvas
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -37,6 +37,7 @@ public class CharacterSelectMenu : BaseMenuScript
             {
                 DeselectCharacter(true);
                 menuNavigation.UnlockPlayerOneSelection();
+                menuNavigation.SwapSelector();
             }
             else
             {
@@ -92,6 +93,7 @@ public class CharacterSelectMenu : BaseMenuScript
                 fighterTwoSelected = true;
                 GameData.SetFighterTwoCharacter(character);
             }
+            menuNavigation.SwapSelector();
         }
         else if (playerCount == 2)
         {
