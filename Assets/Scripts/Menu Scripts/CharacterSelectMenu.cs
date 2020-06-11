@@ -18,8 +18,13 @@ public class CharacterSelectMenu : BaseMenuScript
     private Color[] colors = { Color.black, Color.grey, Color.magenta, Color.red };    private int playerCount = 0;    private bool fighterOneSelected;
     private bool fighterTwoSelected;
 
+    private int playerOneCharacterPosition;
+    private int playerTwoCharacterPosition;
+
     private void OnEnable()
     {
+        playerOneCharacterPosition = 0;
+        playerTwoCharacterPosition = 1;
         ResetAndLoadMenu();
     }
 
@@ -70,7 +75,7 @@ public class CharacterSelectMenu : BaseMenuScript
         }
         else if (playerCount == 2)
         {
-            menuNavigation.LoadMenu(this, buttonMap, 0, 0, 1, 0);
+            menuNavigation.LoadMenu(this, buttonMap, playerOneCharacterPosition, 0, playerTwoCharacterPosition, 0);
         }
     }
 
@@ -102,6 +107,7 @@ public class CharacterSelectMenu : BaseMenuScript
                 fighterOneText.text = "" + character;
                 fighterOneDisplay.color = colors[fighterNumber];
                 fighterOneSelected = true;
+                playerOneCharacterPosition = fighterNumber;
                 GameData.SetFighterOneCharacter(character);
                 menuNavigation.LockPlayerOneSelection();
             }
@@ -110,6 +116,7 @@ public class CharacterSelectMenu : BaseMenuScript
                 fighterTwoText.text = "" + character;
                 fighterTwoDisplay.color = colors[fighterNumber];
                 fighterTwoSelected = true;
+                playerTwoCharacterPosition = fighterNumber;
                 GameData.SetFighterTwoCharacter(character);
                 menuNavigation.LockPlayerTwoSelection();
             }
