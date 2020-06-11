@@ -18,8 +18,8 @@ public class CharacterSelectMenu : BaseMenuScript
     private Color[] colors = { Color.black, Color.grey, Color.magenta, Color.red };    private int playerCount = 0;    private bool fighterOneSelected;
     private bool fighterTwoSelected;
 
-    private int playerOneCharacterPosition;
-    private int playerTwoCharacterPosition;
+    private int playerOneCharacterPosition; //Will have to change logic for this
+    private int playerTwoCharacterPosition; //if characters span more than one row
 
     private void OnEnable()
     {
@@ -38,11 +38,21 @@ public class CharacterSelectMenu : BaseMenuScript
     {
         if (isPlayerOne)
         {
-            if (fighterOneSelected)
+            if (fighterTwoSelected && playerCount == 1)
+            {
+                DeselectCharacter(false);
+                menuNavigation.LoadMenu(this, buttonMap, playerTwoCharacterPosition, 0);
+                menuNavigation.SwapSelector();
+            }
+            else if (fighterOneSelected)
             {
                 DeselectCharacter(true);
                 menuNavigation.UnlockPlayerOneSelection();
-                menuNavigation.SwapSelector();
+                if (playerCount == 1)
+                {
+                    menuNavigation.LoadMenu(this, buttonMap, playerOneCharacterPosition, 0);
+                    menuNavigation.SwapSelector();
+                }
             }
             else
             {
@@ -88,6 +98,7 @@ public class CharacterSelectMenu : BaseMenuScript
                 fighterOneText.text = "" + character;
                 fighterOneDisplay.color = colors[fighterNumber];
                 fighterOneSelected = true;
+                playerOneCharacterPosition = fighterNumber;
                 GameData.SetFighterOneCharacter(character);
 
             }
@@ -96,6 +107,7 @@ public class CharacterSelectMenu : BaseMenuScript
                 fighterTwoText.text = "" + character;
                 fighterTwoDisplay.color = colors[fighterNumber];
                 fighterTwoSelected = true;
+                playerTwoCharacterPosition = fighterNumber;
                 GameData.SetFighterTwoCharacter(character);
             }
             menuNavigation.SwapSelector();

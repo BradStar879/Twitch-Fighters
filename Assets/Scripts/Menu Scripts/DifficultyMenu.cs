@@ -43,7 +43,7 @@ public class DifficultyMenu : BaseMenuScript
 
     public override void Cancel(bool isPlayerOne)
     {
-        characterSelectMenu.ResetAndLoadMenu();
+        characterSelectMenu.Cancel(true);
         gameObject.SetActive(false);
     }
 }
