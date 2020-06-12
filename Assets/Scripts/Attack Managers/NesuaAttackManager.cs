@@ -8,24 +8,32 @@ public class NesuaAttackManager : AttackManager
     private NesuaComboStateP pState;
     private NesuaComboStatePP ppState;
     private NesuaComboStatePPR pprState;
+    private NesuaComboStatePPRR pprrState;
     private NesuaComboStatePR prState;
     private NesuaComboStatePRK prkState;
     private NesuaComboStatePRKR prkrState;
+    private NesuaComboStatePRKP prkpState;
     private NesuaComboStateK kState;
     private NesuaComboStateKK kkState;
+    private NesuaComboStateKP kpState;
+    private NesuaComboStateKPP kppState;
 
     public override void Init()
     {
         base.Init();
         cameraUltimateAnimation = "Nesua Ultimate";
+        prkpState = new NesuaComboStatePRKP(this);
         prkrState = new NesuaComboStatePRKR(this);
-        prkState = new NesuaComboStatePRK(this, prkrState);
+        prkState = new NesuaComboStatePRK(this, prkrState, prkpState);
         prState = new NesuaComboStatePR(this, prkState);
-        pprState = new NesuaComboStatePPR(this);
+        pprrState = new NesuaComboStatePPRR(this);
+        pprState = new NesuaComboStatePPR(this, pprrState);
         ppState = new NesuaComboStatePP(this, pprState);
         pState = new NesuaComboStateP(this, ppState);
+        kppState = new NesuaComboStateKPP(this);
+        kpState = new NesuaComboStateKP(this, kppState);
         kkState = new NesuaComboStateKK(this);
-        kState = new NesuaComboStateK(this, kkState);
+        kState = new NesuaComboStateK(this, kkState, kpState);
         defaultState = new NesuaComboStateDefault(this, pState, kState);
         ResetCombo();
     }
@@ -144,7 +152,12 @@ public class NesuaComboStatePP : ComboState
 
 public class NesuaComboStatePPR : ComboState
 {
-    public NesuaComboStatePPR(AttackManager attackManager) : base(attackManager) { }
+    private NesuaComboStatePPRR pprrState;
+
+    public NesuaComboStatePPR(AttackManager attackManager, NesuaComboStatePPRR pprrState) : base(attackManager) 
+    {
+        this.pprrState = pprrState;
+    }
 
     public override ComboState Punch()
     {
@@ -159,11 +172,42 @@ public class NesuaComboStatePPR : ComboState
 
     public override ComboState RangedAttack()
     {
+        attackManager.QueueUpAttack("Shoot", 5, AttackType.Flinch);
+        return pprrState;
+    }
+
+    public override ComboState SpecialAttack()
+    {
+        return endComboState;
+    }
+}
+
+public class NesuaComboStatePPRR : ComboState
+{
+    public NesuaComboStatePPRR(AttackManager attackManager) : base(attackManager) { }
+
+    public override ComboState Punch()
+    {
+        attackManager.QueueUpAttack("Punch", 6, AttackType.KnockBack);
+        return endComboState;
+    }
+
+    public override ComboState Kick()
+    {
+        return endComboState;
+    }
+
+    public override ComboState RangedAttack()
+    {
         return endComboState;
     }
 
     public override ComboState SpecialAttack()
     {
+        if (attackManager.HasEnoughSpecial(10)) 
+        {
+            attackManager.QueueUpAttack("Punch", 10, AttackType.KnockBack, 10);
+        }
         return endComboState;
     }
 }
@@ -202,15 +246,19 @@ public class NesuaComboStatePR : ComboState
 public class NesuaComboStatePRK : ComboState
 {
     private NesuaComboStatePRKR prkrState;
+    private NesuaComboStatePRKP prkpState;
 
-    public NesuaComboStatePRK(AttackManager attackManager, NesuaComboStatePRKR prkrState) : base(attackManager)
+    public NesuaComboStatePRK(AttackManager attackManager, NesuaComboStatePRKR prkrState, 
+        NesuaComboStatePRKP prkpState) : base(attackManager)
     {
         this.prkrState = prkrState;
+        this.prkpState = prkpState;
     }
 
     public override ComboState Punch()
     {
-        return endComboState;
+        attackManager.QueueUpAttack("Punch", 4, AttackType.KnockUp);
+        return prkpState;
     }
 
     public override ComboState Kick()
@@ -256,18 +304,51 @@ public class NesuaComboStatePRKR : ComboState
     }
 }
 
+public class NesuaComboStatePRKP : ComboState
+{
+    public NesuaComboStatePRKP(AttackManager attackManager) : base(attackManager) { }
+
+    public override ComboState Punch()
+    {
+        attackManager.QueueUpAttack("Punch", 6, AttackType.Flinch);
+        return endComboState;
+    }
+
+    public override ComboState Kick()
+    {
+        return endComboState;
+    }
+
+    public override ComboState RangedAttack()
+    {
+        return endComboState;
+    }
+
+    public override ComboState SpecialAttack()
+    {
+        if (attackManager.HasEnoughSpecial(10))
+        {
+            attackManager.QueueUpAttack("Punch", 10, AttackType.KnockBack, 10);
+        }
+        return endComboState;
+    }
+}
+
 public class NesuaComboStateK : ComboState
 {
     private NesuaComboStateKK kkState;
+    private NesuaComboStateKP kpState;
 
-    public NesuaComboStateK(AttackManager attackManager, NesuaComboStateKK kkState) : base(attackManager)
+    public NesuaComboStateK(AttackManager attackManager, NesuaComboStateKK kkState, NesuaComboStateKP kpState) : base(attackManager)
     {
         this.kkState = kkState;
+        this.kpState = kpState;
     }
 
     public override ComboState Punch()
     {
-        return endComboState;
+        attackManager.QueueUpAttack("Punch", 3, AttackType.Flinch);
+        return kpState;
     }
 
     public override ComboState Kick()
@@ -309,6 +390,67 @@ public class NesuaComboStateKK : ComboState
 
     public override ComboState SpecialAttack()
     {
+        return endComboState;
+    }
+}
+
+public class NesuaComboStateKP : ComboState
+{
+    private NesuaComboStateKPP kppState;
+
+    public NesuaComboStateKP(AttackManager attackManager, NesuaComboStateKPP kppState) : base(attackManager)
+    {
+        this.kppState = kppState;
+    }
+
+    public override ComboState Punch()
+    {
+        attackManager.QueueUpAttack("Punch", 4, AttackType.Flinch);
+        return kppState;
+    }
+
+    public override ComboState Kick()
+    {
+        return endComboState;
+    }
+
+    public override ComboState RangedAttack()
+    {
+        return endComboState;
+    }
+
+    public override ComboState SpecialAttack()
+    {
+        return endComboState;
+    }
+}
+
+public class NesuaComboStateKPP : ComboState
+{
+    public NesuaComboStateKPP(AttackManager attackManager) : base(attackManager) { }
+
+    public override ComboState Punch()
+    {
+        attackManager.QueueUpAttack("Punch", 6, AttackType.KnockBack);
+        return endComboState;
+    }
+
+    public override ComboState Kick()
+    {
+        return endComboState;
+    }
+
+    public override ComboState RangedAttack()
+    {
+        return endComboState;
+    }
+
+    public override ComboState SpecialAttack()
+    {
+        if (attackManager.HasEnoughSpecial(10))
+        {
+            attackManager.QueueUpAttack("Punch", 6, AttackType.KnockUp, 10);
+        }
         return endComboState;
     }
 }
