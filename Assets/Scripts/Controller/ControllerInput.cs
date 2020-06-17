@@ -13,8 +13,7 @@ public class ControllerInput
     public void Init(int playerNumber)
     {
         this.playerNumber = playerNumber;
-        inputState = new InputState();
-        inputState.SetAsKeyboardType(playerNumber);
+        inputState = new KeyboardState(playerNumber);
     }
 
     public bool IsUsingController()
@@ -24,34 +23,14 @@ public class ControllerInput
 
     public void ActivateKeyboardInput()
     {
-        inputState.SetAsKeyboardType(playerNumber);
+        inputState = new KeyboardState(playerNumber);
         usingController = false;
     }
 
     public void ActivateControllerInput(int inputSpot)
     {
-        inputState.SetAsControllerType(inputSpot);
+        inputState = new XboxControllerState(inputSpot);
         usingController = true;
-    }
-
-    public string GetXAxisString()
-    {
-        return inputState.GetXAxisString();
-    }
-
-    public string GetYAxisString()
-    {
-        return inputState.GetYAxisString();
-    }
-
-    public string GetBottomActionButtonString()
-    {
-        return inputState.GetBottomActionButtonString();
-    }
-
-    public string GetRightActionButtonString()
-    {
-        return inputState.GetRightActionButtonString();
     }
 
     public float GetXAxis()
