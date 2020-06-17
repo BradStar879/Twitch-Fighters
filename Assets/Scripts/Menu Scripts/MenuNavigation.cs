@@ -20,7 +20,10 @@ public class MenuNavigation : MonoBehaviour
     private bool isPlayerOne;
 
     private GameObject playerSelector;
+    private Texture unselectedSprite;
+    private Texture selectedSprite;
     private GameObject cpuSelector;
+    private bool selectedSpriteActive;
     private bool cpuSelectorActive;
     private GameObject canvas;
 
@@ -34,12 +37,15 @@ public class MenuNavigation : MonoBehaviour
         menuActive = false;
         lockedMenu = false;
         isPlayerOne = true;
+        selectedSpriteActive = false;
         cpuSelectorActive = false;
         canvas = GameObject.FindWithTag("Canvas");
         playerSelector = Instantiate(Resources.Load<GameObject>("Prefabs/UI/P1 Selector"), canvas.transform);
         playerSelector.SetActive(false);
         cpuSelector = Instantiate(Resources.Load<GameObject>("Prefabs/UI/CPU Selector"), canvas.transform);
         cpuSelector.SetActive(false);
+        unselectedSprite = Resources.Load<Texture>("2D Images/Player 1");
+        selectedSprite = Resources.Load<Texture>("2D Images/Player 1 Selected");
         playerTwoNavigation = GetComponents<MenuNavigation>()[1];
         playerTwoNavigation.SecondPlayerInit();
     }
@@ -52,12 +58,15 @@ public class MenuNavigation : MonoBehaviour
         menuActive = false;
         lockedMenu = false;
         isPlayerOne = false;
+        selectedSpriteActive = false;
         cpuSelectorActive = false;
         canvas = GameObject.FindWithTag("Canvas");
         playerSelector = Instantiate(Resources.Load<GameObject>("Prefabs/UI/P2 Selector"), canvas.transform);
         playerSelector.SetActive(false);
         cpuSelector = Instantiate(Resources.Load<GameObject>("Prefabs/UI/CPU Selector"), canvas.transform);
         cpuSelector.SetActive(false);
+        unselectedSprite = Resources.Load<Texture>("2D Images/Player 2");
+        selectedSprite = Resources.Load<Texture>("2D Images/Player 2 Selected");
     }
 
     void Update()
@@ -173,12 +182,13 @@ public class MenuNavigation : MonoBehaviour
         menuActive = true;
         lockedMenu = false;
         playerSelector.SetActive(true);
+        selectedSpriteActive = false;
+        playerSelector.GetComponent<RawImage>().texture = unselectedSprite;
         if (isPlayerOne)
         {
             playerTwoNavigation.DeactivateMenu();
         }
         SelectButton();
-        //buttonMap[currentY, currentX].OnSelect(null);
     }
 
     public void LoadMenu(BaseMenuScript baseMenuScript, Button[,] buttonMap, 
@@ -272,6 +282,24 @@ public class MenuNavigation : MonoBehaviour
     {
         GameData.SetPressedButtonPlayerOne(isPlayerOne);
         buttonMap[currentY, currentX].onClick.Invoke();
+    }
+
+    public void SwapSelectedSprite()
+    {
+        selectedSpriteActive = !selectedSpriteActive;
+        if (selectedSpriteActive)
+        {
+            playerSelector.GetComponent<RawImage>().texture = selectedSprite;
+        }
+        else
+        {
+            playerSelector.GetComponent<RawImage>().texture = unselectedSprite;
+        }
+    }
+
+    public void SwapSelectedSpritePlayerTwo()
+    {
+        playerTwoNavigation.SwapSelectedSprite();
     }
 }
 

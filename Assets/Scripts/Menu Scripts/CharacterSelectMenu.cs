@@ -53,6 +53,10 @@ public class CharacterSelectMenu : BaseMenuScript
                     menuNavigation.LoadMenu(this, buttonMap, playerOneCharacterPosition, 0);
                     menuNavigation.SwapSelector();
                 }
+                else
+                {
+                    menuNavigation.SwapSelectedSprite();
+                }
             }
             else
             {
@@ -65,6 +69,7 @@ public class CharacterSelectMenu : BaseMenuScript
             {
                 DeselectCharacter(false);
                 menuNavigation.UnlockPlayerTwoSelection();
+                menuNavigation.SwapSelectedSpritePlayerTwo();
             }
             else
             {
@@ -122,6 +127,7 @@ public class CharacterSelectMenu : BaseMenuScript
                 playerOneCharacterPosition = fighterNumber;
                 GameData.SetFighterOneCharacter(character);
                 menuNavigation.LockPlayerOneSelection();
+                menuNavigation.SwapSelectedSprite();
             }
             else
             {
@@ -131,6 +137,7 @@ public class CharacterSelectMenu : BaseMenuScript
                 playerTwoCharacterPosition = fighterNumber;
                 GameData.SetFighterTwoCharacter(character);
                 menuNavigation.LockPlayerTwoSelection();
+                menuNavigation.SwapSelectedSpritePlayerTwo();
             }
         }        if (fighterOneSelected && fighterTwoSelected)
         {            PromptConfirmation();        }    }
