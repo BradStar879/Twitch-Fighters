@@ -27,9 +27,15 @@ public class ControllerInput
         usingController = false;
     }
 
-    public void ActivateControllerInput(int inputSpot)
+    public void ActivateXboxControllerInput(int inputSpot)
     {
         inputState = new XboxControllerState(inputSpot);
+        usingController = true;
+    }
+
+    public void ActivatePlayStationControllerInput(int inputSpot)
+    {
+        inputState = new PlayStationControllerState(inputSpot);
         usingController = true;
     }
 

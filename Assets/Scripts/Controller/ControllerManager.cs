@@ -76,7 +76,7 @@ public class ControllerManager : MonoBehaviour
                 {
                     if (!controllerInputs[playerNumber].IsUsingController())
                     {
-                        controllerInputs[playerNumber].ActivateControllerInput(i + 1);
+                        ActivateController(playerNumber, i + 1, joystickNames[i]);
                         connectedControllerMap.Add(i, playerNumber);
                     }
                     playerNumber++;
@@ -87,6 +87,18 @@ public class ControllerManager : MonoBehaviour
             {
                 break;
             }
+        }
+    }
+
+    private static void ActivateController(int playerNumber, int controllerSpot, string joystickName)
+    {
+        if (joystickName.ToLower().Contains("xbox"))
+        {
+            controllerInputs[playerNumber].ActivateXboxControllerInput(controllerSpot);
+        }
+        else
+        {
+            controllerInputs[playerNumber].ActivatePlayStationControllerInput(controllerSpot);
         }
     }
 
