@@ -301,6 +301,16 @@ public class MenuNavigation : MonoBehaviour
     {
         playerTwoNavigation.SwapSelectedSprite();
     }
+
+    public int GetX()
+    {
+        return currentX;
+    }
+
+    public int GetPlayerTwoX()
+    {
+        return playerTwoNavigation.GetX();
+    }
 }
 
 public enum ButtonTypes

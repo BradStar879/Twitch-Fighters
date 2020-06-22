@@ -34,6 +34,34 @@ public class CharacterSelectMenu : BaseMenuScript
                                     { mainMenuButton, null,           null,        null           } };
     }
 
+    private void LateUpdate()
+    {
+        if (playerCount == 1)
+        {
+            if (!fighterOneSelected)
+            {
+                HighlightPlayerOneCharacter(menuNavigation.GetX());
+                DeselectCharacter(false);
+            }
+            else if (!fighterTwoSelected)
+            {
+                HighlightPlayerTwoCharacter(menuNavigation.GetX());
+            }
+        }
+        else
+        {
+            if (!fighterOneSelected)
+            {
+                HighlightPlayerOneCharacter(menuNavigation.GetX());
+            }
+            if (!fighterTwoSelected)
+            {
+                HighlightPlayerTwoCharacter(menuNavigation.GetPlayerTwoX());
+            }
+        }
+        
+    }
+
     public override void Cancel(bool isPlayerOne)
     {
         if (isPlayerOne)
@@ -50,8 +78,8 @@ public class CharacterSelectMenu : BaseMenuScript
                 menuNavigation.UnlockPlayerOneSelection();
                 if (playerCount == 1)
                 {
-                    menuNavigation.LoadMenu(this, buttonMap, playerOneCharacterPosition, 0);
                     menuNavigation.SwapSelector();
+                    menuNavigation.LoadMenu(this, buttonMap, playerOneCharacterPosition, 0);
                 }
                 else
                 {
@@ -94,14 +122,28 @@ public class CharacterSelectMenu : BaseMenuScript
         }
     }
 
+    public void HighlightPlayerOneCharacter(int fighterNumber)
+    {
+        characters character = (characters)fighterNumber;
+        fighterOneText.text = "" + character;
+        fighterOneDisplay.color = colors[fighterNumber];
+    }
+
+    public void HighlightPlayerTwoCharacter(int fighterNumber)
+    {
+        characters character = (characters)fighterNumber;
+        fighterTwoText.text = "" + character;
+        fighterTwoDisplay.color = colors[fighterNumber];
+    }
+
     public void SelectCharacter(int fighterNumber)    {        characters character = (characters)fighterNumber;
 
         if (playerCount == 1)
         {
             if (!fighterOneSelected)
             {
-                fighterOneText.text = "" + character;
-                fighterOneDisplay.color = colors[fighterNumber];
+                //fighterOneText.text = "" + character;
+                //fighterOneDisplay.color = colors[fighterNumber];
                 fighterOneSelected = true;
                 playerOneCharacterPosition = fighterNumber;
                 GameData.SetFighterOneCharacter(character);
@@ -109,8 +151,8 @@ public class CharacterSelectMenu : BaseMenuScript
             }
             else if (!fighterTwoSelected)
             {
-                fighterTwoText.text = "" + character;
-                fighterTwoDisplay.color = colors[fighterNumber];
+               // fighterTwoText.text = "" + character;
+                //fighterTwoDisplay.color = colors[fighterNumber];
                 fighterTwoSelected = true;
                 playerTwoCharacterPosition = fighterNumber;
                 GameData.SetFighterTwoCharacter(character);
@@ -121,8 +163,8 @@ public class CharacterSelectMenu : BaseMenuScript
         {
             if (GameData.GetPressedButtonPlayerOne())
             {
-                fighterOneText.text = "" + character;
-                fighterOneDisplay.color = colors[fighterNumber];
+                //fighterOneText.text = "" + character;
+                //fighterOneDisplay.color = colors[fighterNumber];
                 fighterOneSelected = true;
                 playerOneCharacterPosition = fighterNumber;
                 GameData.SetFighterOneCharacter(character);
@@ -131,8 +173,8 @@ public class CharacterSelectMenu : BaseMenuScript
             }
             else
             {
-                fighterTwoText.text = "" + character;
-                fighterTwoDisplay.color = colors[fighterNumber];
+                //fighterTwoText.text = "" + character;
+                //fighterTwoDisplay.color = colors[fighterNumber];
                 fighterTwoSelected = true;
                 playerTwoCharacterPosition = fighterNumber;
                 GameData.SetFighterTwoCharacter(character);
