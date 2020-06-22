@@ -142,8 +142,6 @@ public class CharacterSelectMenu : BaseMenuScript
         {
             if (!fighterOneSelected)
             {
-                //fighterOneText.text = "" + character;
-                //fighterOneDisplay.color = colors[fighterNumber];
                 fighterOneSelected = true;
                 playerOneCharacterPosition = fighterNumber;
                 GameData.SetFighterOneCharacter(character);
@@ -151,8 +149,6 @@ public class CharacterSelectMenu : BaseMenuScript
             }
             else if (!fighterTwoSelected)
             {
-               // fighterTwoText.text = "" + character;
-                //fighterTwoDisplay.color = colors[fighterNumber];
                 fighterTwoSelected = true;
                 playerTwoCharacterPosition = fighterNumber;
                 GameData.SetFighterTwoCharacter(character);
@@ -163,8 +159,6 @@ public class CharacterSelectMenu : BaseMenuScript
         {
             if (GameData.GetPressedButtonPlayerOne())
             {
-                //fighterOneText.text = "" + character;
-                //fighterOneDisplay.color = colors[fighterNumber];
                 fighterOneSelected = true;
                 playerOneCharacterPosition = fighterNumber;
                 GameData.SetFighterOneCharacter(character);
@@ -173,8 +167,6 @@ public class CharacterSelectMenu : BaseMenuScript
             }
             else
             {
-                //fighterTwoText.text = "" + character;
-                //fighterTwoDisplay.color = colors[fighterNumber];
                 fighterTwoSelected = true;
                 playerTwoCharacterPosition = fighterNumber;
                 GameData.SetFighterTwoCharacter(character);
