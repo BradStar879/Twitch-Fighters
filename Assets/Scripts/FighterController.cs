@@ -294,7 +294,7 @@ public class FighterController : MonoBehaviour
     {
         ChangeFighterVisibility(true);
         anim.Rebind();
-        anim.Play("Default");
+        anim.Play("Idle");
         transform.position = startingPosition;
         transform.rotation = startingRotation;
         transform.localScale = startingScale;
@@ -313,7 +313,6 @@ public class FighterController : MonoBehaviour
         TurnLegCollidersIntoColliders();
         rightHandCollider.isTrigger = false;
         rightForearmCollider.isTrigger = false;
-
     }
 
     public void ChangeFighterVisibility(bool visible)
