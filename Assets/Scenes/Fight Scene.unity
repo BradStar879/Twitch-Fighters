@@ -8925,7 +8925,7 @@ MonoBehaviour:
     type: 3}
   hasanAbiFighter: {fileID: 4571413033932903503, guid: 5f7e445b35d5b1d4f831c57bbb86b147,
     type: 3}
-  nesuaFighter: {fileID: 4489333375489496809, guid: fbbd6d367dcba2e4f81f5ce484656ec7,
+  nesuaFighter: {fileID: 2583819996243812438, guid: fbbd6d367dcba2e4f81f5ce484656ec7,
     type: 3}
   redFighter: {fileID: 5055013763675836745, guid: 073fe50eb713e6d45883303d8e3afa16,
     type: 3}
@@ -13137,6 +13137,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Nesua
+      objectReference: {fileID: 0}
+    - target: {fileID: 2583819996243812438, guid: fbbd6d367dcba2e4f81f5ce484656ec7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2922908950696934124, guid: fbbd6d367dcba2e4f81f5ce484656ec7,
         type: 3}

@@ -226,6 +226,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8208961603197231269}
   - component: {fileID: 1787364669860562404}
+  - component: {fileID: 2653861724274227658}
   m_Layer: 0
   m_Name: bod
   m_TagString: Untagged
@@ -328,6 +329,20 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.0030113794, y: 0.0110697895, z: 0.009030499}
     m_Extent: {x: 0.052764427, y: 0.083035484, z: 0.04999291}
   m_DirtyAABB: 0
+--- !u!64 &2653861724274227658
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1934602733013390080}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &2005887857279834349
 GameObject:
   m_ObjectHideFlags: 0
@@ -641,6 +656,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2922908950696934124}
+  - component: {fileID: 867047687111519828}
+  - component: {fileID: 8890739096371363276}
+  - component: {fileID: -6610667765981364283}
+  - component: {fileID: 7542218108932482769}
+  - component: {fileID: 4145145096398920787}
+  - component: {fileID: 545840106818884230}
+  - component: {fileID: 5808066967000344326}
   m_Layer: 0
   m_Name: Nesua
   m_TagString: Untagged
@@ -665,6 +687,123 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 53.73, z: 0}
+--- !u!54 &867047687111519828
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2583819996243812438}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 120
+  m_CollisionDetection: 0
+--- !u!95 &8890739096371363276
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2583819996243812438}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: bb5105a97cae16a45af1e45d66cccfd1, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &-6610667765981364283
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2583819996243812438}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f358f88a5d60445794aa2ab7d7afd7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 1
+  projectile: {fileID: 8457953900539127899, guid: 275c7a36e178a5d4f929bcec2ea63c0f,
+    type: 3}
+  leftShinCollider: {fileID: 545840106818884230}
+  leftFootCollider: {fileID: 545840106818884230}
+  leftThighCollider: {fileID: 545840106818884230}
+  rightShinCollider: {fileID: 4145145096398920787}
+  rightFootCollider: {fileID: 4145145096398920787}
+  rightThighCollider: {fileID: 4145145096398920787}
+  rightHandCollider: {fileID: 5808066967000344326}
+  rightForearmCollider: {fileID: 5808066967000344326}
+  sparkParticles: {fileID: 7774494078821449916, guid: 8253d085a6e87da4f903dc12f27e8c7e,
+    type: 3}
+  introQuotes:
+  - Welcome to the Cyber Athletes Club.
+  victoryQuotes:
+  - Get some!
+--- !u!114 &7542218108932482769
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2583819996243812438}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c61f3766f642d4254903af8258049762, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!136 &4145145096398920787
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2583819996243812438}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.017026367
+  m_Height: 0.072127536
+  m_Direction: 1
+  m_Center: {x: 0.016648574, y: 0.03120698, z: -0.0075384206}
+--- !u!136 &545840106818884230
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2583819996243812438}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.017026367
+  m_Height: 0.072127536
+  m_Direction: 1
+  m_Center: {x: -0.02, y: 0.03120698, z: 0.02}
+--- !u!65 &5808066967000344326
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2583819996243812438}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.07173632, y: 0.027508259, z: 0.030271096}
+  m_Center: {x: 0.014131686, y: 0.08722594, z: 0.044845697}
 --- !u!1 &2602030177283786233
 GameObject:
   m_ObjectHideFlags: 0
@@ -3182,6 +3321,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3240183167301193679}
   - component: {fileID: 2471173713029818692}
+  - component: {fileID: 5583722661465187759}
   m_Layer: 0
   m_Name: arms
   m_TagString: Untagged
@@ -3290,6 +3430,20 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.010147551, y: 0.014127411, z: 0.01429637}
     m_Extent: {x: 0.044044897, y: 0.07711863, z: 0.06643014}
   m_DirtyAABB: 0
+--- !u!64 &5583722661465187759
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9217172188878533587}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &9218970455632184827
 GameObject:
   m_ObjectHideFlags: 0
