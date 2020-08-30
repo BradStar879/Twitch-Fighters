@@ -43,7 +43,9 @@ public class GameManager : MonoBehaviour
     private readonly Vector3 fighterOneStartingPosition = new Vector3(-.9f, .6f, -2.9f);
     private readonly Vector3 fighterTwoStartingPosition = new Vector3(.9f, .6f, -2.9f);
     private readonly Quaternion fighterOneStartingRotation = Quaternion.Euler(Vector3.zero);
+    private readonly Quaternion fighterOneStartingRotationNew = Quaternion.Euler(0f, 90f, 0f);
     private readonly Quaternion fighterTwoStartingRotation = Quaternion.Euler(0f, 180f, 0f);
+    private readonly Quaternion fighterTwoStartingRotationNew = Quaternion.Euler(0f, 270f, 0f);
 
     private Vector3 fighterOneSavedVelocity;
     private Vector3 fighterTwoSavedVelocity;
@@ -78,9 +80,24 @@ public class GameManager : MonoBehaviour
         fighterTwoName.text = "" + GameData.GetFighterTwoCharacter();
         GameObject fighterOneToClone = DecideFighter(GameData.GetFighterOneCharacter());
         GameObject fighterTwoToClone = DecideFighter(GameData.GetFighterTwoCharacter());
-
-        GameObject fighterOneClone = Instantiate(fighterOneToClone, fighterOneStartingPosition, fighterOneStartingRotation);
-        GameObject fighterTwoClone = Instantiate(fighterTwoToClone, fighterTwoStartingPosition, fighterTwoStartingRotation);
+        GameObject fighterOneClone;
+        GameObject fighterTwoClone;
+        if (GameData.GetFighterOneCharacter() == characters.Nesua)
+        {
+            fighterOneClone = Instantiate(fighterOneToClone, fighterOneStartingPosition, fighterOneStartingRotationNew);
+        }
+        else
+        {
+            fighterOneClone = Instantiate(fighterOneToClone, fighterOneStartingPosition, fighterOneStartingRotation);
+        }
+        if (GameData.GetFighterTwoCharacter() == characters.Nesua)
+        {
+            fighterTwoClone = Instantiate(fighterTwoToClone, fighterTwoStartingPosition, fighterTwoStartingRotationNew);
+        }
+        else
+        {
+            fighterTwoClone = Instantiate(fighterTwoToClone, fighterTwoStartingPosition, fighterTwoStartingRotation);
+        }
         fighterOneClone.SetActive(true);
         fighterTwoClone.SetActive(true);
         fighterOne = fighterOneClone.GetComponent<FighterController>();

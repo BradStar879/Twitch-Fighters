@@ -143,10 +143,20 @@ public class FighterController : MonoBehaviour
                 if (controllerInput.GetXAxisLeft()) //Movement
                 {
                     velocity.x -= moveSpeed;
+                    anim.SetFloat("direction", -1f);
+                    if (!anim.GetBool("walking"))
+                    {
+                        anim.Play("Walk", 0, float.NegativeInfinity);
+                    }
                 }
                 else if (controllerInput.GetXAxisRight())
                 {
                     velocity.x += moveSpeed;
+                    anim.SetFloat("direction", 1f);
+                    if (!anim.GetBool("walking"))
+                    {
+                        anim.Play("Walk");
+                    }
                 }
 
                 if (action == Action.Blocking)
@@ -203,6 +213,14 @@ public class FighterController : MonoBehaviour
 
             }
             rb.velocity = velocity;
+            if (velocity.x == 0f)
+            {
+                anim.SetBool("walking", false);
+            }
+            else
+            {
+                anim.SetBool("walking", true);
+            }
         }
         else if (attackMoving)
         {
@@ -220,6 +238,7 @@ public class FighterController : MonoBehaviour
         {
             CheckForHit();
         }
+
     }
 
     public void EasyAiUpdate()
